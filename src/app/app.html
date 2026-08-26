@@ -73,24 +73,24 @@
     </div>
   </section>
 
-  <!-- Quick Navigation Pill Bar -->
-  <div class="mb-5 overflow-auto pb-2 border-bottom">
-    <ul class="nav nav-pills flex-nowrap gap-2">
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#basic">Basic</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#multi-select">Multi-Select</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#focus-open">Focus on Open</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#reactive-forms">Reactive Forms</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#filtering">Filtering</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#templating">Templating</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#grouping">Grouping</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#editable">Editable</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#floating">Float Label</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#sizes">Sizes & Variants</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#loading">Loading</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#virtual-scroll">Large Dataset</a></li>
-      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#signals">Signals</a></li>
-      <li class="nav-item"><a class="nav-link bg-primary text-white" href="#api-reference">API Reference</a></li>
-    </ul>
+  <!-- Enhanced Quick Navigation Bar -->
+  <div class="quick-nav-wrapper mb-5 sticky-top shadow-sm py-2">
+    <div class="quick-nav-pills">
+      <a class="nav-link" href="#basic"><i class="bi bi-check-circle-fill text-primary"></i> Basic</a>
+      <a class="nav-link" href="#multi-select"><i class="bi bi-check-all text-success"></i> Multi-Select</a>
+      <a class="nav-link" href="#focus-open"><i class="bi bi-bullseye text-danger"></i> Focus on Open</a>
+      <a class="nav-link" href="#reactive-forms"><i class="bi bi-check2-square text-success"></i> Reactive Forms</a>
+      <a class="nav-link" href="#filtering"><i class="bi bi-search text-info"></i> Filtering</a>
+      <a class="nav-link" href="#templating"><i class="bi bi-brush-fill text-warning"></i> Templating</a>
+      <a class="nav-link" href="#grouping"><i class="bi bi-folder2-open text-danger"></i> Grouping</a>
+      <a class="nav-link" href="#editable"><i class="bi bi-pencil-square text-primary"></i> Editable</a>
+      <a class="nav-link" href="#floating"><i class="bi bi-layers-fill text-info"></i> Float Label</a>
+      <a class="nav-link" href="#sizes"><i class="bi bi-aspect-ratio text-success"></i> Sizes & Variants</a>
+      <a class="nav-link" href="#loading"><i class="bi bi-arrow-repeat text-secondary"></i> Loading</a>
+      <a class="nav-link" href="#virtual-scroll"><i class="bi bi-list-ol text-warning"></i> Large Dataset</a>
+      <a class="nav-link" href="#signals"><i class="bi bi-lightning-charge-fill text-warning"></i> Signals</a>
+      <a class="nav-link active-pill" href="#api-reference"><i class="bi bi-journal-code"></i> API Reference</a>
+    </div>
   </div>
 
   <!-- Main Content Showcase -->
@@ -779,27 +779,24 @@
     <!-- API Tables Card -->
     <div class="card border shadow-sm">
       <div class="card-header bg-body p-0">
-        <ul class="nav nav-tabs border-bottom-0" role="tablist">
+        <ul class="nav api-nav-tabs" role="tablist">
           <li class="nav-item">
-            <button class="nav-link fw-semibold p-3 border-0 border-bottom"
+            <button class="nav-link"
                     [class.active]="activeApiTab === 'inputs'"
-                    [class.text-primary]="activeApiTab === 'inputs'"
                     (click)="activeApiTab = 'inputs'">
               <i class="bi bi-box-arrow-in-right me-1"></i> Properties (@Input)
             </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link fw-semibold p-3 border-0 border-bottom"
+            <button class="nav-link"
                     [class.active]="activeApiTab === 'outputs'"
-                    [class.text-primary]="activeApiTab === 'outputs'"
                     (click)="activeApiTab = 'outputs'">
               <i class="bi bi-box-arrow-up-right me-1"></i> Events (@Output)
             </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link fw-semibold p-3 border-0 border-bottom"
+            <button class="nav-link"
                     [class.active]="activeApiTab === 'templates'"
-                    [class.text-primary]="activeApiTab === 'templates'"
                     (click)="activeApiTab = 'templates'">
               <i class="bi bi-brush me-1"></i> Templates (#refs)
             </button>
