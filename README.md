@@ -192,6 +192,7 @@ For full API property lists, architecture decisions, and implementation strategi
 - [04. Test Strategy](./docs/04-test-cases.md)
 - [05. CI/CD Configuration](./docs/05-cicd-pipeline.md)
 - [06. Git & StackBlitz](./docs/06-git-and-stackblitz.md)
+- [07. Demo Examples Catalog](./docs/07-demo-examples.md)
 
 ## 🧪 Live Preview & Sandbox
 - [View GitHub Pages Live Demo](https://amro.github.io/ngb-select/)

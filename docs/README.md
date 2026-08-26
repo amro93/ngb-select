@@ -158,6 +158,7 @@ For full API property lists, architecture decisions, and implementation strategi
 - [Test Strategy](./04-test-cases.md)
 - [CI/CD Configuration](./05-cicd-pipeline.md)
 - [Git & StackBlitz](./06-git-and-stackblitz.md)
+- [Demo Examples Catalog](./07-demo-examples.md)
 
 ## 🧪 Live Preview & Sandbox
 - [View GitHub Pages Demo](https://{username}.github.io/ngb-select/)

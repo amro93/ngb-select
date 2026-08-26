@@ -1,5 +1,6 @@
 <div class="ngb-select-container position-relative"
      [class.form-floating]="floatLabel"
+     [class.floating-active]="hasSelectedValue() || overlayVisible"
      [class.w-100]="fluid"
      [ngStyle]="style"
      [ngClass]="styleClass"

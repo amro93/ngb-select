@@ -48,9 +48,14 @@
     .form-select {
       height: calc(3.5rem + 2px);
       min-height: calc(3.5rem + 2px);
-      padding-top: 1.625rem;
-      padding-bottom: 0.625rem;
-      line-height: 1.25;
+      padding-top: 1.5rem;
+      padding-bottom: 0.35rem;
+      align-items: flex-end;
+
+      .ngb-select-clear-icon,
+      .ngb-select-dropdown-icon {
+        margin-bottom: 0.15rem;
+      }
     }
 
     > label {
@@ -67,9 +72,15 @@
       pointer-events: none;
       border: 1px solid transparent;
       transform-origin: 0 0;
-      transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+      transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out, color 0.15s ease-in-out;
       color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.65);
-      transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+      transform: scale(1) translateY(0);
+    }
+
+    &.floating-active > label {
+      transform: scale(0.85) translateY(-0.65rem) translateX(0.15rem);
+      color: var(--bs-primary);
+      font-weight: 500;
     }
   }
 
