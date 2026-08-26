@@ -115,7 +115,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('basic') === 'demo'">
-            <p class="text-muted small mb-3">Select supports single value selection from an array of primitives or objects with two-way <code>ngModel</code> binding.</p>
+            <p class="text-muted small mb-3">
+              Standard single-value dropdown supporting arrays of primitives or complex objects. Use <code>optionLabel</code> to specify the display property and <code>dataKey</code> for object identity comparisons.
+            </p>
             <div class="mb-3">
               <label class="form-label text-muted small fw-semibold">Select City</label>
               <ngb-select
@@ -169,7 +171,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('multi') === 'demo'">
-            <p class="text-muted small mb-3">Enables multi-selection with checkboxes. Displays chosen items as removable Bootstrap badge chips with <code>display="chip"</code>.</p>
+            <p class="text-muted small mb-3">
+              Enables multi-selection with checkboxes inside the list. When <code>display="chip"</code>, selected items appear as removable Bootstrap badge chips with individual close buttons.
+            </p>
             <div class="mb-3">
               <label class="form-label text-muted small fw-semibold">Select Multiple Cities (Chips Mode)</label>
               <ngb-select
@@ -217,7 +221,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('selectAll') === 'demo'">
-            <p class="text-muted small mb-3">Renders a sticky header checkbox with <code>[showSelectAll]="true"</code> that selects all filtered items.</p>
+            <p class="text-muted small mb-3">
+              Renders a sticky header checkbox with <code>[showSelectAll]="true"</code>. Toggling it selects or deselects all active items, respecting any active filter search criteria.
+            </p>
             <div class="mb-3">
               <label class="form-label text-muted small fw-semibold">Select Countries (Select All Enabled)</label>
               <ngb-select
@@ -267,8 +273,11 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('focusOpen') === 'demo'">
+            <p class="text-muted small mb-3">
+              Configure <code>[focusOnOpen]="index"</code> to automatically scroll and focus keyboard navigation to a designated option when the overlay opens.
+            </p>
             <div class="d-flex align-items-center justify-content-between mb-2">
-              <label class="form-label text-muted small fw-semibold mb-0">Focus Target Index</label>
+              <label class="form-label text-muted small fw-semibold mb-0">Select Target Index to Focus</label>
               <div class="d-flex align-items-center gap-2">
                 <select class="form-select form-select-sm w-auto" [(ngModel)]="focusOpenIndex">
                   <option [ngValue]="0">0 - New York</option>
@@ -280,7 +289,6 @@
                 </select>
               </div>
             </div>
-            <p class="text-muted small mb-3">When the dropdown opens, it immediately auto-scrolls and sets keyboard focus on option index <code>{{ focusOpenIndex }}</code>.</p>
             <div class="mb-3">
               <ngb-select
                 [options]="objectCities"
@@ -325,7 +333,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('reactive') === 'demo'">
-            <p class="text-muted small mb-3">Implements <code>ControlValueAccessor</code> for seamless integration with Angular's <code>FormGroup</code> and <code>FormControl</code>.</p>
+            <p class="text-muted small mb-3">
+              Implements Angular's <code>ControlValueAccessor</code> interface with full validation status support. Highlights with <code>.is-invalid</code> and displays field errors upon touched validation.
+            </p>
             <form [formGroup]="userForm" (ngSubmit)="submitReactiveForm()">
               <div class="mb-3">
                 <label class="form-label text-muted small fw-semibold">City (Required)</label>
@@ -377,6 +387,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('filter') === 'demo'">
+            <p class="text-muted small mb-3">
+              Built-in search input filtering with multi-field search (<code>filterBy="name,code,currency"</code>) and configurable algorithms (<code>contains</code>, <code>startsWith</code>, <code>endsWith</code>, <code>equals</code>).
+            </p>
             <div class="d-flex align-items-center justify-content-between mb-2">
               <label class="form-label text-muted small fw-semibold mb-0">Search Mode</label>
               <select class="form-select form-select-sm w-auto" [(ngModel)]="filterMatchMode">
@@ -434,7 +447,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('template') === 'demo'">
-            <p class="text-muted small mb-3">Customize the dropdown items (<code>#item</code>) and trigger box (<code>#selectedItem</code>) with arbitrary HTML.</p>
+            <p class="text-muted small mb-3">
+              Render arbitrary HTML layouts for the active selection using <code>#selectedItem</code> and for individual list entries using <code>#item</code> with full context binding.
+            </p>
             <div class="mb-3">
               <ngb-select
                 [options]="countries"
@@ -500,7 +515,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('group') === 'demo'">
-            <p class="text-muted small mb-3">Options can be categorized into sub-groups with <code>[group]="true"</code>, <code>optionGroupLabel</code>, and <code>optionGroupChildren</code>.</p>
+            <p class="text-muted small mb-3">
+              Categorize options into logical groups using <code>[group]="true"</code>, <code>optionGroupLabel</code>, and <code>optionGroupChildren</code> with non-selectable category headers.
+            </p>
             <div class="mb-3">
               <ngb-select
                 [options]="groupedCars"
@@ -546,7 +563,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('editable') === 'demo'">
-            <p class="text-muted small mb-3">When <code>[editable]="true"</code>, the user can either select from the dropdown or freely type custom text into the field.</p>
+            <p class="text-muted small mb-3">
+              Allows the user to select predefined options or freely type arbitrary custom text values with <code>[editable]="true"</code>, supporting <code>maxLength</code> and <code>selectOnFocus</code>.
+            </p>
             <div class="mb-3">
               <ngb-select
                 [options]="primitiveCities"
@@ -590,7 +609,9 @@
         </div>
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('float') === 'demo'">
-            <p class="text-muted small mb-3">Native support for Bootstrap's <code>.form-floating</code> CSS pattern.</p>
+            <p class="text-muted small mb-3">
+              Provides native support for Bootstrap's <code>.form-floating</code> CSS component with floating labels positioned above the selected value.
+            </p>
             <div class="mb-3">
               <ngb-select
                 [options]="objectCities"
@@ -601,6 +622,9 @@
                 placeholder="Destination City"
                 [fluid]="true">
               </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Selected Value:</strong> <code>{{ floatCity ? (floatCity.name + ' (' + floatCity.code + ')') : 'None' }}</code>
             </div>
           </ng-container>
 
@@ -623,6 +647,9 @@
           <i class="bi bi-aspect-ratio text-success me-2"></i>11. Sizes & Variants
         </div>
         <div class="card-body p-3 d-flex flex-column gap-3">
+          <p class="text-muted small mb-0">
+            Control the visual appearance and scale of the dropdown with Bootstrap sizing (<code>.form-select-sm</code>, <code>.form-select-lg</code>) and background variants (<code>variant="filled"</code>).
+          </p>
           <div>
             <label class="form-label text-muted small fw-semibold">Small Size (<code>size="small"</code>)</label>
             <ngb-select [options]="objectCities" [(ngModel)]="sizeCity" optionLabel="name" size="small" [fluid]="true"></ngb-select>
@@ -649,7 +676,9 @@
           </button>
         </div>
         <div class="card-body p-3">
-          <p class="text-muted small mb-3">Displays a Bootstrap <code>.spinner-border</code> when <code>[loading]="true"</code>.</p>
+          <p class="text-muted small mb-3">
+            Displays a Bootstrap <code>.spinner-border</code> spinner in place of the chevron caret when <code>[loading]="true"</code> to indicate active asynchronous data retrieval.
+          </p>
           <div class="mb-3">
             <ngb-select
               [options]="loadingCities"
@@ -660,6 +689,9 @@
               placeholder="Loading dynamic cities..."
               [fluid]="true">
             </ngb-select>
+          </div>
+          <div class="p-2 bg-light rounded text-muted small">
+            <strong>Selected:</strong> <code>{{ selectedLoadingCity || 'None' }}</code>
           </div>
         </div>
       </div>
@@ -672,7 +704,9 @@
           <i class="bi bi-list-ol text-warning me-2"></i>13. Large Dataset (1,000 Items)
         </div>
         <div class="card-body p-3">
-          <p class="text-muted small mb-3">Scrollable container with <code>scrollHeight="250px"</code> effortlessly rendering 1,000 items with search capabilities.</p>
+          <p class="text-muted small mb-3">
+            Smooth scrolling container constrained with <code>scrollHeight="250px"</code> effortlessly rendering 1,000 entries with instant search capabilities.
+          </p>
           <div class="mb-3">
             <ngb-select
               [options]="largeDataset"
@@ -684,6 +718,9 @@
               placeholder="Choose from 1,000 items..."
               [fluid]="true">
             </ngb-select>
+          </div>
+          <div class="p-2 bg-light rounded text-muted small">
+            <strong>Selected ID:</strong> <code>{{ selectedLargeItem || 'None' }}</code>
           </div>
         </div>
       </div>
@@ -697,7 +734,9 @@
             <h5 class="fw-bold text-primary mb-1">
               <i class="bi bi-lightning-charge-fill me-1 text-warning"></i> 14. Modern Angular Signals
             </h5>
-            <p class="text-muted mb-0 small">Direct integration with Angular's reactive Signals primitives (<code>signal()</code> and <code>model()</code>).</p>
+            <p class="text-muted mb-0 small">
+              Seamless two-way reactivity with Angular's reactive Signals primitives (<code>signal()</code> and <code>model()</code>) with zero change detection delays.
+            </p>
           </div>
           <div style="min-width: 280px;">
             <ngb-select

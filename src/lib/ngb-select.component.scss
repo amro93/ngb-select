@@ -1,17 +1,17 @@
 :host {
-  display: inline-block;
-  width: auto;
+  display: block;
+  width: 100%;
 
-  &.w-100,
-  &.fluid {
-    display: block;
-    width: 100%;
+  &.inline {
+    display: inline-block;
+    width: auto;
   }
 }
 
 .ngb-select-container {
   position: relative;
   user-select: none;
+  width: 100%;
 
   .form-select {
     cursor: pointer;
@@ -37,6 +37,39 @@
       cursor: not-allowed;
       background-color: var(--bs-secondary-bg, #e9ecef);
       opacity: 0.65;
+    }
+  }
+
+  // --- Bootstrap Floating Label Integration ---
+  &.form-floating {
+    display: block;
+    width: 100%;
+
+    .form-select {
+      height: calc(3.5rem + 2px);
+      min-height: calc(3.5rem + 2px);
+      padding-top: 1.625rem;
+      padding-bottom: 0.625rem;
+      line-height: 1.25;
+    }
+
+    > label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      height: 100%;
+      padding: 1rem 0.75rem;
+      overflow: hidden;
+      text-align: start;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      pointer-events: none;
+      border: 1px solid transparent;
+      transform-origin: 0 0;
+      transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+      color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.65);
+      transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
     }
   }
 
