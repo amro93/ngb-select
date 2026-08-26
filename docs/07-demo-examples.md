@@ -25,6 +25,16 @@ This document serves as the complete catalog of demo examples for the `ngb-selec
 | **15** | [Lazy Loading & Infinite Scroll](#15-lazy-loading--infinite-scroll) | `lazy="true"`, `(onLazyLoad)` |
 | **16** | [Overlay Append to Body](#16-overlay-append-to-body) | `appendTo="body"`, modal dialog escape |
 | **17** | [RTL & Arabic (AR) Showcase](#17-rtl--arabic-ar-showcase) | `dir="rtl"`, Arabic datasets, Alef/Tashkeel normalization |
+| **18** | [Cascading / Dependent Dropdowns](#18-cascading--dependent-dropdowns) | Country $\rightarrow$ State $\rightarrow$ City chain binding |
+| **19** | [Server-Side Debounced Async Search](#19-server-side-debounced-async-search) | Remote HTTP query with `(onFilter)` debouncing |
+| **20** | [Custom Clear & Dropdown Icon Templates](#20-custom-clear--dropdown-icon-templates) | `#clearIcon`, `#dropdownIcon` overrides |
+| **21** | [Table Cell In-Place Inline Editing](#21-table-cell-in-place-inline-editing) | Data table row inline editing with compact sizing |
+| **22** | [Bootstrap Modal Integration](#22-bootstrap-modal-integration) | Dialog z-index, backdrop dismissal, `appendTo="body"` |
+| **23** | [Multi-Select with Custom Chip Template](#23-multi-select-with-custom-chip-template) | Custom chip layout with avatar, status badge, and close |
+| **24** | [Bootstrap Dark Mode & Theme Switching](#24-bootstrap-dark-mode--theme-switching) | `data-bs-theme="dark"` styling and CSS variables |
+| **25** | [Accessibility (A11y) & Keyboard Traversal](#25-accessibility-a11y--keyboard-traversal) | ARIA `combobox`, `listbox`, keyboard focus and traversal |
+| **26** | [Form Reset & Dynamic Disabling](#26-form-reset--dynamic-disabling) | Programmatic control `.disable()`, `.reset()` flows |
+| **27** | [Hierarchical Grouped Multi-Select](#27-hierarchical-grouped-multi-select) | Multi-select across grouped option categories |
 
 ---
 
@@ -519,3 +529,381 @@ Comprehensive Arabic showcase demonstrating full RTL layout, Arabic search norma
   </div>
 </div>
 ```
+
+---
+
+## 18. Cascading / Dependent Dropdowns
+
+Demonstrates linked dropdowns where selecting a parent automatically filters the available options in the child dropdown and resets downstream selections.
+
+```typescript
+@Component({
+  standalone: true,
+  imports: [NgbSelectComponent, FormsModule, CommonModule],
+  template: `
+    <div class="row g-3">
+      <!-- Country Dropdown -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">1. Select Country:</label>
+        <ngb-select 
+          [options]="countries" 
+          [(ngModel)]="selectedCountry" 
+          optionLabel="name" 
+          optionValue="code"
+          [showClear]="true"
+          placeholder="Choose Country"
+          (onChange)="onCountryChange($event.value)">
+        </ngb-select>
+      </div>
+
+      <!-- Dependent City Dropdown -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">2. Select City:</label>
+        <ngb-select 
+          [options]="availableCities" 
+          [(ngModel)]="selectedCity" 
+          optionLabel="name" 
+          optionValue="id"
+          [disabled]="!selectedCountry"
+          [placeholder]="selectedCountry ? 'Choose City' : 'Select a country first'">
+        </ngb-select>
+      </div>
+    </div>
+  `
+})
+export class CascadingDemoComponent {
+  selectedCountry: string | null = null;
+  selectedCity: number | null = null;
+
+  countries = [
+    { name: 'United States', code: 'US' },
+    { name: 'United Kingdom', code: 'UK' },
+    { name: 'Germany', code: 'DE' }
+  ];
+
+  allCities = [
+    { id: 1, countryCode: 'US', name: 'New York' },
+    { id: 2, countryCode: 'US', name: 'San Francisco' },
+    { id: 3, countryCode: 'UK', name: 'London' },
+    { id: 4, countryCode: 'UK', name: 'Manchester' },
+    { id: 5, countryCode: 'DE', name: 'Berlin' },
+    { id: 6, countryCode: 'DE', name: 'Munich' }
+  ];
+
+  availableCities: any[] = [];
+
+  onCountryChange(countryCode: string | null): void {
+    this.selectedCity = null;
+    if (countryCode) {
+      this.availableCities = this.allCities.filter(c => c.countryCode === countryCode);
+    } else {
+      this.availableCities = [];
+    }
+  }
+}
+```
+
+---
+
+## 19. Server-Side Debounced Async Search
+
+Demonstrates handling live remote API searches with debouncing via the `(onFilter)` event.
+
+```typescript
+@Component({
+  standalone: true,
+  imports: [NgbSelectComponent, FormsModule, CommonModule],
+  template: `
+    <label class="form-label fw-semibold">Remote Async Search (GitHub Users):</label>
+    <ngb-select 
+      [options]="searchResults" 
+      [(ngModel)]="selectedUser" 
+      optionLabel="login" 
+      optionValue="id"
+      [filter]="true"
+      [loading]="isLoading"
+      filterPlaceholder="Type at least 2 characters..."
+      placeholder="Search GitHub users..."
+      (onFilter)="onSearchFilter($event.filter)">
+    </ngb-select>
+  `
+})
+export class AsyncSearchDemoComponent {
+  searchResults: any[] = [];
+  selectedUser: number | null = null;
+  isLoading = false;
+  private searchSubject = new Subject<string>();
+
+  constructor() {
+    this.searchSubject.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query || query.length < 2) {
+          this.isLoading = false;
+          return of([]);
+        }
+        this.isLoading = true;
+        // Simulated HTTP search call
+        return of([
+          { id: 101, login: `${query}_dev` },
+          { id: 102, login: `${query}_lead` },
+          { id: 103, login: `${query}_architect` }
+        ]).pipe(delay(300));
+      })
+    ).subscribe(results => {
+      this.searchResults = results;
+      this.isLoading = false;
+    });
+  }
+
+  onSearchFilter(query: string): void {
+    this.searchSubject.next(query);
+  }
+}
+```
+
+---
+
+## 20. Custom Clear & Dropdown Icon Templates
+
+Demonstrates overriding default icons using `#clearIcon` and `#dropdownIcon` template outlets.
+
+```html
+<ngb-select 
+  [options]="browsers" 
+  [(ngModel)]="selectedBrowser" 
+  [showClear]="true" 
+  placeholder="Select Web Browser">
+  
+  <!-- Custom Clear Button (Trash icon) -->
+  <ng-template #clearIcon>
+    <i class="bi bi-trash text-danger me-2 cursor-pointer"></i>
+  </ng-template>
+
+  <!-- Custom Dropdown Trigger Caret -->
+  <ng-template #dropdownIcon>
+    <i class="bi bi-chevron-bar-expand text-primary"></i>
+  </ng-template>
+</ngb-select>
+```
+
+---
+
+## 21. Table Cell In-Place Inline Editing
+
+Demonstrates compact dropdown embedding directly inside data table rows.
+
+```html
+<table class="table table-hover align-middle">
+  <thead class="table-light">
+    <tr>
+      <th>User</th>
+      <th>Email</th>
+      <th style="width: 220px;">Role (Inline Edit)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let member of teamMembers">
+      <td class="fw-semibold">{{ member.name }}</td>
+      <td>{{ member.email }}</td>
+      <td>
+        <ngb-select 
+          [options]="roleOptions" 
+          [(ngModel)]="member.role" 
+          size="small" 
+          optionLabel="label" 
+          optionValue="value"
+          (onChange)="onRoleUpdated(member, $event.value)">
+        </ngb-select>
+      </td>
+    </tr>
+  </tbody>
+</table>
+```
+
+---
+
+## 22. Bootstrap Modal Integration
+
+Demonstrates using `appendTo="body"` to break out of modal dialog scroll boundaries and handling z-index correctly.
+
+```html
+<!-- Trigger Modal Button -->
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">
+  Open Edit Modal
+</button>
+
+<!-- Modal Dialog -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Assign Department</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body overflow-hidden">
+        <label class="form-label fw-semibold">Target Department:</label>
+        <ngb-select 
+          [options]="departments" 
+          [(ngModel)]="selectedDept" 
+          optionLabel="name" 
+          appendTo="body"
+          [filter]="true"
+          placeholder="Select Department">
+        </ngb-select>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+---
+
+## 23. Multi-Select with Custom Chip Template
+
+Demonstrates fully customized chip badges rendering user profile images and colored status badges with an interactive close icon.
+
+```html
+<ngb-select 
+  [options]="collaborators" 
+  [(ngModel)]="selectedCollaborators" 
+  optionLabel="name" 
+  optionValue="id"
+  [multiple]="true"
+  display="chip"
+  placeholder="Add team collaborators">
+  
+  <!-- Custom Chip Template -->
+  <ng-template #chip let-user>
+    <div class="d-inline-flex align-items-center gap-1">
+      <img [src]="user.avatar" class="rounded-circle" width="18" height="18">
+      <span class="fw-semibold">{{ user.name }}</span>
+      <span class="badge bg-primary-subtle text-primary ms-1 font-monospace">{{ user.team }}</span>
+    </div>
+  </ng-template>
+</ngb-select>
+```
+
+---
+
+## 24. Bootstrap Dark Mode & Theme Switching
+
+Demonstrates component rendering in dark mode using Bootstrap 5.3+ `data-bs-theme="dark"`.
+
+```html
+<!-- Dark Theme Wrapper -->
+<div class="p-4 rounded bg-dark text-light" data-bs-theme="dark">
+  <h6 class="mb-3">Dark Mode Theme:</h6>
+  <ngb-select 
+    [options]="themes" 
+    [(ngModel)]="activeTheme" 
+    optionLabel="label" 
+    optionValue="id"
+    [showClear]="true"
+    [filter]="true"
+    placeholder="Select Dark Mode Option">
+  </ngb-select>
+</div>
+```
+
+---
+
+## 25. Accessibility (A11y) & Keyboard Traversal
+
+Demonstrates WCAG compliant setup with screen reader labels and complete keyboard navigability.
+
+```html
+<div class="mb-3">
+  <label id="paymentMethodLabel" class="form-label fw-bold">Choose Payment Method:</label>
+  <ngb-select 
+    [options]="paymentMethods" 
+    [(ngModel)]="selectedPayment" 
+    ariaLabelledBy="paymentMethodLabel"
+    optionLabel="name" 
+    optionValue="code"
+    placeholder="Select Payment">
+  </ngb-select>
+  <div class="form-text">
+    Keyboard controls: <kbd>Space</kbd> or <kbd>Enter</kbd> to open, <kbd>Up</kbd>/<kbd>Down</kbd> to navigate, <kbd>Esc</kbd> to close.
+  </div>
+</div>
+```
+
+---
+
+## 26. Form Reset & Dynamic Disabling
+
+Demonstrates programmatic form resetting, setting disabled states dynamically, and observing clean UI synchronization.
+
+```typescript
+@Component({
+  standalone: true,
+  imports: [NgbSelectComponent, ReactiveFormsModule, CommonModule],
+  template: `
+    <form [formGroup]="accountForm">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Subscription Plan:</label>
+        <ngb-select 
+          [options]="plans" 
+          formControlName="plan" 
+          optionLabel="name" 
+          optionValue="id"
+          placeholder="Select Plan">
+        </ngb-select>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="toggleDisable()">
+          {{ accountForm.get('plan')?.disabled ? 'Enable Select' : 'Disable Select' }}
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="resetForm()">
+          Reset to Default
+        </button>
+      </div>
+    </form>
+  `
+})
+export class FormResetDemoComponent {
+  plans = [
+    { id: 'free', name: 'Free Tier' },
+    { id: 'pro', name: 'Professional ($29/mo)' },
+    { id: 'enterprise', name: 'Enterprise' }
+  ];
+
+  accountForm = new FormGroup({
+    plan: new FormControl('pro')
+  });
+
+  toggleDisable(): void {
+    const ctrl = this.accountForm.get('plan');
+    ctrl?.disabled ? ctrl.enable() : ctrl?.disable();
+  }
+
+  resetForm(): void {
+    this.accountForm.reset({ plan: 'free' });
+  }
+}
+```
+
+---
+
+## 27. Hierarchical Grouped Multi-Select
+
+Demonstrates multi-selection within categorized options with item count summaries.
+
+```html
+<ngb-select 
+  [options]="groupedPermissions" 
+  [(ngModel)]="selectedPermissions" 
+  [group]="true" 
+  optionGroupLabel="category" 
+  optionGroupChildren="permissions" 
+  optionLabel="name" 
+  optionValue="key"
+  [multiple]="true"
+  [showSelectAll]="true"
+  display="chip"
+  placeholder="Assign categorized permissions">
+</ngb-select>
+```
+

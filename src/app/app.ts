@@ -154,6 +154,9 @@ export class App implements OnInit {
   activeTabs: { [key: string]: 'demo' | 'html' | 'ts' } = {};
   copiedSection: string | null = null;
 
+  // Sidebar navigation state
+  isNavCollapsed = false;
+
   ngOnInit(): void {
     for (let i = 1; i <= 1000; i++) {
       this.largeDataset.push({ label: `Option Item #${i}`, value: i });
