@@ -59,8 +59,8 @@
         <!-- Standard Single or Comma Multi-Select Text -->
         <ng-template #standardTextTpl>
           <ng-container *ngIf="hasSelectedValue(); else placeholderTpl">
-            <ng-container *ngIf="selectedItemTemplate; else defaultSelectedLabelTpl">
-              <ng-container *ngTemplateOutlet="selectedItemTemplate; context: { $implicit: value }"></ng-container>
+            <ng-container *ngIf="selectedItemTemplate || labelTemplate; else defaultSelectedLabelTpl">
+              <ng-container *ngTemplateOutlet="selectedItemTemplate || labelTemplate; context: { $implicit: value }"></ng-container>
             </ng-container>
             <ng-template #defaultSelectedLabelTpl>
               <span>{{ getDisplayLabel() }}</span>

@@ -132,6 +132,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   // --- Custom Content Templates ---
   @ContentChild('item') itemTemplate?: TemplateRef<any>;
   @ContentChild('selectedItem') selectedItemTemplate?: TemplateRef<any>;
+  @ContentChild('label') labelTemplate?: TemplateRef<any>;
   @ContentChild('chip') chipTemplate?: TemplateRef<any>;
   @ContentChild('headerCheckbox') headerCheckboxTemplate?: TemplateRef<any>;
   @ContentChild('header') headerTemplate?: TemplateRef<any>;

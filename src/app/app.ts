@@ -116,6 +116,17 @@ export class App implements OnInit {
   // 7. Editable (Combobox)
   editableCity: string = 'San Francisco';
 
+  // Team Members for Advanced Label & Item Templating Cases
+  members = [
+    { name: 'Sarah Connor', email: 'sarah@example.com', role: 'Lead Architect', status: 'online', badge: 'bg-primary' },
+    { name: 'John Doe', email: 'john@example.com', role: 'Frontend Engineer', status: 'busy', badge: 'bg-danger' },
+    { name: 'Alex Rivera', email: 'alex@example.com', role: 'Product Designer', status: 'away', badge: 'bg-warning text-dark' },
+    { name: 'Elena Rostova', email: 'elena@example.com', role: 'DevOps Engineer', status: 'offline', badge: 'bg-secondary' }
+  ];
+  selectedMember: any = this.members[0];
+  selectedCustomChips: any[] = [this.countries[0], this.countries[2]];
+  selectedMultiSummary: any[] = [this.countries[0], this.countries[1], this.countries[2]];
+
   // 8. Float Label
   floatCity: City | null = null;
 
@@ -277,24 +288,33 @@ selectedCity = null;`,
   [fluid]="true">
 </ngb-select>`,
 
-    templateHtml: `<ngb-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [fluid]="true">
-  <!-- Selected Item Template -->
-  <ng-template #selectedItem let-country>
+    templateHtml: `<!-- 1. Single Custom Selected Item / Label Template -->
+<ngb-select [options]="members" [(ngModel)]="selectedMember" optionLabel="name" [fluid]="true">
+  <ng-template #selectedItem let-member>
     <div class="d-flex align-items-center gap-2">
-      <span class="fs-5">{{ country.flag }}</span>
-      <span class="fw-semibold">{{ country.name }}</span>
+      <span class="badge rounded-pill" [ngClass]="member.badge">{{ member.status }}</span>
+      <span class="fw-semibold">{{ member.name }}</span>
+      <span class="text-muted small">&bull; {{ member.role }}</span>
     </div>
   </ng-template>
-
-  <!-- Option Item Template -->
-  <ng-template #item let-country>
+  <ng-template #item let-member>
     <div class="d-flex align-items-center justify-content-between w-100 py-1">
-      <div class="d-flex align-items-center gap-2">
-        <span class="fs-5">{{ country.flag }}</span>
-        <span>{{ country.name }}</span>
+      <div>
+        <div class="fw-semibold">{{ member.name }}</div>
+        <small class="text-muted">{{ member.email }}</small>
       </div>
-      <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ country.currency }}</span>
+      <span class="badge" [ngClass]="member.badge">{{ member.role }}</span>
     </div>
+  </ng-template>
+</ngb-select>
+
+<!-- 2. Multi-Select Custom Chip Template -->
+<ngb-select [options]="countries" [(ngModel)]="selectedChips" [multiple]="true" display="chip" [fluid]="true">
+  <ng-template #chip let-country>
+    <span class="d-inline-flex align-items-center gap-1">
+      <span>{{ country.flag }}</span>
+      <strong class="text-primary">{{ country.name }}</strong>
+    </span>
   </ng-template>
 </ngb-select>`,
 

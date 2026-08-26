@@ -456,39 +456,86 @@
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('template') === 'demo'">
             <p class="text-muted small mb-3">
-              Render arbitrary HTML layouts for the active selection using <code>#selectedItem</code> and for individual list entries using <code>#item</code> with full context binding.
+              Comprehensive examples of customizing the trigger label across all single and multi-select cases using <code>#selectedItem</code> (or <code>#label</code>) and <code>#chip</code> templates.
             </p>
+
+            <!-- Case A: Single Selection Custom Label -->
             <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Case 1: Single Selection Label Template (<code>#selectedItem</code>)</label>
               <ngb-select
-                [options]="countries"
-                [(ngModel)]="selectedCountryTemplate"
+                [options]="members"
+                [(ngModel)]="selectedMember"
                 optionLabel="name"
-                [filter]="true"
-                filterBy="name,currency"
                 [showClear]="true"
-                placeholder="Select a Country"
+                placeholder="Assign Team Member"
                 [fluid]="true">
 
-                <!-- Selected View Template -->
-                <ng-template #selectedItem let-country>
+                <!-- Selected Label Template -->
+                <ng-template #selectedItem let-member>
                   <div class="d-flex align-items-center gap-2">
-                    <span class="fs-5">{{ country.flag }}</span>
-                    <span class="fw-semibold">{{ country.name }}</span>
-                    <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ country.code }}</span>
+                    <span class="badge rounded-pill" [ngClass]="member.badge">{{ member.status }}</span>
+                    <span class="fw-semibold">{{ member.name }}</span>
+                    <span class="text-muted small">&bull; {{ member.role }}</span>
                   </div>
                 </ng-template>
 
                 <!-- Dropdown Item Template -->
-                <ng-template #item let-country>
+                <ng-template #item let-member>
                   <div class="d-flex align-items-center justify-content-between w-100 py-1">
-                    <div class="d-flex align-items-center gap-2">
-                      <span class="fs-5">{{ country.flag }}</span>
-                      <div>
-                        <div class="fw-semibold">{{ country.name }}</div>
-                        <small class="text-muted">Currency: {{ country.currency }}</small>
-                      </div>
+                    <div>
+                      <div class="fw-semibold">{{ member.name }}</div>
+                      <small class="text-muted">{{ member.email }}</small>
                     </div>
-                    <span class="badge bg-primary-subtle text-primary-emphasis">{{ country.code }}</span>
+                    <span class="badge" [ngClass]="member.badge">{{ member.role }}</span>
+                  </div>
+                </ng-template>
+              </ngb-select>
+            </div>
+
+            <!-- Case B: Multi-Select Custom Chip Template -->
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Case 2: Multi-Select Chip Template (<code>#chip</code>)</label>
+              <ngb-select
+                [options]="countries"
+                [(ngModel)]="selectedCustomChips"
+                optionLabel="name"
+                [multiple]="true"
+                display="chip"
+                [showClear]="true"
+                placeholder="Select Countries..."
+                [fluid]="true">
+
+                <!-- Custom Chip Template -->
+                <ng-template #chip let-country>
+                  <span class="d-inline-flex align-items-center gap-1">
+                    <span>{{ country.flag }}</span>
+                    <strong class="text-primary">{{ country.name }}</strong>
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis fs-8">{{ country.currency }}</span>
+                  </span>
+                </ng-template>
+              </ngb-select>
+            </div>
+
+            <!-- Case C: Multi-Select Comma/Summary Custom Label Template -->
+            <div>
+              <label class="form-label text-muted small fw-semibold">Case 3: Multi-Select Custom Summary Label (<code>#selectedItem</code>)</label>
+              <ngb-select
+                [options]="countries"
+                [(ngModel)]="selectedMultiSummary"
+                optionLabel="name"
+                [multiple]="true"
+                display="comma"
+                [showClear]="true"
+                placeholder="Choose Countries..."
+                [fluid]="true">
+
+                <!-- Custom Multi Summary Label Template -->
+                <ng-template #selectedItem let-selectedList>
+                  <div class="d-flex align-items-center gap-1 text-truncate">
+                    <span class="badge bg-primary me-1">{{ selectedList?.length }} selected</span>
+                    <span class="text-truncate small text-secondary">
+                      <span *ngFor="let item of selectedList; let last = last">{{ item.name }} ({{ item.code }}){{ last ? '' : ', ' }}</span>
+                    </span>
                   </div>
                 </ng-template>
               </ngb-select>
@@ -884,7 +931,7 @@
             </thead>
             <tbody>
               <tr><td><code>#item</code></td><td><code>let-option</code></td><td>Custom template for each individual dropdown item.</td></tr>
-              <tr><td><code>#selectedItem</code></td><td><code>let-value</code></td><td>Custom template for displaying the currently selected value in the box.</td></tr>
+              <tr><td><code>#selectedItem</code> / <code>#label</code></td><td><code>let-value</code></td><td>Custom template for displaying the selected value / label in the trigger box.</td></tr>
               <tr><td><code>#chip</code></td><td><code>let-value</code></td><td>Custom template for rendering chips in multi-select mode.</td></tr>
               <tr><td><code>#headerCheckbox</code></td><td><code>let-checked</code></td><td>Custom template for rendering the "Select All" checkbox header.</td></tr>
               <tr><td><code>#group</code></td><td><code>let-group</code></td><td>Custom template for option group headers.</td></tr>
