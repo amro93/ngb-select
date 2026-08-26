@@ -4,6 +4,7 @@
 
 ```typescript
 export type SelectSize = 'small' | 'medium' | 'large';
+export type SelectDisplayMode = 'comma' | 'chip';
 
 export interface SelectOption {
   label?: string;
@@ -45,6 +46,14 @@ export interface SelectOption {
 | `dataKey` | `string` | `undefined` | A property to uniquely identify a value in data, useful for object comparison. |
 | `autofocus` | `boolean` | `false` | When present, specifies that the component should automatically get focus on load. |
 | `size` | `SelectSize` | `'medium'` | Defines the size of the component (`'small'`, `'medium'`, `'large'`). Maps to Bootstrap's `.form-select-sm` or `.form-select-lg`. |
+| `multiple` | `boolean` | `false` | When specified, allows selecting multiple values (model binds to an array `any[]`). |
+| `display` | `SelectDisplayMode` | `'comma'` | Defines how multiple selected items are displayed in the input field (`'comma'` or `'chip'`). |
+| `showSelectAll` | `boolean` | `false` | When enabled, renders a "Select All" checkbox header inside the dropdown panel. |
+| `selectAll` | `boolean \| null` | `null` | Controls or binds the state of the "Select All" checkbox. |
+| `maxSelectedLabels` | `number` | `3` | Maximum number of item labels to display in the trigger before switching to summary text. |
+| `selectedItemsLabel` | `string` | `'{0} items selected'` | Label template shown when selection count exceeds `maxSelectedLabels`. |
+| `selectionLimit` | `number` | `undefined` | Maximum number of items the user is permitted to select. |
+| `closeOnSelect` | `boolean` | `false` | Whether selecting an item closes the dropdown panel (defaults to false for `multiple: true`). |
 | `appendTo` | `any` | `undefined` | Target element to attach the overlay, valid values are "body" or a local ng-template ref. |
 | `editable` | `boolean` | `false` | When specified, allows users to type values that are not in the options list. |
 | `lazy` | `boolean` | `false` | Defines if data is loaded and interacted with in a lazy manner (useful for infinite scrolling). |
@@ -75,6 +84,8 @@ export interface SelectOption {
 | `onShow` | `EventEmitter<Event>` | Emitted when the dropdown panel opens. |
 | `onHide` | `EventEmitter<Event>` | Emitted when the dropdown panel closes. |
 | `onClear` | `EventEmitter<Event>` | Emitted when the clear icon is clicked. |
+| `onSelectAllChange` | `EventEmitter<{originalEvent: Event, checked: boolean}>` | Emitted when the "Select All" checkbox is toggled. |
+| `onRemoveChip` | `EventEmitter<{originalEvent: Event, value: any}>` | Emitted when a chip is removed via its close icon. |
 | `onLazyLoad` | `EventEmitter<any>` | Callback to invoke when data needs to be loaded lazily (e.g., scrolled to bottom). |
 | `overlayVisibleChange` | `EventEmitter<boolean>` | Emitted when the visibility of the dropdown panel changes, enabling two-way binding. |
 
@@ -88,4 +99,6 @@ You can inject templates using Angular's `<ng-template>` directives by attaching
 @ContentChild('footer') footerTemplate: TemplateRef<any>;
 @ContentChild('group') groupTemplate: TemplateRef<any>;
 @ContentChild('empty') emptyTemplate: TemplateRef<any>;
+@ContentChild('chip') chipTemplate: TemplateRef<any>;
+@ContentChild('headerCheckbox') headerCheckboxTemplate: TemplateRef<any>;
 ```

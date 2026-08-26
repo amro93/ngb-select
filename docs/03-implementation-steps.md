@@ -21,11 +21,22 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 })
 export class NgbSelectComponent implements ControlValueAccessor {
   // Internal State
-  public value: any = null;
+  public value: any = null; // Can be single value or array (any[]) when multiple: true
   public isDisabled: boolean = false;
 
+  @Input() multiple: boolean = false;
+  @Input() display: SelectDisplayMode = 'comma';
+  @Input() showSelectAll: boolean = false;
+  @Input() selectAll: boolean | null = null;
+  @Input() maxSelectedLabels: number = 3;
+  @Input() selectedItemsLabel: string = '{0} items selected';
+  @Input() selectionLimit?: number;
+  @Input() closeOnSelect: boolean = false;
   @Input() overlayVisible: boolean = false;
+
   @Output() overlayVisibleChange = new EventEmitter<boolean>();
+  @Output() onSelectAllChange = new EventEmitter<{ originalEvent: Event, checked: boolean }>();
+  @Output() onRemoveChip = new EventEmitter<{ originalEvent: Event, value: any }>();
 
   // CVA Callbacks
   onChange = (value: any) => {};
@@ -33,14 +44,13 @@ export class NgbSelectComponent implements ControlValueAccessor {
 
   constructor(private elementRef: ElementRef) {}
 
-  // Modern Angular Signals Support (Optional pattern alongside CVA)
-  // public valueSignal = model<any>(null);
-
   // Triggered by ngModel or formControl
   writeValue(obj: any): void {
-    // Robustness: Handle undefined inputs safely
-    this.value = obj !== undefined ? obj : null;
-    // this.valueSignal.set(this.value);
+    if (this.multiple) {
+      this.value = Array.isArray(obj) ? [...obj] : [];
+    } else {
+      this.value = obj !== undefined ? obj : null;
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -55,26 +65,85 @@ export class NgbSelectComponent implements ControlValueAccessor {
     this.isDisabled = isDisabled;
   }
 
-  // User Interaction
+  // User Interaction for Option Selection
   selectOption(option: any, event: Event): void {
     if (this.isOptionDisabled(option)) return;
     
     const val = this.resolveOptionValue(option);
-    this.value = val;
-    this.onChange(val);
-    
-    this.overlayVisible = false;
-    this.overlayVisibleChange.emit(this.overlayVisible);
-    // Emit custom event
+
+    if (this.multiple) {
+      let currentSelection: any[] = Array.isArray(this.value) ? [...this.value] : [];
+      const selectedIndex = this.findOptionIndex(option, currentSelection);
+
+      if (selectedIndex !== -1) {
+        currentSelection.splice(selectedIndex, 1);
+      } else {
+        if (this.selectionLimit !== undefined && currentSelection.length >= this.selectionLimit) {
+          return; // Max selection limit reached
+        }
+        currentSelection.push(val);
+      }
+
+      this.value = currentSelection;
+      this.onChange(this.value);
+      this.updateSelectAllState();
+
+      if (this.closeOnSelect) {
+        this.overlayVisible = false;
+        this.overlayVisibleChange.emit(this.overlayVisible);
+      }
+    } else {
+      this.value = val;
+      this.onChange(val);
+      this.overlayVisible = false;
+      this.overlayVisibleChange.emit(this.overlayVisible);
+    }
   }
 
-  // Equality check handling dataKey for complex objects
+  // Remove a specific chip item in multi-select mode
+  removeChip(val: any, event: Event): void {
+    event.stopPropagation();
+    if (this.isDisabled || this.readonly) return;
+
+    if (Array.isArray(this.value)) {
+      this.value = this.value.filter(item => !this.areValuesEqual(item, val));
+      this.onChange(this.value);
+      this.onRemoveChip.emit({ originalEvent: event, value: val });
+      this.updateSelectAllState();
+    }
+  }
+
+  // Toggle Select All checkbox in header
+  toggleSelectAll(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    const targetOptions = this.filteredOptions.filter(opt => !this.isOptionDisabled(opt));
+
+    if (checked) {
+      const allValues = targetOptions.map(opt => this.resolveOptionValue(opt));
+      this.value = [...allValues];
+    } else {
+      this.value = [];
+    }
+
+    this.selectAll = checked;
+    this.onChange(this.value);
+    this.onSelectAllChange.emit({ originalEvent: event, checked });
+  }
+
+  // Equality check handling dataKey for complex objects and multiple selection arrays
   isSelected(option: any): boolean {
     const val = this.resolveOptionValue(option);
-    if (this.dataKey && this.value && val) {
-      return this.value[this.dataKey] === val[this.dataKey];
+    if (this.multiple && Array.isArray(this.value)) {
+      return this.value.some(item => this.areValuesEqual(item, val));
     }
-    return this.value === val;
+    return this.areValuesEqual(this.value, val);
+  }
+
+  areValuesEqual(val1: any, val2: any): boolean {
+    if (this.dataKey && val1 && val2) {
+      return val1[this.dataKey] === val2[this.dataKey];
+    }
+    return val1 === val2;
   }
 }
 ```
@@ -168,26 +237,39 @@ Demonstrating ARIA roles, float label integration, and template outlets.
        (click)="toggleDropdown()" 
        role="combobox" aria-haspopup="listbox" [attr.aria-expanded]="overlayVisible">
        
-    <span class="text-truncate w-100">
-      <!-- Editable Input or Standard Label -->
-      <ng-container *ngIf="editable; else standardLabelTpl">
+    <span class="text-truncate w-100 d-flex flex-wrap align-items-center gap-1">
+      <!-- Editable Input or Standard Label / Chips -->
+      <ng-container *ngIf="editable && !multiple; else displaySelectionTpl">
         <input type="text" class="form-control border-0 bg-transparent p-0 w-100" 
                [value]="resolveOptionLabel(value)" 
                (input)="onEditableInput($event)"
                (click)="$event.stopPropagation()">
       </ng-container>
 
-      <ng-template #standardLabelTpl>
-        <ng-container *ngIf="value; else placeholderTpl">
-          <!-- User injected template or default label -->
-          <ng-container *ngTemplateOutlet="selectedItemTemplate ? selectedItemTemplate : defaultSelectedTpl; context: {$implicit: value}"></ng-container>
+      <ng-template #displaySelectionTpl>
+        <!-- Multiple Chips Display Mode -->
+        <ng-container *ngIf="multiple && display === 'chip' && hasSelection; else textLabelTpl">
+          <ng-container *ngFor="let val of value">
+            <span class="badge bg-light text-dark border d-inline-flex align-items-center py-1 px-2">
+              <ng-container *ngTemplateOutlet="chipTemplate ? chipTemplate : defaultChipTpl; context: {$implicit: val}"></ng-container>
+              <ng-template #defaultChipTpl>{{ resolveOptionLabel(val) }}</ng-template>
+              <i class="bi bi-x ms-1 cursor-pointer" (click)="removeChip(val, $event)"></i>
+            </span>
+          </ng-container>
         </ng-container>
-        <ng-template #placeholderTpl><span class="text-muted">{{ placeholder }}</span></ng-template>
+
+        <!-- Standard Single or Comma Multi-Select Label -->
+        <ng-template #textLabelTpl>
+          <ng-container *ngIf="hasSelection; else placeholderTpl">
+            <ng-container *ngTemplateOutlet="selectedItemTemplate ? selectedItemTemplate : defaultSelectedTpl; context: {$implicit: value}"></ng-container>
+          </ng-container>
+          <ng-template #placeholderTpl><span class="text-muted">{{ placeholder }}</span></ng-template>
+        </ng-template>
       </ng-template>
     </span>
 
     <div class="d-flex align-items-center">
-      <i *ngIf="showClear && value" class="bi bi-x-circle me-2" (click)="clearValue($event)"></i>
+      <i *ngIf="showClear && hasSelection" class="bi bi-x-circle me-2" (click)="clearValue($event)"></i>
       <div *ngIf="loading" class="spinner-border spinner-border-sm me-2"></div>
     </div>
   </div>
@@ -203,9 +285,15 @@ Demonstrating ARIA roles, float label integration, and template outlets.
        [style.max-height]="scrollHeight" 
        style="overflow-y: auto;">
     
-    <!-- Filter -->
-    <div class="px-2 pb-2" *ngIf="filter">
-      <input type="text" class="form-control form-control-sm" 
+    <!-- Header: Filter & Select All Checkbox -->
+    <div class="px-2 pb-2 border-bottom mb-1" *ngIf="filter || (multiple && showSelectAll)">
+      <div class="d-flex align-items-center mb-2" *ngIf="multiple && showSelectAll">
+        <input type="checkbox" class="form-check-input me-2" 
+               [checked]="selectAll" 
+               (change)="toggleSelectAll($event)" id="selectAllCheckbox">
+        <label class="form-check-label small fw-semibold cursor-pointer" for="selectAllCheckbox">Select All</label>
+      </div>
+      <input *ngIf="filter" type="text" class="form-control form-control-sm" 
              [placeholder]="filterPlaceholder" (input)="onFilterChange($event)">
     </div>
 
@@ -217,11 +305,16 @@ Demonstrating ARIA roles, float label integration, and template outlets.
 
     <!-- Items List -->
     <ng-container *ngFor="let option of filteredOptions">
-      <button class="dropdown-item" 
+      <button class="dropdown-item d-flex align-items-center" 
               role="option" 
               [attr.aria-selected]="isSelected(option)"
-              [class.active]="isSelected(option)"
+              [class.active]="!multiple && isSelected(option)"
               (click)="selectOption(option, $event)">
+         <!-- Checkbox in Multiple Mode -->
+         <input *ngIf="multiple" type="checkbox" 
+                class="form-check-input me-2" 
+                [checked]="isSelected(option)" 
+                tabindex="-1" (click)="$event.stopPropagation()">
          <ng-container *ngTemplateOutlet="itemTemplate ? itemTemplate : defaultItemTpl; context: {$implicit: option}"></ng-container>
          <ng-template #defaultItemTpl>{{ resolveOptionLabel(option) }}</ng-template>
       </button>

@@ -141,13 +141,29 @@ Override the default rendering of options and the selected view using `<ng-templ
 ```html
 <ngb-select 
   [options]="groupedCars" 
-  [(ngModel)]="selectedCar"
+  [(ngModel)]="selectedCar" 
   [group]="true" 
   optionGroupLabel="brand" 
   optionGroupChildren="cars"
-  optionLabel="name"
+  optionLabel="name" 
   optionValue="value"
   placeholder="Choose vehicle brand">
+</ngb-select>
+```
+
+### 6. Multi-Select with Checkboxes & Chips
+Enable multiple selection, "Select All" checkbox header, and removable chip badges:
+```html
+<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCities" 
+  optionLabel="name" 
+  optionValue="code"
+  [multiple]="true"
+  display="chip"
+  [showSelectAll]="true"
+  [filter]="true"
+  placeholder="Select Cities">
 </ngb-select>
 ```
 

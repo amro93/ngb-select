@@ -14,10 +14,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render ngb-select header title', async () => {
+  it('should render ngb-select brand and header title', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('ngb-select');
+    expect(compiled.querySelector('.navbar-brand')?.textContent).toContain('ngb-select');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Angular Select Component');
   });
 });

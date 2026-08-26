@@ -44,5 +44,9 @@ To ensure WCAG compliance, the component must implement strict ARIA guidelines:
 - **States:** Full support for `disabled`, `readonly`, and `loading` (spinner) states.
 - **Virtual Scrolling Alternative:** Due to pure Bootstrap constraints, long lists utilize CSS `max-height` (e.g., `300px`) combined with `overflow-y-auto` to maintain performance without requiring the Angular CDK.
 - **Initial Focus:** Ability to programmatically focus or scroll to a specific option index when the dropdown overlay opens.
-- **Robustness & Safe Fallbacks:** The component defensively handles `null`, `undefined`, or missing arrays to avoid runtime crashes.
+- **Multi-Select & Checkboxes:** Enables selecting multiple items with checkboxes rendered inside dropdown items (`multiple="true"`). The model value binds to an array (`any[]`).
+- **Display Modes (Comma vs Chips):** Selected items can be rendered as comma-separated labels (e.g. `'New York, Rome'`) or removable Bootstrap badges/chips (`display="chip"`).
+- **Select All Header:** Optional sticky header checkbox (`showSelectAll="true"`) to toggle selection for all items, taking active search filter criteria into account.
+- **Selection Limits:** Restrict the maximum allowed selections using `selectionLimit`.
+- **Selected Items Summary:** Configurable threshold (`maxSelectedLabels`) displaying a concise summary (e.g. `'3 items selected'`) when multiple items exceed the threshold.
 - **Modern Forms & Signals:** First-class support for `FormControl`, `ReactiveFormsModule`, and Angular's modern `model()` Signals alongside standard `ngModel`.

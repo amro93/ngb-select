@@ -117,6 +117,19 @@ groupedCities = [
   [group]="true" 
   optionGroupLabel="label" 
   optionGroupChildren="items">
+### 5. Multi-Select with Checkboxes & Chips
+Enable multiple selection, "Select All" header, and removable chip badges:
+```html
+<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCities" 
+  optionLabel="name" 
+  optionValue="code"
+  [multiple]="true"
+  display="chip"
+  [showSelectAll]="true"
+  [filter]="true"
+  placeholder="Select Cities">
 </ngb-select>
 ```
 

@@ -138,3 +138,49 @@ class TestHostComponent {
   
 - **Two-way Overlay Visibility Binding:**
   Bind `[(overlayVisible)]="isOpen"` in the host component and verify that manually toggling `isOpen` opens/closes the dropdown, and that interacting with the component triggers the `overlayVisibleChange` emitter.
+
+## Category 8: Multi-Select Testing Scenarios
+
+- **Multi-Select Value Array Initialization:**
+  ```typescript
+  it('should initialize multi-select with array of values', () => {
+    component.multiple = true;
+    component.options = [{id: 1, name: 'A'}, {id: 2, name: 'B'}, {id: 3, name: 'C'}];
+    component.writeValue([1, 2]);
+    fixture.detectChanges();
+
+    expect(component.isSelected(component.options[0])).toBeTrue();
+    expect(component.isSelected(component.options[1])).toBeTrue();
+    expect(component.isSelected(component.options[2])).toBeFalse();
+  });
+  ```
+
+- **Keep Overlay Open on Multiple Selection:**
+  Verify that when `multiple=true` and `closeOnSelect=false` (default), selecting an item toggles its inclusion in `value` array and leaves `overlayVisible` true.
+
+- **Select All Checkbox Functionality:**
+  ```typescript
+  it('should select and deselect all options via Select All checkbox', () => {
+    component.multiple = true;
+    component.showSelectAll = true;
+    component.options = [{id: 1, name: 'A'}, {id: 2, name: 'B'}];
+    fixture.detectChanges();
+
+    const selectAllCheckbox = fixture.debugElement.query(By.css('#selectAllCheckbox')).nativeElement;
+    selectAllCheckbox.checked = true;
+    selectAllCheckbox.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    expect(component.value.length).toBe(2);
+    expect(component.selectAll).toBeTrue();
+  });
+  ```
+
+- **Chips Display and Removal:**
+  Verify that with `display="chip"`, multiple `.badge` elements are rendered in the trigger, and clicking the close icon (`bi-x`) removes that specific item from the model and emits `onRemoveChip`.
+
+- **Selection Limit Enforcement:**
+  Set `selectionLimit=2`. Attempt to select a 3rd option and verify that the selection array length remains 2 and no additional option is added.
+
+- **Max Selected Labels Summary:**
+  Set `maxSelectedLabels=2` and select 3 items. Verify that the trigger renders the formatted label from `selectedItemsLabel` (e.g. `'3 items selected'`) instead of comma-separated text.

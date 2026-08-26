@@ -1,262 +1,698 @@
-<div class="container py-5">
-  <!-- Header -->
-  <header class="pb-4 mb-4 border-bottom d-flex align-items-center justify-content-between">
-    <div>
-      <h1 class="display-6 fw-bold text-primary mb-1">
-        <i class="bi bi-ui-checks me-2"></i>ngb-select
-      </h1>
-      <p class="text-muted lead mb-0 fs-6">
-        A comprehensive Angular Standalone select component powered by <strong>pure Bootstrap 5</strong> classes.
-      </p>
-    </div>
-    <div>
-      <a href="https://github.com" target="_blank" class="btn btn-outline-dark btn-sm me-2">
-        <i class="bi bi-github me-1"></i> GitHub
-      </a>
-      <span class="badge bg-primary fs-6">Angular Standalone</span>
-    </div>
-  </header>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body shadow-sm">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" href="#">
+      <i class="bi bi-ui-checks-grid fs-4"></i>
+      <span>ngb-select</span>
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7">v1.0.0</span>
+    </a>
 
-  <div class="row g-4">
-    <!-- 1. Basic & Two-way Binding -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-hand-index-thumb me-1 text-primary"></i> 1. Basic Selection (ngModel)
+    <div class="d-flex align-items-center gap-2">
+      <!-- Dark/Light Theme Toggle -->
+      <button class="btn btn-outline-secondary btn-sm" (click)="toggleTheme()" [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+        <i class="bi" [class.bi-moon-stars-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
+      </button>
+
+      <!-- StackBlitz Live Edit -->
+      <a href="https://stackblitz.com/github/amro/ngb-select/tree/main" target="_blank" class="btn btn-outline-primary btn-sm d-none d-sm-inline-flex align-items-center gap-1">
+        <i class="bi bi-lightning-charge-fill"></i> StackBlitz
+      </a>
+
+      <!-- GitHub Link -->
+      <a href="https://github.com/amro/ngb-select" target="_blank" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1">
+        <i class="bi bi-github"></i> GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <!-- Hero Section -->
+  <section class="hero-banner p-4 p-md-5 mb-5 text-center text-md-start">
+    <div class="row align-items-center g-4">
+      <div class="col-md-8">
+        <div class="d-flex flex-wrap gap-2 mb-3 justify-content-center justify-content-md-start">
+          <span class="badge bg-white text-primary badge-feature"><i class="bi bi-bootstrap-fill me-1"></i> Pure Bootstrap 5</span>
+          <span class="badge bg-white text-primary badge-feature"><i class="bi bi-code-square me-1"></i> Standalone Component</span>
+          <span class="badge bg-white text-primary badge-feature"><i class="bi bi-lightning-fill me-1"></i> Signals Ready</span>
+          <span class="badge bg-white text-primary badge-feature"><i class="bi bi-shield-check me-1"></i> PrimeNG Parity</span>
         </div>
-        <div class="card-body">
-          <label class="form-label text-muted small fw-semibold">Select City</label>
+        <h1 class="display-5 fw-bold mb-3">Angular Select Component</h1>
+        <p class="lead opacity-90 mb-4">
+          A high-performance, robust Angular Standalone select and dropdown component styled strictly with <strong>pure Bootstrap 5 CSS classes</strong>. Zero external UI library runtime dependencies.
+        </p>
+        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start">
+          <a href="#examples" class="btn btn-light btn-lg fw-semibold text-primary shadow-sm">
+            <i class="bi bi-play-circle-fill me-1"></i> Explore Examples
+          </a>
+          <a href="#api-reference" class="btn btn-outline-light btn-lg fw-semibold">
+            <i class="bi bi-journal-code me-1"></i> API Reference
+          </a>
+        </div>
+      </div>
+      <div class="col-md-4 d-none d-md-block text-center">
+        <div class="bg-white p-4 rounded-4 shadow-lg text-dark text-start">
+          <label class="form-label text-muted small fw-bold mb-1">Live Quick Preview</label>
           <ngb-select
-            [options]="cities"
-            [(ngModel)]="selectedCity"
-            placeholder="Select a city"
+            [options]="countries"
+            [(ngModel)]="selectedCountryFilter"
+            optionLabel="name"
+            optionValue="code"
+            [filter]="true"
+            [showClear]="true"
+            placeholder="Select a country..."
             [fluid]="true">
           </ngb-select>
-          <div class="mt-3 p-2 bg-light rounded text-muted small">
-            <strong>Selected Value:</strong> <code>{{ selectedCity | json }}</code>
+          <div class="mt-3 p-2 bg-light rounded small text-muted">
+            <i class="bi bi-info-circle me-1 text-primary"></i> Bound Value: <code>{{ selectedCountryFilter }}</code>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Navigation Pill Bar -->
+  <div class="mb-5 overflow-auto pb-2 border-bottom">
+    <ul class="nav nav-pills flex-nowrap gap-2">
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#basic">Basic</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#reactive-forms">Reactive Forms</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#filtering">Filtering</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#templating">Templating</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#grouping">Grouping</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#editable">Editable</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#floating">Float Label</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#sizes">Sizes & Variants</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#loading">Loading</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#virtual-scroll">Large Dataset</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#signals">Signals</a></li>
+      <li class="nav-item"><a class="nav-link bg-primary text-white" href="#api-reference">API Reference</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content Showcase -->
+  <div class="row g-4" id="examples">
+
+    <!-- 1. Basic Example -->
+    <div class="col-lg-6" id="basic">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-check-circle-fill text-primary me-2"></i>Basic Selection</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('basic') === 'demo'" (click)="setTab('basic', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('basic') === 'html'" (click)="setTab('basic', 'html')">HTML</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('basic') === 'ts'" (click)="setTab('basic', 'ts')">TS</button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <ng-container *ngIf="getTab('basic') === 'demo'">
+            <p class="text-muted small">Select supports single value selection from an array of primitives or objects with two-way <code>ngModel</code> binding.</p>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Select City (Object Array)</label>
+              <ngb-select
+                [options]="objectCities"
+                [(ngModel)]="selectedObjectCity"
+                optionLabel="name"
+                [dataKey]="'code'"
+                placeholder="Select a city"
+                [fluid]="true">
+              </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Value:</strong> <code>{{ selectedObjectCity | json }}</code>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('basic') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.basicHtml, 'basic')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'basic'" [class.bi-check-lg]="copiedSection === 'basic'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.basicHtml }}</code></pre>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('basic') === 'ts'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.basicTs, 'basicTs')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'basicTs'" [class.bi-check-lg]="copiedSection === 'basicTs'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.basicTs }}</code></pre>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
 
     <!-- 2. Reactive Forms & Validation -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-check2-square me-1 text-success"></i> 2. Reactive Forms & Validation
+    <div class="col-lg-6" id="reactive-forms">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-ui-checks text-success me-2"></i>Reactive Forms & Validation</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('reactive') === 'demo'" (click)="setTab('reactive', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('reactive') === 'html'" (click)="setTab('reactive', 'html')">HTML</button>
+            </li>
+          </ul>
         </div>
         <div class="card-body">
-          <form [formGroup]="userForm" (ngSubmit)="submitForm()">
-            <label class="form-label text-muted small fw-semibold">Select Country (Required)</label>
-            <ngb-select
-              [options]="countries"
-              formControlName="country"
-              optionLabel="name"
-              optionValue="code"
-              placeholder="Choose a country"
-              [showClear]="true"
-              [invalid]="!!(userForm.get('country')?.invalid && userForm.get('country')?.touched)"
-              [fluid]="true">
-            </ngb-select>
-            <div *ngIf="userForm.get('country')?.invalid && userForm.get('country')?.touched" class="text-danger small mt-1">
-              Please select a country.
+          <ng-container *ngIf="getTab('reactive') === 'demo'">
+            <p class="text-muted small">Implements <code>ControlValueAccessor</code> for seamless integration with Angular's <code>FormGroup</code> and <code>FormControl</code>.</p>
+            <form [formGroup]="userForm" (ngSubmit)="submitReactiveForm()">
+              <div class="mb-3">
+                <label class="form-label text-muted small fw-semibold">City (Required)</label>
+                <ngb-select
+                  [options]="objectCities"
+                  formControlName="city"
+                  optionLabel="name"
+                  [invalid]="!!(userForm.get('city')?.invalid && userForm.get('city')?.touched)"
+                  [showClear]="true"
+                  placeholder="Select a city"
+                  [fluid]="true">
+                </ngb-select>
+                <div *ngIf="userForm.get('city')?.invalid && userForm.get('city')?.touched" class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i> City selection is required.
+                </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-between">
+                <button type="submit" class="btn btn-primary btn-sm">Submit Form</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="userForm.reset()">Reset</button>
+              </div>
+            </form>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('reactive') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.reactiveHtml, 'reactive')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'reactive'" [class.bi-check-lg]="copiedSection === 'reactive'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.reactiveHtml }}</code></pre>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm mt-3">Submit Form</button>
-          </form>
+          </ng-container>
         </div>
       </div>
     </div>
 
-    <!-- 3. Filter & Search -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-search me-1 text-info"></i> 3. Filtering & Match Modes
+    <!-- 3. Filtering & Match Modes -->
+    <div class="col-lg-6" id="filtering">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-search text-info me-2"></i>Filtering & Match Modes</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('filter') === 'demo'" (click)="setTab('filter', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('filter') === 'html'" (click)="setTab('filter', 'html')">HTML</button>
+            </li>
+          </ul>
         </div>
         <div class="card-body">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <label class="form-label text-muted small fw-semibold mb-0">Search Countries</label>
-            <select class="form-select form-select-sm w-auto" [(ngModel)]="filterMode">
-              <option value="contains">contains</option>
-              <option value="startsWith">startsWith</option>
-              <option value="endsWith">endsWith</option>
-            </select>
-          </div>
-          <ngb-select
-            [options]="countries"
-            [(ngModel)]="selectedCountryWithFilter"
-            optionLabel="name"
-            optionValue="code"
-            [filter]="true"
-            [filterMatchMode]="filterMode"
-            filterPlaceholder="Type country name..."
-            [showClear]="true"
-            placeholder="Search & select..."
-            [fluid]="true">
-          </ngb-select>
-          <div class="mt-3 p-2 bg-light rounded text-muted small">
-            <strong>Selected:</strong> <code>{{ selectedCountryWithFilter | json }}</code>
-          </div>
+          <ng-container *ngIf="getTab('filter') === 'demo'">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <label class="form-label text-muted small fw-semibold mb-0">Search Mode</label>
+              <select class="form-select form-select-sm w-auto" [(ngModel)]="filterMatchMode">
+                <option value="contains">contains</option>
+                <option value="startsWith">startsWith</option>
+                <option value="endsWith">endsWith</option>
+                <option value="equals">equals</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <ngb-select
+                [options]="countries"
+                [(ngModel)]="selectedCountryFilter"
+                optionLabel="name"
+                optionValue="code"
+                [filter]="true"
+                filterBy="name,code,currency"
+                [filterMatchMode]="filterMatchMode"
+                filterPlaceholder="Search by country, code or currency..."
+                [showClear]="true"
+                placeholder="Choose Country"
+                [fluid]="true">
+              </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Filtered Code:</strong> <code>{{ selectedCountryFilter }}</code>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('filter') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.filterHtml, 'filter')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'filter'" [class.bi-check-lg]="copiedSection === 'filter'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.filterHtml }}</code></pre>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
 
     <!-- 4. Custom Templating -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-brush me-1 text-warning"></i> 4. Custom Item & Selection Templates
+    <div class="col-lg-6" id="templating">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-brush-fill text-warning me-2"></i>Custom Item & Selected Templating</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('template') === 'demo'" (click)="setTab('template', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('template') === 'html'" (click)="setTab('template', 'html')">HTML</button>
+            </li>
+          </ul>
         </div>
         <div class="card-body">
-          <label class="form-label text-muted small fw-semibold">Frameworks / Stack</label>
-          <ngb-select
-            [options]="technologies"
-            [(ngModel)]="selectedTech"
-            optionLabel="name"
-            [fluid]="true"
-            placeholder="Choose tech">
+          <ng-container *ngIf="getTab('template') === 'demo'">
+            <p class="text-muted small">Customize the dropdown list items (<code>#item</code>) and the selected input display (<code>#selectedItem</code>) with arbitrary HTML.</p>
+            <div class="mb-3">
+              <ngb-select
+                [options]="countries"
+                [(ngModel)]="selectedCountryTemplate"
+                optionLabel="name"
+                [filter]="true"
+                filterBy="name,currency"
+                [showClear]="true"
+                placeholder="Select a Country"
+                [fluid]="true">
 
-            <!-- Selected View Template -->
-            <ng-template #selectedItem let-tech>
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi {{ tech.icon }} text-primary fs-5"></i>
-                <span class="fw-bold">{{ tech.name }}</span>
-                <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ tech.badge }}</span>
-              </div>
-            </ng-template>
-
-            <!-- Dropdown Item Template -->
-            <ng-template #item let-tech>
-              <div class="d-flex align-items-center justify-content-between w-100 py-1">
-                <div class="d-flex align-items-center gap-2">
-                  <i class="bi {{ tech.icon }} fs-5 text-secondary"></i>
-                  <div>
-                    <div class="fw-semibold">{{ tech.name }}</div>
-                    <small class="text-muted">{{ tech.type }}</small>
+                <!-- Selected View Template -->
+                <ng-template #selectedItem let-country>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fs-5">{{ country.flag }}</span>
+                    <span class="fw-semibold">{{ country.name }}</span>
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ country.code }}</span>
                   </div>
-                </div>
-                <span class="badge bg-primary-subtle text-primary-emphasis">{{ tech.badge }}</span>
-              </div>
-            </ng-template>
-          </ngb-select>
+                </ng-template>
+
+                <!-- Dropdown Item Template -->
+                <ng-template #item let-country>
+                  <div class="d-flex align-items-center justify-content-between w-100 py-1">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="fs-5">{{ country.flag }}</span>
+                      <div>
+                        <div class="fw-semibold">{{ country.name }}</div>
+                        <small class="text-muted">Currency: {{ country.currency }}</small>
+                      </div>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary-emphasis">{{ country.code }}</span>
+                  </div>
+                </ng-template>
+              </ngb-select>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('template') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.templateHtml, 'template')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'template'" [class.bi-check-lg]="copiedSection === 'template'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.templateHtml }}</code></pre>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
 
-    <!-- 5. Grouping -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-folder2-open me-1 text-danger"></i> 5. Grouped Options
+    <!-- 5. Grouped Options -->
+    <div class="col-lg-6" id="grouping">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-folder2-open text-danger me-2"></i>Grouped Options</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('group') === 'demo'" (click)="setTab('group', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('group') === 'html'" (click)="setTab('group', 'html')">HTML</button>
+            </li>
+          </ul>
         </div>
         <div class="card-body">
-          <label class="form-label text-muted small fw-semibold">Select Car by Origin</label>
-          <ngb-select
-            [options]="groupedCars"
-            [(ngModel)]="selectedCar"
-            [group]="true"
-            optionGroupLabel="brand"
-            optionGroupChildren="cars"
-            optionLabel="name"
-            optionValue="value"
-            placeholder="Choose vehicle brand"
-            [showClear]="true"
-            [fluid]="true">
-          </ngb-select>
-          <div class="mt-3 p-2 bg-light rounded text-muted small">
-            <strong>Selected Car:</strong> <code>{{ selectedCar | json }}</code>
-          </div>
+          <ng-container *ngIf="getTab('group') === 'demo'">
+            <p class="text-muted small">Options can be categorized into sub-groups using <code>[group]="true"</code>, <code>optionGroupLabel</code>, and <code>optionGroupChildren</code>.</p>
+            <div class="mb-3">
+              <ngb-select
+                [options]="groupedCars"
+                [(ngModel)]="selectedGroupedCar"
+                [group]="true"
+                optionGroupLabel="label"
+                optionGroupChildren="items"
+                placeholder="Select a Car Brand"
+                [showClear]="true"
+                [fluid]="true">
+              </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Selected Car:</strong> <code>{{ selectedGroupedCar }}</code>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('group') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.groupHtml, 'group')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'group'" [class.bi-check-lg]="copiedSection === 'group'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.groupHtml }}</code></pre>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
 
-    <!-- 6. Floating Labels -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-layers me-1 text-primary"></i> 6. Bootstrap Floating Labels
+    <!-- 6. Editable Combobox -->
+    <div class="col-lg-6" id="editable">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-pencil-square text-primary me-2"></i>Editable Combobox</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('editable') === 'demo'" (click)="setTab('editable', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('editable') === 'html'" (click)="setTab('editable', 'html')">HTML</button>
+            </li>
+          </ul>
         </div>
         <div class="card-body">
-          <ngb-select
-            [options]="cities"
-            [(ngModel)]="selectedFloatCity"
-            placeholder="Select Destination City"
-            [floatLabel]="true"
-            [showClear]="true"
-            [fluid]="true">
-          </ngb-select>
+          <ng-container *ngIf="getTab('editable') === 'demo'">
+            <p class="text-muted small">When <code>[editable]="true"</code>, the user can either select from the dropdown or freely type custom text into the input field.</p>
+            <div class="mb-3">
+              <ngb-select
+                [options]="primitiveCities"
+                [(ngModel)]="editableCity"
+                [editable]="true"
+                [showClear]="true"
+                placeholder="Type or select a city..."
+                [fluid]="true">
+              </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Current Value:</strong> <code>{{ editableCity }}</code>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('editable') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.editableHtml, 'editable')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'editable'" [class.bi-check-lg]="copiedSection === 'editable'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.editableHtml }}</code></pre>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
 
-    <!-- 7. Sizing & Variants -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-aspect-ratio me-1 text-success"></i> 7. Sizes & Variants
+    <!-- 7. Float Label -->
+    <div class="col-lg-6" id="floating">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-layers-fill text-info me-2"></i>Bootstrap Floating Label</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('float') === 'demo'" (click)="setTab('float', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('float') === 'html'" (click)="setTab('float', 'html')">HTML</button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <ng-container *ngIf="getTab('float') === 'demo'">
+            <p class="text-muted small">Native support for Bootstrap's <code>.form-floating</code> CSS style.</p>
+            <div class="mb-3">
+              <ngb-select
+                [options]="objectCities"
+                [(ngModel)]="floatCity"
+                optionLabel="name"
+                [floatLabel]="true"
+                [showClear]="true"
+                placeholder="Destination City"
+                [fluid]="true">
+              </ngb-select>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('float') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.floatLabelHtml, 'float')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'float'" [class.bi-check-lg]="copiedSection === 'float'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.floatLabelHtml }}</code></pre>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Sizes & Variants -->
+    <div class="col-lg-6" id="sizes">
+      <div class="card example-card h-100">
+        <div class="card-header">
+          <i class="bi bi-aspect-ratio text-success me-2"></i>Sizes & Variants
         </div>
         <div class="card-body d-flex flex-column gap-3">
           <div>
-            <label class="form-label text-muted small fw-semibold">Small Size (.form-select-sm)</label>
-            <ngb-select [options]="cities" [(ngModel)]="selectedSizeCity" size="small" [fluid]="true"></ngb-select>
+            <label class="form-label text-muted small fw-semibold">Small Size (<code>size="small"</code>)</label>
+            <ngb-select [options]="objectCities" [(ngModel)]="sizeCity" optionLabel="name" size="small" [fluid]="true"></ngb-select>
           </div>
           <div>
-            <label class="form-label text-muted small fw-semibold">Large Size (.form-select-lg)</label>
-            <ngb-select [options]="cities" [(ngModel)]="selectedSizeCity" size="large" [fluid]="true"></ngb-select>
+            <label class="form-label text-muted small fw-semibold">Large Size (<code>size="large"</code>)</label>
+            <ngb-select [options]="objectCities" [(ngModel)]="sizeCity" optionLabel="name" size="large" [fluid]="true"></ngb-select>
           </div>
           <div>
-            <label class="form-label text-muted small fw-semibold">Filled Variant (.bg-light)</label>
-            <ngb-select [options]="cities" [(ngModel)]="selectedSizeCity" variant="filled" [fluid]="true"></ngb-select>
+            <label class="form-label text-muted small fw-semibold">Filled Variant (<code>variant="filled"</code>)</label>
+            <ngb-select [options]="objectCities" [(ngModel)]="sizeCity" optionLabel="name" variant="filled" [fluid]="true"></ngb-select>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 8. Editable Combobox & Focus on Open -->
-    <div class="col-md-6">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">
-          <i class="bi bi-pencil-square me-1 text-info"></i> 8. Editable Combobox & Focus on Open
+    <!-- 9. Loading State -->
+    <div class="col-lg-6" id="loading">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <span><i class="bi bi-arrow-repeat text-secondary me-2"></i>Loading State & Async Fetch</span>
+          <button class="btn btn-outline-primary btn-sm" (click)="reloadDynamicData()" [disabled]="isLoading">
+            <i class="bi bi-arrow-clockwise me-1" [class.animate-spin]="isLoading"></i> Reload
+          </button>
         </div>
-        <div class="card-body d-flex flex-column gap-3">
-          <div>
-            <label class="form-label text-muted small fw-semibold">Editable Combobox (Type custom value)</label>
-            <ngb-select [options]="cities" [(ngModel)]="editableValue" [editable]="true" [showClear]="true" [fluid]="true"></ngb-select>
-            <div class="small text-muted mt-1">Value: <code>{{ editableValue }}</code></div>
-          </div>
-          <div>
-            <label class="form-label text-muted small fw-semibold">Focus on Index 2 (London) on Open</label>
-            <ngb-select [options]="cities" [(ngModel)]="focusIndexCity" [focusOnOpen]="2" placeholder="Open to auto-focus 3rd item" [fluid]="true"></ngb-select>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 9. Angular Signals Integration -->
-    <div class="col-12">
-      <div class="card shadow-sm border-0 bg-light">
-        <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3">
-          <div>
-            <h5 class="fw-bold mb-1"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Modern Angular Signals</h5>
-            <p class="text-muted mb-0 small">Binds directly with Angular Signals reactivity.</p>
-          </div>
-          <div style="min-width: 250px;">
+        <div class="card-body">
+          <p class="text-muted small">Displays a Bootstrap <code>.spinner-border</code> when <code>[loading]="true"</code>.</p>
+          <div class="mb-3">
             <ngb-select
-              [options]="cities"
-              [ngModel]="signalCity()"
-              (ngModelChange)="signalCity.set($event)"
+              [options]="loadingCities"
+              [(ngModel)]="selectedLoadingCity"
+              optionLabel="name"
+              optionValue="code"
+              [loading]="isLoading"
+              placeholder="Loading dynamic cities..."
               [fluid]="true">
             </ngb-select>
           </div>
-          <div class="badge bg-dark fs-6">
-            Signal Value: {{ signalCity() }}
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Large Dataset / Virtual Scrolling Alternative -->
+    <div class="col-lg-6" id="virtual-scroll">
+      <div class="card example-card h-100">
+        <div class="card-header">
+          <i class="bi bi-list-ol text-warning me-2"></i>Large Dataset (1,000 Items)
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">Scrollable container with <code>scrollHeight="250px"</code> effortlessly rendering 1,000 items with search capabilities.</p>
+          <div class="mb-3">
+            <ngb-select
+              [options]="largeDataset"
+              [(ngModel)]="selectedLargeItem"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              scrollHeight="250px"
+              placeholder="Choose from 1,000 items..."
+              [fluid]="true">
+            </ngb-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Modern Angular Signals -->
+    <div class="col-12" id="signals">
+      <div class="card example-card border-primary-subtle bg-primary-subtle bg-opacity-10">
+        <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-4">
+          <div>
+            <h5 class="fw-bold text-primary mb-1">
+              <i class="bi bi-lightning-charge-fill me-1 text-warning"></i> Modern Angular Signals
+            </h5>
+            <p class="text-muted mb-0 small">Direct integration with Angular's reactive Signals primitives (<code>signal()</code> and <code>model()</code>).</p>
+          </div>
+          <div style="min-width: 280px;">
+            <ngb-select
+              [options]="objectCities"
+              [ngModel]="signalCity()"
+              (ngModelChange)="signalCity.set($event)"
+              optionLabel="name"
+              optionValue="code"
+              [fluid]="true">
+            </ngb-select>
+          </div>
+          <div class="badge bg-primary fs-6 p-2">
+            Signal Value: <code>{{ signalCity() }}</code>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- API Reference Table Section -->
+  <section class="mt-5 pt-4 border-top" id="api-reference">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h2 class="fw-bold text-primary mb-1">
+          <i class="bi bi-journal-code me-2"></i>API Reference
+        </h2>
+        <p class="text-muted small mb-0">Detailed list of all Input properties, Output events, and Content Templates.</p>
+      </div>
+    </div>
+
+    <!-- API Tables Card -->
+    <div class="card border shadow-sm">
+      <div class="card-header bg-body p-0">
+        <ul class="nav nav-tabs border-bottom-0" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link active fw-semibold" data-bs-toggle="tab" data-bs-target="#inputs-tab">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Properties (@Input)
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#outputs-tab">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Events (@Output)
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#templates-tab">
+              <i class="bi bi-brush me-1"></i> Templates (#refs)
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body p-0">
+        <div class="tab-content">
+          <!-- Properties Tab -->
+          <div class="tab-pane fade show active" id="inputs-tab">
+            <div class="table-responsive">
+              <table class="table table-hover table-api table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>options</code></td><td><code>any[]</code></td><td><code>[]</code></td><td>An array of objects or primitives to display as selectable options.</td></tr>
+                  <tr><td><code>optionLabel</code></td><td><code>string</code></td><td><code>'label'</code></td><td>Field name to resolve the displayed label string of an option.</td></tr>
+                  <tr><td><code>optionValue</code></td><td><code>string</code></td><td><code>'value'</code></td><td>Field name to resolve the bound value. If undefined, whole object is used.</td></tr>
+                  <tr><td><code>placeholder</code></td><td><code>string</code></td><td><code>undefined</code></td><td>Default placeholder text when no item is selected.</td></tr>
+                  <tr><td><code>filter</code></td><td><code>boolean</code></td><td><code>false</code></td><td>When true, displays a search input field to filter items.</td></tr>
+                  <tr><td><code>filterBy</code></td><td><code>string</code></td><td><code>undefined</code></td><td>Comma-separated list of fields to search against (e.g. <code>'name,code'</code>).</td></tr>
+                  <tr><td><code>filterMatchMode</code></td><td><code>string</code></td><td><code>'contains'</code></td><td>Filter search strategy: <code>contains</code>, <code>startsWith</code>, <code>endsWith</code>, <code>equals</code>.</td></tr>
+                  <tr><td><code>group</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Whether options are categorized into groups with non-selectable headers.</td></tr>
+                  <tr><td><code>editable</code></td><td><code>boolean</code></td><td><code>false</code></td><td>When true, enables combobox mode allowing custom typed inputs.</td></tr>
+                  <tr><td><code>showClear</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Displays a clear icon to quickly reset the selected value to null.</td></tr>
+                  <tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Disables interactions with the component.</td></tr>
+                  <tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Displays a Bootstrap loading spinner.</td></tr>
+                  <tr><td><code>floatLabel</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enables Bootstrap <code>.form-floating</code> styling.</td></tr>
+                  <tr><td><code>invalid</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Applies Bootstrap <code>.is-invalid</code> validation class.</td></tr>
+                  <tr><td><code>size</code></td><td><code>'small' | 'large'</code></td><td><code>undefined</code></td><td>Component size (<code>.form-select-sm</code> or <code>.form-select-lg</code>).</td></tr>
+                  <tr><td><code>variant</code></td><td><code>'filled' | 'outlined'</code></td><td><code>'outlined'</code></td><td>Appearance variant (<code>filled</code> adds <code>.bg-light</code>).</td></tr>
+                  <tr><td><code>dataKey</code></td><td><code>string</code></td><td><code>undefined</code></td><td>Property to uniquely compare object values rather than by reference.</td></tr>
+                  <tr><td><code>focusOnOpen</code></td><td><code>number</code></td><td><code>undefined</code></td><td>Index of option to scroll & focus on popup open.</td></tr>
+                  <tr><td><code>appendTo</code></td><td><code>string | HTMLElement</code></td><td><code>undefined</code></td><td>Appends overlay to <code>'body'</code> to prevent container clipping.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Events Tab -->
+          <div class="tab-pane fade" id="outputs-tab">
+            <div class="table-responsive">
+              <table class="table table-hover table-api table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Parameters</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>onChange</code></td><td><code>event: SelectChangeEvent</code></td><td>Emitted when a new option value is chosen.</td></tr>
+                  <tr><td><code>onFilter</code></td><td><code>event: SelectFilterEvent</code></td><td>Emitted when user types inside search input.</td></tr>
+                  <tr><td><code>onFocus</code></td><td><code>event: FocusEvent</code></td><td>Emitted when component trigger gains focus.</td></tr>
+                  <tr><td><code>onBlur</code></td><td><code>event: FocusEvent</code></td><td>Emitted when component trigger loses focus.</td></tr>
+                  <tr><td><code>onShow</code></td><td><code>event: Event</code></td><td>Emitted when the dropdown panel opens.</td></tr>
+                  <tr><td><code>onHide</code></td><td><code>event: Event</code></td><td>Emitted when the dropdown panel closes.</td></tr>
+                  <tr><td><code>onClear</code></td><td><code>event: Event</code></td><td>Emitted when the clear icon is clicked.</td></tr>
+                  <tr><td><code>onLazyLoad</code></td><td><code>event: SelectLazyLoadEvent</code></td><td>Emitted when panel is scrolled near bottom for lazy loading.</td></tr>
+                  <tr><td><code>overlayVisibleChange</code></td><td><code>visible: boolean</code></td><td>Enables two-way binding on <code>[(overlayVisible)]</code>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Templates Tab -->
+          <div class="tab-pane fade" id="templates-tab">
+            <div class="table-responsive">
+              <table class="table table-hover table-api table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Template Ref</th>
+                    <th>Context Variable</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>#item</code></td><td><code>let-option</code></td><td>Custom template for each individual dropdown item.</td></tr>
+                  <tr><td><code>#selectedItem</code></td><td><code>let-value</code></td><td>Custom template for displaying the currently selected value in the box.</td></tr>
+                  <tr><td><code>#group</code></td><td><code>let-group</code></td><td>Custom template for option group headers.</td></tr>
+                  <tr><td><code>#header</code></td><td>-</td><td>Injected above the search input and items list in the overlay.</td></tr>
+                  <tr><td><code>#footer</code></td><td>-</td><td>Injected at the bottom of the dropdown overlay.</td></tr>
+                  <tr><td><code>#empty</code></td><td>-</td><td>Custom content when no options match the filter or list is empty.</td></tr>
+                  <tr><td><code>#clearIcon</code></td><td>-</td><td>Custom icon for the clear button.</td></tr>
+                  <tr><td><code>#dropdownIcon</code></td><td>-</td><td>Custom icon for the dropdown caret.</td></tr>
+                  <tr><td><code>#filterIcon</code></td><td>-</td><td>Custom icon for the search bar.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer class="mt-5 text-center text-muted small border-top pt-4">
-    Built with pure <strong>Bootstrap 5</strong> and <strong>Angular Standalone Components</strong>.
+    <div class="d-flex justify-content-center gap-3 mb-2">
+      <a href="https://github.com/amro/ngb-select" class="text-decoration-none text-muted">GitHub Repository</a>
+      <span>&bull;</span>
+      <a href="https://stackblitz.com/github/amro/ngb-select/tree/main" class="text-decoration-none text-muted">StackBlitz Demo</a>
+      <span>&bull;</span>
+      <a href="https://opensource.org/licenses/MIT" class="text-decoration-none text-muted">MIT License</a>
+    </div>
+    <p class="mb-0">Designed & built with <strong>Angular Standalone</strong> & <strong>Bootstrap 5</strong>.</p>
   </footer>
 </div>

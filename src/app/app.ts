@@ -1,8 +1,20 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbSelectComponent } from '../lib/ngb-select.component';
-import { SelectOption } from '../lib/ngb-select.interface';
+import { SelectOption, SelectFilterMatchMode } from '../lib/ngb-select.interface';
+
+interface City {
+  name: string;
+  code: string;
+}
+
+interface Country {
+  name: string;
+  code: string;
+  flag: string;
+  currency: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -11,90 +23,263 @@ import { SelectOption } from '../lib/ngb-select.interface';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
-  // 1. Basic
-  cities: SelectOption[] = [
-    { label: 'New York', value: 'NY' },
-    { label: 'Rome', value: 'RM' },
-    { label: 'London', value: 'LDN' },
-    { label: 'Istanbul', value: 'IST' },
-    { label: 'Tokyo', value: 'TOK' }
+export class App implements OnInit {
+  // Theme state
+  isDarkMode = false;
+
+  // 1. Basic (Primitives & Objects)
+  primitiveCities: string[] = ['New York', 'Rome', 'London', 'Istanbul', 'Paris', 'Tokyo'];
+  selectedPrimitiveCity: string = 'Rome';
+
+  objectCities: City[] = [
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' },
+    { name: 'Tokyo', code: 'TOK' }
   ];
-  selectedCity: string = 'NY';
+  selectedObjectCity: City | null = this.objectCities[1];
 
   // 2. Reactive Forms
   userForm = new FormGroup({
-    country: new FormControl<string | null>(null, [Validators.required])
+    city: new FormControl<City | null>(null, [Validators.required])
   });
 
-  countries = [
-    { name: 'United States', code: 'US', flag: '🇺🇸' },
-    { name: 'Germany', code: 'DE', flag: '🇩🇪' },
-    { name: 'France', code: 'FR', flag: '🇫🇷' },
-    { name: 'Japan', code: 'JP', flag: '🇯🇵' },
-    { name: 'United Kingdom', code: 'UK', flag: '🇬🇧' }
-  ];
-
   // 3. Filtering & Match Modes
-  selectedCountryWithFilter: string | null = null;
-  filterMode: any = 'contains';
-
-  // 4. Custom Templates
-  technologies = [
-    { name: 'Angular', type: 'Frontend', icon: 'bi-gem', badge: 'v19' },
-    { name: 'Bootstrap', type: 'CSS Framework', icon: 'bi-bootstrap-fill', badge: 'v5.3' },
-    { name: 'TypeScript', type: 'Language', icon: 'bi-code-slash', badge: 'v5.6' },
-    { name: 'Node.js', type: 'Backend', icon: 'bi-hdd-network', badge: 'v22' }
+  countries: Country[] = [
+    { name: 'Australia', code: 'AU', flag: '🇦🇺', currency: 'AUD' },
+    { name: 'Brazil', code: 'BR', flag: '🇧🇷', currency: 'BRL' },
+    { name: 'Canada', code: 'CA', flag: '🇨🇦', currency: 'CAD' },
+    { name: 'Egypt', code: 'EG', flag: '🇪🇬', currency: 'EGP' },
+    { name: 'France', code: 'FR', flag: '🇫🇷', currency: 'EUR' },
+    { name: 'Germany', code: 'DE', flag: '🇩🇪', currency: 'EUR' },
+    { name: 'India', code: 'IN', flag: '🇮🇳', currency: 'INR' },
+    { name: 'Japan', code: 'JP', flag: '🇯🇵', currency: 'JPY' },
+    { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦', currency: 'SAR' },
+    { name: 'United Kingdom', code: 'UK', flag: '🇬🇧', currency: 'GBP' },
+    { name: 'United States', code: 'US', flag: '🇺🇸', currency: 'USD' }
   ];
-  selectedTech: any = this.technologies[0];
+  selectedCountryFilter: string | null = 'SA';
+  filterMatchMode: SelectFilterMatchMode = 'contains';
 
-  // 5. Grouping
+  // 4. Custom Templating
+  selectedCountryTemplate: Country | null = this.countries[8];
+
+  // 5. Grouped Options
   groupedCars = [
     {
-      brand: 'Germany',
-      cars: [
-        { name: 'BMW', value: 'bmw' },
-        { name: 'Mercedes-Benz', value: 'mercedes' },
-        { name: 'Audi', value: 'audi' }
+      label: 'Germany',
+      value: 'de',
+      items: [
+        { label: 'Audi', value: 'Audi' },
+        { label: 'BMW', value: 'BMW' },
+        { label: 'Mercedes-Benz', value: 'Mercedes' },
+        { label: 'Porsche', value: 'Porsche' }
       ]
     },
     {
-      brand: 'Japan',
-      cars: [
-        { name: 'Toyota', value: 'toyota' },
-        { name: 'Honda', value: 'honda' },
-        { name: 'Nissan', value: 'nissan' }
+      label: 'USA',
+      value: 'us',
+      items: [
+        { label: 'Cadillac', value: 'Cadillac' },
+        { label: 'Chevrolet', value: 'Chevrolet' },
+        { label: 'Ford', value: 'Ford' },
+        { label: 'Tesla', value: 'Tesla' }
       ]
     },
     {
-      brand: 'USA',
-      cars: [
-        { name: 'Tesla', value: 'tesla' },
-        { name: 'Ford', value: 'ford' }
+      label: 'Japan',
+      value: 'jp',
+      items: [
+        { label: 'Honda', value: 'Honda' },
+        { label: 'Nissan', value: 'Nissan' },
+        { label: 'Toyota', value: 'Toyota' }
       ]
     }
   ];
-  selectedCar: string | null = null;
+  selectedGroupedCar: string | null = 'Porsche';
 
-  // 6. Sizes & Variants
-  selectedSizeCity: string = 'RM';
+  // 6. Editable (Combobox)
+  editableCity: string = 'San Francisco';
 
   // 7. Float Label
-  selectedFloatCity: string | null = null;
+  floatCity: City | null = null;
 
-  // 8. Focus on Open & Editable
-  editableValue: string = 'Custom Initial Value';
-  focusIndexCity: string | null = null;
+  // 8. Sizes & Variants
+  sizeCity: City | null = this.objectCities[0];
 
-  // 9. Angular Signals
+  // 9. Loading State (Simulated API Fetch)
+  loadingCities: City[] = [];
+  isLoading = false;
+  selectedLoadingCity: string | null = null;
+
+  // 10. Large Dataset / Virtual Scrolling Alternative
+  largeDataset: { label: string; value: number }[] = [];
+  selectedLargeItem: number | null = null;
+
+  // 11. Focus on Open Index
+  focusCity: string | null = null;
+
+  // 12. Angular Signals Binding
   signalCity = signal<string>('TOK');
 
-  // Helper
-  submitForm(): void {
+  // Code Tab state for examples
+  activeTabs: { [key: string]: 'demo' | 'html' | 'ts' } = {};
+  copiedSection: string | null = null;
+
+  ngOnInit(): void {
+    // Generate 1000 items
+    for (let i = 1; i <= 1000; i++) {
+      this.largeDataset.push({ label: `Option Item #${i}`, value: i });
+    }
+    this.reloadDynamicData();
+  }
+
+  toggleTheme(): void {
+    this.isDarkMode = !this.isDarkMode;
+    document.documentElement.setAttribute('data-bs-theme', this.isDarkMode ? 'dark' : 'light');
+  }
+
+  reloadDynamicData(): void {
+    this.isLoading = true;
+    this.loadingCities = [];
+    setTimeout(() => {
+      this.loadingCities = [...this.objectCities];
+      this.isLoading = false;
+    }, 1500);
+  }
+
+  setTab(section: string, tab: 'demo' | 'html' | 'ts'): void {
+    this.activeTabs[section] = tab;
+  }
+
+  getTab(section: string): 'demo' | 'html' | 'ts' {
+    return this.activeTabs[section] || 'demo';
+  }
+
+  copyCode(code: string, section: string): void {
+    navigator.clipboard.writeText(code);
+    this.copiedSection = section;
+    setTimeout(() => {
+      this.copiedSection = null;
+    }, 2000);
+  }
+
+  submitReactiveForm(): void {
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
     } else {
-      alert('Form submitted successfully: ' + JSON.stringify(this.userForm.value));
+      alert('Form Valid & Submitted: ' + JSON.stringify(this.userForm.value));
     }
   }
+
+  // --- Code Snippet Helpers ---
+  snippets = {
+    basicHtml: `<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCity" 
+  optionLabel="name" 
+  placeholder="Select a City"
+  [fluid]="true">
+</ngb-select>`,
+    basicTs: `cities = [
+  { name: 'New York', code: 'NY' },
+  { name: 'Rome', code: 'RM' },
+  { name: 'London', code: 'LDN' },
+  { name: 'Paris', code: 'PRS' }
+];
+selectedCity = null;`,
+
+    reactiveHtml: `<form [formGroup]="userForm" (ngSubmit)="submit()">
+  <ngb-select 
+    [options]="cities" 
+    formControlName="city" 
+    optionLabel="name"
+    [invalid]="userForm.get('city')?.invalid && userForm.get('city')?.touched"
+    [showClear]="true"
+    placeholder="Select a City"
+    [fluid]="true">
+  </ngb-select>
+  <button type="submit" class="btn btn-primary mt-2">Submit</button>
+</form>`,
+
+    filterHtml: `<ngb-select 
+  [options]="countries" 
+  [(ngModel)]="selectedCountry" 
+  optionLabel="name" 
+  optionValue="code"
+  [filter]="true" 
+  filterBy="name,code"
+  filterMatchMode="contains"
+  filterPlaceholder="Search country..."
+  [showClear]="true"
+  placeholder="Select a Country"
+  [fluid]="true">
+</ngb-select>`,
+
+    templateHtml: `<ngb-select [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [fluid]="true">
+  <!-- Selected Item Template -->
+  <ng-template #selectedItem let-country>
+    <div class="d-flex align-items-center gap-2">
+      <span class="fs-5">{{ country.flag }}</span>
+      <span class="fw-semibold">{{ country.name }}</span>
+    </div>
+  </ng-template>
+
+  <!-- Option Item Template -->
+  <ng-template #item let-country>
+    <div class="d-flex align-items-center justify-content-between w-100 py-1">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-5">{{ country.flag }}</span>
+        <span>{{ country.name }}</span>
+      </div>
+      <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ country.currency }}</span>
+    </div>
+  </ng-template>
+</ngb-select>`,
+
+    groupHtml: `<ngb-select 
+  [options]="groupedCars" 
+  [(ngModel)]="selectedCar" 
+  [group]="true"
+  optionGroupLabel="label" 
+  optionGroupChildren="items"
+  placeholder="Select a Car"
+  [fluid]="true">
+</ngb-select>`,
+
+    editableHtml: `<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="customCity" 
+  optionLabel="name" 
+  optionValue="name"
+  [editable]="true" 
+  [showClear]="true"
+  placeholder="Type custom or select"
+  [fluid]="true">
+</ngb-select>`,
+
+    floatLabelHtml: `<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCity" 
+  optionLabel="name"
+  [floatLabel]="true" 
+  placeholder="Destination City"
+  [fluid]="true">
+</ngb-select>`,
+
+    signalsHtml: `<!-- Template -->
+<ngb-select 
+  [options]="cities" 
+  [ngModel]="signalCity()" 
+  (ngModelChange)="signalCity.set($event)"
+  optionLabel="name" 
+  optionValue="code"
+  [fluid]="true">
+</ngb-select>
+
+<!-- Component TS -->
+signalCity = signal<string>('TOK');`
+  };
 }
