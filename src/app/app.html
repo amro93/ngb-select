@@ -1,0 +1,262 @@
+<div class="container py-5">
+  <!-- Header -->
+  <header class="pb-4 mb-4 border-bottom d-flex align-items-center justify-content-between">
+    <div>
+      <h1 class="display-6 fw-bold text-primary mb-1">
+        <i class="bi bi-ui-checks me-2"></i>ngb-select
+      </h1>
+      <p class="text-muted lead mb-0 fs-6">
+        A comprehensive Angular Standalone select component powered by <strong>pure Bootstrap 5</strong> classes.
+      </p>
+    </div>
+    <div>
+      <a href="https://github.com" target="_blank" class="btn btn-outline-dark btn-sm me-2">
+        <i class="bi bi-github me-1"></i> GitHub
+      </a>
+      <span class="badge bg-primary fs-6">Angular Standalone</span>
+    </div>
+  </header>
+
+  <div class="row g-4">
+    <!-- 1. Basic & Two-way Binding -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-hand-index-thumb me-1 text-primary"></i> 1. Basic Selection (ngModel)
+        </div>
+        <div class="card-body">
+          <label class="form-label text-muted small fw-semibold">Select City</label>
+          <ngb-select
+            [options]="cities"
+            [(ngModel)]="selectedCity"
+            placeholder="Select a city"
+            [fluid]="true">
+          </ngb-select>
+          <div class="mt-3 p-2 bg-light rounded text-muted small">
+            <strong>Selected Value:</strong> <code>{{ selectedCity | json }}</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Reactive Forms & Validation -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-check2-square me-1 text-success"></i> 2. Reactive Forms & Validation
+        </div>
+        <div class="card-body">
+          <form [formGroup]="userForm" (ngSubmit)="submitForm()">
+            <label class="form-label text-muted small fw-semibold">Select Country (Required)</label>
+            <ngb-select
+              [options]="countries"
+              formControlName="country"
+              optionLabel="name"
+              optionValue="code"
+              placeholder="Choose a country"
+              [showClear]="true"
+              [invalid]="!!(userForm.get('country')?.invalid && userForm.get('country')?.touched)"
+              [fluid]="true">
+            </ngb-select>
+            <div *ngIf="userForm.get('country')?.invalid && userForm.get('country')?.touched" class="text-danger small mt-1">
+              Please select a country.
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm mt-3">Submit Form</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Filter & Search -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-search me-1 text-info"></i> 3. Filtering & Match Modes
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <label class="form-label text-muted small fw-semibold mb-0">Search Countries</label>
+            <select class="form-select form-select-sm w-auto" [(ngModel)]="filterMode">
+              <option value="contains">contains</option>
+              <option value="startsWith">startsWith</option>
+              <option value="endsWith">endsWith</option>
+            </select>
+          </div>
+          <ngb-select
+            [options]="countries"
+            [(ngModel)]="selectedCountryWithFilter"
+            optionLabel="name"
+            optionValue="code"
+            [filter]="true"
+            [filterMatchMode]="filterMode"
+            filterPlaceholder="Type country name..."
+            [showClear]="true"
+            placeholder="Search & select..."
+            [fluid]="true">
+          </ngb-select>
+          <div class="mt-3 p-2 bg-light rounded text-muted small">
+            <strong>Selected:</strong> <code>{{ selectedCountryWithFilter | json }}</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Custom Templating -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-brush me-1 text-warning"></i> 4. Custom Item & Selection Templates
+        </div>
+        <div class="card-body">
+          <label class="form-label text-muted small fw-semibold">Frameworks / Stack</label>
+          <ngb-select
+            [options]="technologies"
+            [(ngModel)]="selectedTech"
+            optionLabel="name"
+            [fluid]="true"
+            placeholder="Choose tech">
+
+            <!-- Selected View Template -->
+            <ng-template #selectedItem let-tech>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi {{ tech.icon }} text-primary fs-5"></i>
+                <span class="fw-bold">{{ tech.name }}</span>
+                <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ tech.badge }}</span>
+              </div>
+            </ng-template>
+
+            <!-- Dropdown Item Template -->
+            <ng-template #item let-tech>
+              <div class="d-flex align-items-center justify-content-between w-100 py-1">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi {{ tech.icon }} fs-5 text-secondary"></i>
+                  <div>
+                    <div class="fw-semibold">{{ tech.name }}</div>
+                    <small class="text-muted">{{ tech.type }}</small>
+                  </div>
+                </div>
+                <span class="badge bg-primary-subtle text-primary-emphasis">{{ tech.badge }}</span>
+              </div>
+            </ng-template>
+          </ngb-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Grouping -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-folder2-open me-1 text-danger"></i> 5. Grouped Options
+        </div>
+        <div class="card-body">
+          <label class="form-label text-muted small fw-semibold">Select Car by Origin</label>
+          <ngb-select
+            [options]="groupedCars"
+            [(ngModel)]="selectedCar"
+            [group]="true"
+            optionGroupLabel="brand"
+            optionGroupChildren="cars"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Choose vehicle brand"
+            [showClear]="true"
+            [fluid]="true">
+          </ngb-select>
+          <div class="mt-3 p-2 bg-light rounded text-muted small">
+            <strong>Selected Car:</strong> <code>{{ selectedCar | json }}</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Floating Labels -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-layers me-1 text-primary"></i> 6. Bootstrap Floating Labels
+        </div>
+        <div class="card-body">
+          <ngb-select
+            [options]="cities"
+            [(ngModel)]="selectedFloatCity"
+            placeholder="Select Destination City"
+            [floatLabel]="true"
+            [showClear]="true"
+            [fluid]="true">
+          </ngb-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Sizing & Variants -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-aspect-ratio me-1 text-success"></i> 7. Sizes & Variants
+        </div>
+        <div class="card-body d-flex flex-column gap-3">
+          <div>
+            <label class="form-label text-muted small fw-semibold">Small Size (.form-select-sm)</label>
+            <ngb-select [options]="cities" [(ngModel)]="selectedSizeCity" size="small" [fluid]="true"></ngb-select>
+          </div>
+          <div>
+            <label class="form-label text-muted small fw-semibold">Large Size (.form-select-lg)</label>
+            <ngb-select [options]="cities" [(ngModel)]="selectedSizeCity" size="large" [fluid]="true"></ngb-select>
+          </div>
+          <div>
+            <label class="form-label text-muted small fw-semibold">Filled Variant (.bg-light)</label>
+            <ngb-select [options]="cities" [(ngModel)]="selectedSizeCity" variant="filled" [fluid]="true"></ngb-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Editable Combobox & Focus on Open -->
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-pencil-square me-1 text-info"></i> 8. Editable Combobox & Focus on Open
+        </div>
+        <div class="card-body d-flex flex-column gap-3">
+          <div>
+            <label class="form-label text-muted small fw-semibold">Editable Combobox (Type custom value)</label>
+            <ngb-select [options]="cities" [(ngModel)]="editableValue" [editable]="true" [showClear]="true" [fluid]="true"></ngb-select>
+            <div class="small text-muted mt-1">Value: <code>{{ editableValue }}</code></div>
+          </div>
+          <div>
+            <label class="form-label text-muted small fw-semibold">Focus on Index 2 (London) on Open</label>
+            <ngb-select [options]="cities" [(ngModel)]="focusIndexCity" [focusOnOpen]="2" placeholder="Open to auto-focus 3rd item" [fluid]="true"></ngb-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Angular Signals Integration -->
+    <div class="col-12">
+      <div class="card shadow-sm border-0 bg-light">
+        <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div>
+            <h5 class="fw-bold mb-1"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Modern Angular Signals</h5>
+            <p class="text-muted mb-0 small">Binds directly with Angular Signals reactivity.</p>
+          </div>
+          <div style="min-width: 250px;">
+            <ngb-select
+              [options]="cities"
+              [ngModel]="signalCity()"
+              (ngModelChange)="signalCity.set($event)"
+              [fluid]="true">
+            </ngb-select>
+          </div>
+          <div class="badge bg-dark fs-6">
+            Signal Value: {{ signalCity() }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-5 text-center text-muted small border-top pt-4">
+    Built with pure <strong>Bootstrap 5</strong> and <strong>Angular Standalone Components</strong>.
+  </footer>
+</div>

@@ -1,0 +1,204 @@
+<div class="ngb-select-container position-relative"
+     [class.form-floating]="floatLabel"
+     [class.w-100]="fluid"
+     [ngStyle]="style"
+     [ngClass]="styleClass"
+     (keydown)="onKeydown($event)">
+
+  <!-- Select Trigger Box -->
+  <div class="form-select d-flex align-items-center justify-content-between"
+       [class.is-invalid]="invalid"
+       [class.disabled]="disabled"
+       [class.form-select-sm]="size === 'small'"
+       [class.form-select-lg]="size === 'large'"
+       [class.bg-light]="variant === 'filled'"
+       [attr.id]="id"
+       [attr.tabindex]="disabled ? -1 : tabindex"
+       [attr.aria-label]="ariaLabel"
+       [attr.aria-labelledby]="ariaLabelledBy"
+       [attr.aria-expanded]="overlayVisible"
+       [attr.aria-haspopup]="'listbox'"
+       role="combobox"
+       (click)="onTriggerClick($event)"
+       (focus)="onTriggerFocus($event)"
+       (blur)="onTriggerBlur($event)">
+
+    <!-- Selected Value / Input Area -->
+    <span class="text-truncate flex-grow-1 me-2">
+      <ng-container *ngIf="editable; else standardViewTpl">
+        <input #editableInput
+               type="text"
+               class="form-control border-0 bg-transparent p-0 shadow-none"
+               [class.form-control-sm]="size === 'small'"
+               [class.form-control-lg]="size === 'large'"
+               [disabled]="disabled"
+               [readonly]="readonly"
+               [attr.maxlength]="maxLength"
+               [value]="getDisplayLabel()"
+               [placeholder]="placeholder || ''"
+               (input)="onEditableInput($event)"
+               (focus)="onEditableFocus($event)"
+               (click)="$event.stopPropagation()">
+      </ng-container>
+
+      <ng-template #standardViewTpl>
+        <ng-container *ngIf="hasSelectedValue(); else placeholderTpl">
+          <!-- Custom Selected Item Template or Default Resolved Label -->
+          <ng-container *ngIf="selectedItemTemplate; else defaultSelectedLabelTpl">
+            <ng-container *ngTemplateOutlet="selectedItemTemplate; context: { $implicit: value }"></ng-container>
+          </ng-container>
+          <ng-template #defaultSelectedLabelTpl>
+            <span>{{ getDisplayLabel() }}</span>
+          </ng-template>
+        </ng-container>
+        <ng-template #placeholderTpl>
+          <span class="text-muted">{{ floatLabel ? '' : (placeholder || '') }}</span>
+        </ng-template>
+      </ng-template>
+    </span>
+
+    <!-- Icons & Spinners Area -->
+    <div class="d-flex align-items-center flex-shrink-0 gap-1">
+      <!-- Clear Icon -->
+      <span *ngIf="showClear && hasSelectedValue() && !disabled && !readonly"
+            class="ngb-select-clear-icon text-muted me-1"
+            (click)="onClearClick($event)"
+            title="Clear"
+            tabindex="0"
+            role="button"
+            aria-label="Clear value">
+        <ng-container *ngIf="clearIconTemplate; else defaultClearIconTpl">
+          <ng-container *ngTemplateOutlet="clearIconTemplate"></ng-container>
+        </ng-container>
+        <ng-template #defaultClearIconTpl>
+          <i class="bi bi-x-circle-fill"></i>
+        </ng-template>
+      </span>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="spinner-border spinner-border-sm text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+
+      <!-- Dropdown Caret Icon -->
+      <span *ngIf="!loading" class="ngb-select-dropdown-icon text-secondary">
+        <ng-container *ngIf="dropdownIconTemplate; else defaultDropdownIconTpl">
+          <ng-container *ngTemplateOutlet="dropdownIconTemplate"></ng-container>
+        </ng-container>
+        <ng-template #defaultDropdownIconTpl>
+          <i class="bi bi-chevron-down" [class.rotate-180]="overlayVisible"></i>
+        </ng-template>
+      </span>
+    </div>
+  </div>
+
+  <!-- Float Label Support -->
+  <label *ngIf="floatLabel && placeholder" [attr.for]="id">{{ placeholder }}</label>
+
+  <!-- Overlay Dropdown Menu -->
+  <div #dropdownMenu
+       class="dropdown-menu w-100 shadow-sm"
+       [class.show]="overlayVisible"
+       [ngStyle]="panelStyle"
+       [ngClass]="panelStyleClass"
+       [style.max-height]="scrollHeight"
+       style="overflow-y: auto;"
+       role="listbox"
+       (scroll)="onOverlayScroll($event)"
+       (click)="$event.stopPropagation()">
+
+    <!-- Header Template -->
+    <div *ngIf="headerTemplate" class="p-2 border-bottom">
+      <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+    </div>
+
+    <!-- Search / Filter Box -->
+    <div *ngIf="filter" class="p-2 border-bottom">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-transparent border-end-0">
+          <ng-container *ngIf="filterIconTemplate; else defaultFilterIconTpl">
+            <ng-container *ngTemplateOutlet="filterIconTemplate"></ng-container>
+          </ng-container>
+          <ng-template #defaultFilterIconTpl>
+            <i class="bi bi-search text-muted"></i>
+          </ng-template>
+        </span>
+        <input #filterInput
+               type="text"
+               class="form-control border-start-0"
+               [placeholder]="filterPlaceholder || 'Search...'"
+               [value]="filterValue"
+               (input)="onFilterChange($event)"
+               (keydown)="onFilterKeydown($event)">
+      </div>
+    </div>
+
+    <!-- Grouped Options Mode -->
+    <ng-container *ngIf="group; else flatOptionsTpl">
+      <div *ngFor="let groupOption of filteredOptions">
+        <!-- Group Header -->
+        <h6 class="dropdown-header text-muted py-2 px-3 m-0">
+          <ng-container *ngIf="groupTemplate; else defaultGroupHeaderTpl">
+            <ng-container *ngTemplateOutlet="groupTemplate; context: { $implicit: groupOption }"></ng-container>
+          </ng-container>
+          <ng-template #defaultGroupHeaderTpl>
+            {{ resolveOptionGroupLabel(groupOption) }}
+          </ng-template>
+        </h6>
+
+        <!-- Group Items -->
+        <button *ngFor="let option of resolveOptionGroupChildren(groupOption)"
+                type="button"
+                class="dropdown-item d-flex align-items-center py-2 px-3"
+                [class.active]="isSelected(option)"
+                [class.disabled]="isOptionDisabled(option)"
+                [disabled]="isOptionDisabled(option)"
+                role="option"
+                [attr.aria-selected]="isSelected(option)"
+                (click)="onOptionClick(option, $event)">
+          <ng-container *ngIf="itemTemplate; else defaultItemTpl">
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"></ng-container>
+          </ng-container>
+          <ng-template #defaultItemTpl>
+            <span>{{ resolveOptionLabel(option) }}</span>
+          </ng-template>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Flat Options Mode -->
+    <ng-template #flatOptionsTpl>
+      <button *ngFor="let option of filteredOptions; let i = index"
+              type="button"
+              class="dropdown-item d-flex align-items-center py-2 px-3"
+              [class.active]="isSelected(option)"
+              [class.disabled]="isOptionDisabled(option)"
+              [disabled]="isOptionDisabled(option)"
+              role="option"
+              [attr.aria-selected]="isSelected(option)"
+              (click)="onOptionClick(option, $event)">
+        <ng-container *ngIf="itemTemplate; else defaultFlatItemTpl">
+          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"></ng-container>
+        </ng-container>
+        <ng-template #defaultFlatItemTpl>
+          <span>{{ resolveOptionLabel(option) }}</span>
+        </ng-template>
+      </button>
+    </ng-template>
+
+    <!-- Empty State Message -->
+    <div *ngIf="isOptionsEmpty()" class="dropdown-item text-muted text-center py-3">
+      <ng-container *ngIf="emptyTemplate; else defaultEmptyTpl">
+        <ng-container *ngTemplateOutlet="emptyTemplate"></ng-container>
+      </ng-container>
+      <ng-template #defaultEmptyTpl>
+        <small>{{ filterValue ? (emptyFilterMessage || 'No results found') : (emptyMessage || 'No results found') }}</small>
+      </ng-template>
+    </div>
+
+    <!-- Footer Template -->
+    <div *ngIf="footerTemplate" class="p-2 border-top">
+      <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+    </div>
+  </div>
+</div>

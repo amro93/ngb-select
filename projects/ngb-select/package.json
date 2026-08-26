@@ -1,0 +1,35 @@
+{
+  "name": "ngb-select",
+  "version": "0.0.1",
+  "description": "Lightweight, accessible, standalone Angular Select dropdown component built with pure Bootstrap 5",
+  "keywords": [
+    "angular",
+    "angular-select",
+    "bootstrap",
+    "bootstrap-5",
+    "select",
+    "dropdown",
+    "combobox",
+    "standalone",
+    "ngb-select"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=18.0.0",
+    "@angular/core": ">=18.0.0",
+    "@angular/forms": ">=18.0.0",
+    "bootstrap": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "bootstrap": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,67 @@
+:host {
+  display: inline-block;
+  width: auto;
+
+  &.w-100,
+  &.fluid {
+    display: block;
+    width: 100%;
+  }
+}
+
+.ngb-select-container {
+  position: relative;
+  user-select: none;
+
+  .form-select {
+    cursor: pointer;
+    min-height: 38px;
+    background-image: none; // We render custom icons/spinners cleanly
+
+    &.disabled,
+    &:disabled {
+      cursor: not-allowed;
+      background-color: var(--bs-secondary-bg, #e9ecef);
+      opacity: 0.65;
+    }
+  }
+
+  .dropdown-menu {
+    top: 100%;
+    left: 0;
+    margin-top: 0.125rem;
+    z-index: 1050;
+
+    .dropdown-item {
+      cursor: pointer;
+      white-space: normal;
+      word-break: break-word;
+
+      &.disabled,
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      &.focused:not(.active) {
+        background-color: var(--bs-tertiary-bg, #f8f9fa);
+      }
+    }
+
+    .dropdown-header {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  .ngb-select-clear-icon,
+  .ngb-select-dropdown-icon {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+}
