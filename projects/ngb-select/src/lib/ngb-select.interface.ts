@@ -6,6 +6,8 @@ export type SelectVariant = 'filled' | 'outlined';
 
 export type SelectFilterMatchMode = 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals';
 
+export type FocusOnOpenStrategy = 'always' | 'notSelected';
+
 export interface SelectOption {
   label?: string;
   value?: any;

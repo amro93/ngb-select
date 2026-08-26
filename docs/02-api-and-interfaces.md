@@ -43,6 +43,7 @@ export interface SelectOption {
 | `scrollHeight` | `string` | `'200px'` | Max height of the dropdown panel before scrolling occurs. |
 | `tabindex` | `number` | `0` | Tab index of the component for keyboard navigation. |
 | `focusOnOpen` | `number` | `undefined` | The index of the option to programmatically focus/scroll to when the dropdown opens. |
+| `focusOnOpenStrategy` | `'always' \| 'notSelected'` | `'always'` | Determines whether focusOnOpen applies always or only when no item is selected. |
 | `dataKey` | `string` | `undefined` | A property to uniquely identify a value in data, useful for object comparison. |
 | `autofocus` | `boolean` | `false` | When present, specifies that the component should automatically get focus on load. |
 | `size` | `SelectSize` | `'medium'` | Defines the size of the component (`'small'`, `'medium'`, `'large'`). Maps to Bootstrap's `.form-select-sm` or `.form-select-lg`. |

@@ -2,7 +2,7 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbSelectComponent } from '../lib/ngb-select.component';
-import { SelectOption, SelectFilterMatchMode } from '../lib/ngb-select.interface';
+import { SelectOption, SelectFilterMatchMode, FocusOnOpenStrategy } from '../lib/ngb-select.interface';
 import { APP_VERSION } from '../version';
 
 interface City {
@@ -133,6 +133,7 @@ export class App implements OnInit {
 
   // 12. Focus on Open Index Example
   focusOpenIndex: number = 3; // Index 3 is 'Istanbul'
+  focusOpenStrategy: FocusOnOpenStrategy = 'always';
   selectedFocusCity: City | null = null;
 
   // 13. Angular Signals Binding
@@ -243,7 +244,8 @@ selectedCity = null;`,
   [options]="cities" 
   [(ngModel)]="selectedCity" 
   optionLabel="name" 
-  [focusOnOpen]="3" 
+  [focusOnOpen]="3"
+  [focusOnOpenStrategy]="'always'" 
   placeholder="Open to auto-focus index 3 (Istanbul)"
   [fluid]="true">
 </ngb-select>`,

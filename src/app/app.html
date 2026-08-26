@@ -274,18 +274,25 @@
         <div class="card-body p-3">
           <ng-container *ngIf="getTab('focusOpen') === 'demo'">
             <p class="text-muted small mb-3">
-              Configure <code>[focusOnOpen]="index"</code> to automatically scroll and focus keyboard navigation to a designated option when the overlay opens.
+              Configure <code>[focusOnOpen]="index"</code> and <code>[focusOnOpenStrategy]</code> to choose whether target index is focused <strong>always</strong>, or <strong>only when no value is currently selected</strong> (if a value is selected, it focuses the selected item instead).
             </p>
-            <div class="d-flex align-items-center justify-content-between mb-2">
-              <label class="form-label text-muted small fw-semibold mb-0">Select Target Index to Focus</label>
-              <div class="d-flex align-items-center gap-2">
-                <select class="form-select form-select-sm w-auto" [(ngModel)]="focusOpenIndex">
+            <div class="row g-2 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label text-muted small fw-semibold mb-1">Target Focus Index</label>
+                <select class="form-select form-select-sm" [(ngModel)]="focusOpenIndex">
                   <option [ngValue]="0">0 - New York</option>
                   <option [ngValue]="1">1 - Rome</option>
                   <option [ngValue]="2">2 - London</option>
                   <option [ngValue]="3">3 - Istanbul</option>
                   <option [ngValue]="4">4 - Paris</option>
                   <option [ngValue]="5">5 - Tokyo</option>
+                </select>
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label text-muted small fw-semibold mb-1">Focus Strategy</label>
+                <select class="form-select form-select-sm" [(ngModel)]="focusOpenStrategy">
+                  <option value="always">always (Always Target Index)</option>
+                  <option value="notSelected">notSelected (Only If Not Selected)</option>
                 </select>
               </div>
             </div>
@@ -295,6 +302,7 @@
                 [(ngModel)]="selectedFocusCity"
                 optionLabel="name"
                 [focusOnOpen]="focusOpenIndex"
+                [focusOnOpenStrategy]="focusOpenStrategy"
                 [showClear]="true"
                 placeholder="Click to open & auto-focus target"
                 [fluid]="true">
@@ -835,6 +843,7 @@
               <tr><td><code>variant</code></td><td><code>'filled' | 'outlined'</code></td><td><code>'outlined'</code></td><td>Appearance variant (<code>filled</code> adds <code>.bg-light</code>).</td></tr>
               <tr><td><code>dataKey</code></td><td><code>string</code></td><td><code>undefined</code></td><td>Property to uniquely compare object values rather than by reference.</td></tr>
               <tr><td><code>focusOnOpen</code></td><td><code>number</code></td><td><code>undefined</code></td><td>Index of option to scroll & focus on popup open.</td></tr>
+              <tr><td><code>focusOnOpenStrategy</code></td><td><code>'always' | 'notSelected'</code></td><td><code>'always'</code></td><td>Determines whether focusOnOpen applies always or only when no item is selected.</td></tr>
               <tr><td><code>appendTo</code></td><td><code>string | HTMLElement</code></td><td><code>undefined</code></td><td>Appends overlay to <code>'body'</code> to prevent container clipping.</td></tr>
             </tbody>
           </table>

@@ -23,6 +23,7 @@ import {
   SelectSize,
   SelectVariant,
   SelectDisplayMode,
+  FocusOnOpenStrategy,
   SelectChangeEvent,
   SelectFilterEvent,
   SelectSelectAllChangeEvent,
@@ -110,6 +111,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @Input() selectOnFocus: boolean = false;
   @Input() autoOptionFocus: boolean = true;
   @Input() focusOnOpen?: number;
+  @Input() focusOnOpenStrategy: FocusOnOpenStrategy = 'always';
   @Input() lazy: boolean = false;
 
   // --- Two-way Overlay Visibility Binding ---
@@ -390,10 +392,16 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     const flatItems = this.getFlatFilteredOptions();
     let targetIndex = -1;
 
+    const hasSelection = this.hasSelectedValue();
+    const selectedIdx = flatItems.findIndex(opt => this.isSelected(opt));
+
     if (this.focusOnOpen !== undefined && this.focusOnOpen >= 0 && this.focusOnOpen < flatItems.length) {
-      targetIndex = this.focusOnOpen;
+      if (this.focusOnOpenStrategy === 'notSelected' && hasSelection && selectedIdx !== -1) {
+        targetIndex = selectedIdx;
+      } else {
+        targetIndex = this.focusOnOpen;
+      }
     } else if (this.autoOptionFocus) {
-      const selectedIdx = flatItems.findIndex(opt => this.isSelected(opt));
       targetIndex = selectedIdx !== -1 ? selectedIdx : 0;
     }
 

@@ -38,6 +38,7 @@ import { NgbSelectComponent } from './ngb-select.component';
         [selectionLimit]="selectionLimit"
         [closeOnSelect]="closeOnSelect"
         [focusOnOpen]="focusOnOpen"
+        [focusOnOpenStrategy]="focusOnOpenStrategy"
         [(overlayVisible)]="overlayVisible"
         (onChange)="onSelectChange($event)"
         (onFilter)="onFilterChange($event)"
@@ -79,6 +80,7 @@ class TestHostComponent {
   selectionLimit?: number;
   closeOnSelect = false;
   focusOnOpen?: number;
+  focusOnOpenStrategy: any = 'always';
   overlayVisible = false;
 
   form = new FormGroup({
@@ -459,6 +461,34 @@ describe('NgbSelectComponent', () => {
     it('should focus option on focusOnOpen index when opening popup', async () => {
       const { fixture, selectComponent } = createComponent(host => {
         host.focusOnOpen = 1;
+      });
+
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+      await new Promise(r => setTimeout(r, 20));
+
+      expect(selectComponent.focusedIndex).toBe(1);
+    });
+
+    it('should prioritize selected item over focusOnOpen when focusOnOpenStrategy is notSelected and value is present', async () => {
+      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+        host.focusOnOpen = 0; // NY is index 0
+        host.focusOnOpenStrategy = 'notSelected';
+      });
+      hostComponent.form.get('selectedCity')?.setValue('PRS'); // PRS is index 3
+      fixture.detectChanges();
+
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+      await new Promise(r => setTimeout(r, 20));
+
+      expect(selectComponent.focusedIndex).toBe(3); // Should focus selected PRS instead of focusOnOpen index 0
+    });
+
+    it('should use focusOnOpen when focusOnOpenStrategy is notSelected and no value is selected', async () => {
+      const { fixture, selectComponent } = createComponent(host => {
+        host.focusOnOpen = 1; // Rome is index 1
+        host.focusOnOpenStrategy = 'notSelected';
       });
 
       selectComponent.openOverlay();
