@@ -184,3 +184,42 @@ class TestHostComponent {
 
 - **Max Selected Labels Summary:**
   Set `maxSelectedLabels=2` and select 3 items. Verify that the trigger renders the formatted label from `selectedItemsLabel` (e.g. `'3 items selected'`) instead of comma-separated text.
+
+## Category 9: RTL and Arabic Localization Testing Scenarios
+
+- **RTL Direction Attribute Inheritance:**
+  Verify that when placed in an element with `dir="rtl"`, the component's internal container mirrors layout correctly using Bootstrap's directional CSS classes (`ms-*`, `me-*`, `text-start`).
+
+- **Arabic Text Search Normalization (Alef, Yaa, Taa Marbuta):**
+  ```typescript
+  it('should match Arabic search terms regardless of Alef forms or Tashkeel', () => {
+    component.options = [
+      { id: 1, name: 'الإمارات' },
+      { id: 2, name: 'الْأُرْدُنّ' }, // with Tashkeel diacritics
+      { id: 3, name: 'مصر' }
+    ];
+    component.filter = true;
+    component.filterNormalizeArabic = true;
+    fixture.detectChanges();
+
+    // Query with bare Alef 'امارات'
+    const input = fixture.debugElement.query(By.css('.form-control')).nativeElement;
+    input.value = 'امارات';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.filteredOptions.length).toBe(1);
+    expect(component.filteredOptions[0].id).toBe(1);
+
+    // Query with plain 'الاردن' against 'الْأُرْدُنّ'
+    input.value = 'الاردن';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.filteredOptions.length).toBe(1);
+    expect(component.filteredOptions[0].id).toBe(2);
+  });
+  ```
+
+- **Arabic Chips & Close Icon Alignment in RTL:**
+  Verify that inside an RTL container, chip close buttons are positioned cleanly on the left (the logical end in RTL), without text overlap.

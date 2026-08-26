@@ -50,10 +50,12 @@ export interface SelectOption {
 | `display` | `SelectDisplayMode` | `'comma'` | Defines how multiple selected items are displayed in the input field (`'comma'` or `'chip'`). |
 | `showSelectAll` | `boolean` | `false` | When enabled, renders a "Select All" checkbox header inside the dropdown panel. |
 | `selectAll` | `boolean \| null` | `null` | Controls or binds the state of the "Select All" checkbox. |
+| `selectAllLabel` | `string` | `'Select All'` | Text label for the "Select All" checkbox header (e.g. `'تحديد الكل'`). |
 | `maxSelectedLabels` | `number` | `3` | Maximum number of item labels to display in the trigger before switching to summary text. |
-| `selectedItemsLabel` | `string` | `'{0} items selected'` | Label template shown when selection count exceeds `maxSelectedLabels`. |
+| `selectedItemsLabel` | `string` | `'{0} items selected'` | Label template shown when selection count exceeds `maxSelectedLabels` (e.g. `'{0} عناصر محددة'`). |
 | `selectionLimit` | `number` | `undefined` | Maximum number of items the user is permitted to select. |
 | `closeOnSelect` | `boolean` | `false` | Whether selecting an item closes the dropdown panel (defaults to false for `multiple: true`). |
+| `dir` | `'ltr' \| 'rtl' \| 'auto'` | `'auto'` | Text direction for RTL / LTR layout. Inherits from DOM `dir` attribute by default. |
 | `appendTo` | `any` | `undefined` | Target element to attach the overlay, valid values are "body" or a local ng-template ref. |
 | `editable` | `boolean` | `false` | When specified, allows users to type values that are not in the options list. |
 | `lazy` | `boolean` | `false` | Defines if data is loaded and interacted with in a lazy manner (useful for infinite scrolling). |
@@ -62,7 +64,8 @@ export interface SelectOption {
 | `ariaLabel` | `string` | `undefined` | Defines a string that labels the input for accessibility. |
 | `ariaLabelledBy`| `string` | `undefined` | Establishes relationships between the component and label(s) using element IDs. |
 | `filterMatchMode` | `string` | `'contains'` | Defines how items are filtered (`startsWith`, `contains`, `endsWith`, `equals`, `notEquals`). |
-| `filterLocale` | `string` | `undefined` | Locale to use in filtering string comparisons. |
+| `filterLocale` | `string` | `undefined` | Locale to use in filtering string comparisons (e.g. `'ar'` or `'en'`). |
+| `filterNormalizeArabic` | `boolean` | `true` | Normalizes Arabic letters (`[أإآا]`, `[ىي]`, `[ةه]`) and strips diacritics during search. |
 | `panelStyle` | `object` | `undefined` | Inline style of the dropdown panel. |
 | `panelStyleClass` | `string` | `undefined` | Style class of the dropdown panel. |
 | `style` | `object` | `undefined` | Inline style of the component container. |

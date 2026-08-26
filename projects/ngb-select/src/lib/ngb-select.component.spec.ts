@@ -31,6 +31,12 @@ import { NgbSelectComponent } from './ngb-select.component';
         [editable]="editable"
         [dataKey]="dataKey"
         [size]="size"
+        [multiple]="multiple"
+        [display]="display"
+        [showSelectAll]="showSelectAll"
+        [maxSelectedLabels]="maxSelectedLabels"
+        [selectionLimit]="selectionLimit"
+        [closeOnSelect]="closeOnSelect"
         [focusOnOpen]="focusOnOpen"
         [(overlayVisible)]="overlayVisible"
         (onChange)="onSelectChange($event)"
@@ -66,6 +72,12 @@ class TestHostComponent {
   editable = false;
   dataKey?: string;
   size?: any;
+  multiple = false;
+  display: any = 'comma';
+  showSelectAll = false;
+  maxSelectedLabels = 3;
+  selectionLimit?: number;
+  closeOnSelect = false;
   focusOnOpen?: number;
   overlayVisible = false;
 
@@ -343,7 +355,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should not open dropdown when disabled is true', () => {
-      const { fixture, selectComponent, hostComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent(host => {
         host.form.get('selectedCity')?.disable();
       });
 
@@ -417,7 +429,7 @@ describe('NgbSelectComponent', () => {
   describe('Category 7: Advanced Features', () => {
     it('should match objects by dataKey rather than reference equality', () => {
       const { fixture, selectComponent } = createComponent();
-      selectComponent.optionValue = undefined as any; // Full object mode
+      selectComponent.optionValue = undefined as any;
       selectComponent.dataKey = 'code';
       selectComponent.options = [
         { name: 'New York', code: 'NY' },
@@ -464,6 +476,91 @@ describe('NgbSelectComponent', () => {
 
       expect(selectComponent.overlayVisible).toBe(true);
       expect(hostComponent.overlayVisible).toBe(true);
+    });
+  });
+
+  // ==========================================
+  // Category 8: Multi-Select Scenarios
+  // ==========================================
+  describe('Category 8: Multi-Select Scenarios', () => {
+    it('should initialize multi-select with array of values', () => {
+      const { fixture, selectComponent } = createComponent(host => {
+        host.multiple = true;
+      });
+      selectComponent.options = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' },
+        { name: 'Paris', code: 'PRS' }
+      ];
+      selectComponent.writeValue(['NY', 'PRS']);
+      fixture.detectChanges();
+
+      expect(selectComponent.isSelected(selectComponent.options[0])).toBe(true);
+      expect(selectComponent.isSelected(selectComponent.options[1])).toBe(false);
+      expect(selectComponent.isSelected(selectComponent.options[2])).toBe(true);
+    });
+
+    it('should toggle selection in multiple mode and remain open by default', async () => {
+      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+        host.multiple = true;
+      });
+      hostComponent.form.get('selectedCity')?.setValue(['NY']);
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const items = fixture.debugElement.queryAll(By.css('.dropdown-item'));
+      items[1].nativeElement.click(); // Select 'Rome' ('RM')
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(hostComponent.form.get('selectedCity')?.value).toEqual(['NY', 'RM']);
+      expect(selectComponent.overlayVisible).toBe(true); // Should remain open
+    });
+
+    it('should render chips when display="chip"', () => {
+      const { fixture, hostComponent } = createComponent(host => {
+        host.multiple = true;
+        host.display = 'chip';
+      });
+      hostComponent.form.get('selectedCity')?.setValue(['NY', 'RM']);
+      fixture.detectChanges();
+
+      const chips = fixture.debugElement.queryAll(By.css('.badge.bg-light'));
+      expect(chips.length).toBe(2);
+    });
+
+    it('should select all and deselect all options via Select All checkbox', () => {
+      const { fixture, selectComponent } = createComponent(host => {
+        host.multiple = true;
+        host.showSelectAll = true;
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      const selectAllInput = fixture.debugElement.query(By.css('#selectAllCheckbox')).nativeElement;
+      selectAllInput.checked = true;
+      selectAllInput.dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+
+      expect(selectComponent.value.length).toBe(3); // 3 non-disabled items (NY, RM, PRS)
+      expect(selectComponent.selectAll).toBe(true);
+    });
+
+    it('should enforce selectionLimit in multi-select mode', () => {
+      const { fixture, selectComponent } = createComponent(host => {
+        host.multiple = true;
+        host.selectionLimit = 2;
+      });
+      selectComponent.writeValue(['NY', 'RM']);
+      fixture.detectChanges();
+
+      const thirdOption = { name: 'Paris', code: 'PRS' };
+      selectComponent.onOptionClick(thirdOption, new Event('click'));
+      fixture.detectChanges();
+
+      expect(selectComponent.value.length).toBe(2);
+      expect(selectComponent.value).toEqual(['NY', 'RM']);
     });
   });
 });

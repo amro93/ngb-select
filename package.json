@@ -1,6 +1,6 @@
 {
   "name": "ngb-select-app",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,6 +10,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:lib": "ng test ngb-select",
+    "sync:version": "node ./scripts/sync-version.js",
+    "version:patch": "npm version patch --no-git-tag-version && npm run sync:version",
+    "version:minor": "npm version minor --no-git-tag-version && npm run sync:version",
+    "version:major": "npm version major --no-git-tag-version && npm run sync:version",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
     "release": "semantic-release"

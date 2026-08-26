@@ -1,10 +1,10 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body shadow-sm">
+<nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body shadow-sm py-2">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" href="#">
       <i class="bi bi-ui-checks-grid fs-4"></i>
       <span>ngb-select</span>
-      <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7">v1.0.0</span>
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7">v{{ appVersion }}</span>
     </a>
 
     <div class="d-flex align-items-center gap-2">
@@ -26,20 +26,20 @@
   </div>
 </nav>
 
-<div class="container py-4">
+<div class="container py-4 my-2">
   <!-- Hero Section -->
   <section class="hero-banner p-4 p-md-5 mb-5 text-center text-md-start">
     <div class="row align-items-center g-4">
       <div class="col-md-8">
         <div class="d-flex flex-wrap gap-2 mb-3 justify-content-center justify-content-md-start">
           <span class="badge bg-white text-primary badge-feature"><i class="bi bi-bootstrap-fill me-1"></i> Pure Bootstrap 5</span>
+          <span class="badge bg-white text-primary badge-feature"><i class="bi bi-check-all me-1"></i> Multi-Select & Chips</span>
           <span class="badge bg-white text-primary badge-feature"><i class="bi bi-code-square me-1"></i> Standalone Component</span>
           <span class="badge bg-white text-primary badge-feature"><i class="bi bi-lightning-fill me-1"></i> Signals Ready</span>
-          <span class="badge bg-white text-primary badge-feature"><i class="bi bi-shield-check me-1"></i> PrimeNG Parity</span>
         </div>
         <h1 class="display-5 fw-bold mb-3">Angular Select Component</h1>
         <p class="lead opacity-90 mb-4">
-          A high-performance, robust Angular Standalone select and dropdown component styled strictly with <strong>pure Bootstrap 5 CSS classes</strong>. Zero external UI library runtime dependencies.
+          A high-performance, robust Angular Standalone select and multi-select dropdown component styled strictly with <strong>pure Bootstrap 5 CSS classes</strong>. Zero external UI library dependencies.
         </p>
         <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start">
           <a href="#examples" class="btn btn-light btn-lg fw-semibold text-primary shadow-sm">
@@ -52,19 +52,21 @@
       </div>
       <div class="col-md-4 d-none d-md-block text-center">
         <div class="bg-white p-4 rounded-4 shadow-lg text-dark text-start">
-          <label class="form-label text-muted small fw-bold mb-1">Live Quick Preview</label>
+          <label class="form-label text-muted small fw-bold mb-1">Live Multi-Select Preview</label>
           <ngb-select
             [options]="countries"
-            [(ngModel)]="selectedCountryFilter"
+            [(ngModel)]="selectedAllCountries"
             optionLabel="name"
-            optionValue="code"
+            [multiple]="true"
+            display="chip"
             [filter]="true"
+            [showSelectAll]="true"
             [showClear]="true"
-            placeholder="Select a country..."
+            placeholder="Select countries..."
             [fluid]="true">
           </ngb-select>
           <div class="mt-3 p-2 bg-light rounded small text-muted">
-            <i class="bi bi-info-circle me-1 text-primary"></i> Bound Value: <code>{{ selectedCountryFilter }}</code>
+            <i class="bi bi-info-circle me-1 text-primary"></i> Selected ({{ selectedAllCountries.length }} items)
           </div>
         </div>
       </div>
@@ -75,6 +77,7 @@
   <div class="mb-5 overflow-auto pb-2 border-bottom">
     <ul class="nav nav-pills flex-nowrap gap-2">
       <li class="nav-item"><a class="nav-link bg-light text-dark" href="#basic">Basic</a></li>
+      <li class="nav-item"><a class="nav-link bg-light text-dark" href="#multi-select">Multi-Select</a></li>
       <li class="nav-item"><a class="nav-link bg-light text-dark" href="#reactive-forms">Reactive Forms</a></li>
       <li class="nav-item"><a class="nav-link bg-light text-dark" href="#filtering">Filtering</a></li>
       <li class="nav-item"><a class="nav-link bg-light text-dark" href="#templating">Templating</a></li>
@@ -92,11 +95,11 @@
   <!-- Main Content Showcase -->
   <div class="row g-4" id="examples">
 
-    <!-- 1. Basic Example -->
+    <!-- 1. Basic Single Selection -->
     <div class="col-lg-6" id="basic">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-check-circle-fill text-primary me-2"></i>Basic Selection</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-check-circle-fill text-primary me-2"></i>1. Basic Single Selection</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('basic') === 'demo'" (click)="setTab('basic', 'demo')">Demo</button>
@@ -109,11 +112,11 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('basic') === 'demo'">
-            <p class="text-muted small">Select supports single value selection from an array of primitives or objects with two-way <code>ngModel</code> binding.</p>
+            <p class="text-muted small mb-3">Select supports single value selection from an array of primitives or objects with two-way <code>ngModel</code> binding.</p>
             <div class="mb-3">
-              <label class="form-label text-muted small fw-semibold">Select City (Object Array)</label>
+              <label class="form-label text-muted small fw-semibold">Select City</label>
               <ngb-select
                 [options]="objectCities"
                 [(ngModel)]="selectedObjectCity"
@@ -149,11 +152,109 @@
       </div>
     </div>
 
-    <!-- 2. Reactive Forms & Validation -->
+    <!-- 2. Multi-Select & Chips Display -->
+    <div class="col-lg-6" id="multi-select">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-check-all text-success me-2"></i>2. Multi-Select & Chips Mode</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('multi') === 'demo'" (click)="setTab('multi', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('multi') === 'html'" (click)="setTab('multi', 'html')">HTML</button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body p-3">
+          <ng-container *ngIf="getTab('multi') === 'demo'">
+            <p class="text-muted small mb-3">Enables multi-selection with checkboxes. Displays chosen items as removable Bootstrap badge chips with <code>display="chip"</code>.</p>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Select Multiple Cities (Chips Mode)</label>
+              <ngb-select
+                [options]="objectCities"
+                [(ngModel)]="selectedChipsCities"
+                optionLabel="name"
+                [dataKey]="'code'"
+                [multiple]="true"
+                display="chip"
+                [showClear]="true"
+                placeholder="Choose cities..."
+                [fluid]="true">
+              </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Selected ({{ selectedChipsCities.length }}):</strong> <code>{{ selectedChipsCities | json }}</code>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('multi') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.multiChipsHtml, 'multi')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'multi'" [class.bi-check-lg]="copiedSection === 'multi'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.multiChipsHtml }}</code></pre>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Multi-Select with "Select All" & Limit -->
+    <div class="col-lg-6">
+      <div class="card example-card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-ui-checks-grid text-primary me-2"></i>3. Multi-Select with "Select All"</span>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('selectAll') === 'demo'" (click)="setTab('selectAll', 'demo')">Demo</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="getTab('selectAll') === 'html'" (click)="setTab('selectAll', 'html')">HTML</button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body p-3">
+          <ng-container *ngIf="getTab('selectAll') === 'demo'">
+            <p class="text-muted small mb-3">Renders a sticky header checkbox with <code>[showSelectAll]="true"</code> that selects all filtered items.</p>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Select Countries (Select All Enabled)</label>
+              <ngb-select
+                [options]="countries"
+                [(ngModel)]="selectedAllCountries"
+                optionLabel="name"
+                [dataKey]="'code'"
+                [multiple]="true"
+                [showSelectAll]="true"
+                [filter]="true"
+                filterBy="name,currency"
+                [showClear]="true"
+                placeholder="Choose countries..."
+                [fluid]="true">
+              </ngb-select>
+            </div>
+            <div class="p-2 bg-light rounded text-muted small">
+              <strong>Selected Count:</strong> <code>{{ selectedAllCountries.length }} / {{ countries.length }} countries</code>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="getTab('selectAll') === 'html'">
+            <div class="position-relative">
+              <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" (click)="copyCode(snippets.selectAllHtml, 'selectAll')">
+                <i class="bi" [class.bi-clipboard]="copiedSection !== 'selectAll'" [class.bi-check-lg]="copiedSection === 'selectAll'"></i>
+              </button>
+              <pre class="code-box m-0"><code>{{ snippets.selectAllHtml }}</code></pre>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Reactive Forms & Validation -->
     <div class="col-lg-6" id="reactive-forms">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-ui-checks text-success me-2"></i>Reactive Forms & Validation</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-check2-square text-success me-2"></i>4. Reactive Forms & Validation</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('reactive') === 'demo'" (click)="setTab('reactive', 'demo')">Demo</button>
@@ -163,9 +264,9 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('reactive') === 'demo'">
-            <p class="text-muted small">Implements <code>ControlValueAccessor</code> for seamless integration with Angular's <code>FormGroup</code> and <code>FormControl</code>.</p>
+            <p class="text-muted small mb-3">Implements <code>ControlValueAccessor</code> for seamless integration with Angular's <code>FormGroup</code> and <code>FormControl</code>.</p>
             <form [formGroup]="userForm" (ngSubmit)="submitReactiveForm()">
               <div class="mb-3">
                 <label class="form-label text-muted small fw-semibold">City (Required)</label>
@@ -201,11 +302,11 @@
       </div>
     </div>
 
-    <!-- 3. Filtering & Match Modes -->
+    <!-- 5. Filtering & Match Modes -->
     <div class="col-lg-6" id="filtering">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-search text-info me-2"></i>Filtering & Match Modes</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-search text-info me-2"></i>5. Filtering & Match Modes</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('filter') === 'demo'" (click)="setTab('filter', 'demo')">Demo</button>
@@ -215,7 +316,7 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('filter') === 'demo'">
             <div class="d-flex align-items-center justify-content-between mb-2">
               <label class="form-label text-muted small fw-semibold mb-0">Search Mode</label>
@@ -235,7 +336,7 @@
                 [filter]="true"
                 filterBy="name,code,currency"
                 [filterMatchMode]="filterMatchMode"
-                filterPlaceholder="Search by country, code or currency..."
+                filterPlaceholder="Search country, code or currency..."
                 [showClear]="true"
                 placeholder="Choose Country"
                 [fluid]="true">
@@ -258,11 +359,11 @@
       </div>
     </div>
 
-    <!-- 4. Custom Templating -->
+    <!-- 6. Custom Templating -->
     <div class="col-lg-6" id="templating">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-brush-fill text-warning me-2"></i>Custom Item & Selected Templating</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-brush-fill text-warning me-2"></i>6. Custom Item & Selected Templating</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('template') === 'demo'" (click)="setTab('template', 'demo')">Demo</button>
@@ -272,9 +373,9 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('template') === 'demo'">
-            <p class="text-muted small">Customize the dropdown list items (<code>#item</code>) and the selected input display (<code>#selectedItem</code>) with arbitrary HTML.</p>
+            <p class="text-muted small mb-3">Customize the dropdown items (<code>#item</code>) and trigger box (<code>#selectedItem</code>) with arbitrary HTML.</p>
             <div class="mb-3">
               <ngb-select
                 [options]="countries"
@@ -324,11 +425,11 @@
       </div>
     </div>
 
-    <!-- 5. Grouped Options -->
+    <!-- 7. Grouped Options -->
     <div class="col-lg-6" id="grouping">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-folder2-open text-danger me-2"></i>Grouped Options</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-folder2-open text-danger me-2"></i>7. Grouped Options</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('group') === 'demo'" (click)="setTab('group', 'demo')">Demo</button>
@@ -338,9 +439,9 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('group') === 'demo'">
-            <p class="text-muted small">Options can be categorized into sub-groups using <code>[group]="true"</code>, <code>optionGroupLabel</code>, and <code>optionGroupChildren</code>.</p>
+            <p class="text-muted small mb-3">Options can be categorized into sub-groups with <code>[group]="true"</code>, <code>optionGroupLabel</code>, and <code>optionGroupChildren</code>.</p>
             <div class="mb-3">
               <ngb-select
                 [options]="groupedCars"
@@ -370,11 +471,11 @@
       </div>
     </div>
 
-    <!-- 6. Editable Combobox -->
+    <!-- 8. Editable Combobox -->
     <div class="col-lg-6" id="editable">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-pencil-square text-primary me-2"></i>Editable Combobox</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-pencil-square text-primary me-2"></i>8. Editable Combobox</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('editable') === 'demo'" (click)="setTab('editable', 'demo')">Demo</button>
@@ -384,9 +485,9 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('editable') === 'demo'">
-            <p class="text-muted small">When <code>[editable]="true"</code>, the user can either select from the dropdown or freely type custom text into the input field.</p>
+            <p class="text-muted small mb-3">When <code>[editable]="true"</code>, the user can either select from the dropdown or freely type custom text into the field.</p>
             <div class="mb-3">
               <ngb-select
                 [options]="primitiveCities"
@@ -414,11 +515,11 @@
       </div>
     </div>
 
-    <!-- 7. Float Label -->
+    <!-- 9. Float Label -->
     <div class="col-lg-6" id="floating">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-layers-fill text-info me-2"></i>Bootstrap Floating Label</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-layers-fill text-info me-2"></i>9. Bootstrap Floating Label</span>
           <ul class="nav nav-pills">
             <li class="nav-item">
               <button class="nav-link" [class.active]="getTab('float') === 'demo'" (click)="setTab('float', 'demo')">Demo</button>
@@ -428,9 +529,9 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
           <ng-container *ngIf="getTab('float') === 'demo'">
-            <p class="text-muted small">Native support for Bootstrap's <code>.form-floating</code> CSS style.</p>
+            <p class="text-muted small mb-3">Native support for Bootstrap's <code>.form-floating</code> CSS pattern.</p>
             <div class="mb-3">
               <ngb-select
                 [options]="objectCities"
@@ -456,13 +557,13 @@
       </div>
     </div>
 
-    <!-- 8. Sizes & Variants -->
+    <!-- 10. Sizes & Variants -->
     <div class="col-lg-6" id="sizes">
       <div class="card example-card h-100">
-        <div class="card-header">
-          <i class="bi bi-aspect-ratio text-success me-2"></i>Sizes & Variants
+        <div class="card-header p-3">
+          <i class="bi bi-aspect-ratio text-success me-2"></i>10. Sizes & Variants
         </div>
-        <div class="card-body d-flex flex-column gap-3">
+        <div class="card-body p-3 d-flex flex-column gap-3">
           <div>
             <label class="form-label text-muted small fw-semibold">Small Size (<code>size="small"</code>)</label>
             <ngb-select [options]="objectCities" [(ngModel)]="sizeCity" optionLabel="name" size="small" [fluid]="true"></ngb-select>
@@ -479,17 +580,17 @@
       </div>
     </div>
 
-    <!-- 9. Loading State -->
+    <!-- 11. Loading State -->
     <div class="col-lg-6" id="loading">
       <div class="card example-card h-100">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <span><i class="bi bi-arrow-repeat text-secondary me-2"></i>Loading State & Async Fetch</span>
+        <div class="card-header d-flex align-items-center justify-content-between p-3">
+          <span><i class="bi bi-arrow-repeat text-secondary me-2"></i>11. Loading State & Async Fetch</span>
           <button class="btn btn-outline-primary btn-sm" (click)="reloadDynamicData()" [disabled]="isLoading">
             <i class="bi bi-arrow-clockwise me-1" [class.animate-spin]="isLoading"></i> Reload
           </button>
         </div>
-        <div class="card-body">
-          <p class="text-muted small">Displays a Bootstrap <code>.spinner-border</code> when <code>[loading]="true"</code>.</p>
+        <div class="card-body p-3">
+          <p class="text-muted small mb-3">Displays a Bootstrap <code>.spinner-border</code> when <code>[loading]="true"</code>.</p>
           <div class="mb-3">
             <ngb-select
               [options]="loadingCities"
@@ -505,14 +606,14 @@
       </div>
     </div>
 
-    <!-- 10. Large Dataset / Virtual Scrolling Alternative -->
+    <!-- 12. Large Dataset / Virtual Scrolling Alternative -->
     <div class="col-lg-6" id="virtual-scroll">
       <div class="card example-card h-100">
-        <div class="card-header">
-          <i class="bi bi-list-ol text-warning me-2"></i>Large Dataset (1,000 Items)
+        <div class="card-header p-3">
+          <i class="bi bi-list-ol text-warning me-2"></i>12. Large Dataset (1,000 Items)
         </div>
-        <div class="card-body">
-          <p class="text-muted small">Scrollable container with <code>scrollHeight="250px"</code> effortlessly rendering 1,000 items with search capabilities.</p>
+        <div class="card-body p-3">
+          <p class="text-muted small mb-3">Scrollable container with <code>scrollHeight="250px"</code> effortlessly rendering 1,000 items with search capabilities.</p>
           <div class="mb-3">
             <ngb-select
               [options]="largeDataset"
@@ -529,13 +630,13 @@
       </div>
     </div>
 
-    <!-- 11. Modern Angular Signals -->
+    <!-- 13. Modern Angular Signals -->
     <div class="col-12" id="signals">
       <div class="card example-card border-primary-subtle bg-primary-subtle bg-opacity-10">
-        <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-4">
+        <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-4">
           <div>
             <h5 class="fw-bold text-primary mb-1">
-              <i class="bi bi-lightning-charge-fill me-1 text-warning"></i> Modern Angular Signals
+              <i class="bi bi-lightning-charge-fill me-1 text-warning"></i> 13. Modern Angular Signals
             </h5>
             <p class="text-muted mb-0 small">Direct integration with Angular's reactive Signals primitives (<code>signal()</code> and <code>model()</code>).</p>
           </div>
@@ -566,6 +667,7 @@
         </h2>
         <p class="text-muted small mb-0">Detailed list of all Input properties, Output events, and Content Templates.</p>
       </div>
+      <span class="badge bg-light text-dark border">Version: v{{ appVersion }}</span>
     </div>
 
     <!-- API Tables Card -->
@@ -573,17 +675,17 @@
       <div class="card-header bg-body p-0">
         <ul class="nav nav-tabs border-bottom-0" role="tablist">
           <li class="nav-item">
-            <button class="nav-link active fw-semibold" data-bs-toggle="tab" data-bs-target="#inputs-tab">
+            <button class="nav-link active fw-semibold p-3" data-bs-toggle="tab" data-bs-target="#inputs-tab">
               <i class="bi bi-box-arrow-in-right me-1"></i> Properties (@Input)
             </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#outputs-tab">
+            <button class="nav-link fw-semibold p-3" data-bs-toggle="tab" data-bs-target="#outputs-tab">
               <i class="bi bi-box-arrow-up-right me-1"></i> Events (@Output)
             </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#templates-tab">
+            <button class="nav-link fw-semibold p-3" data-bs-toggle="tab" data-bs-target="#templates-tab">
               <i class="bi bi-brush me-1"></i> Templates (#refs)
             </button>
           </li>
@@ -607,6 +709,12 @@
                   <tr><td><code>options</code></td><td><code>any[]</code></td><td><code>[]</code></td><td>An array of objects or primitives to display as selectable options.</td></tr>
                   <tr><td><code>optionLabel</code></td><td><code>string</code></td><td><code>'label'</code></td><td>Field name to resolve the displayed label string of an option.</td></tr>
                   <tr><td><code>optionValue</code></td><td><code>string</code></td><td><code>'value'</code></td><td>Field name to resolve the bound value. If undefined, whole object is used.</td></tr>
+                  <tr><td><code>multiple</code></td><td><code>boolean</code></td><td><code>false</code></td><td>When true, enables multi-selection with checkbox controls. Model binds to an array.</td></tr>
+                  <tr><td><code>display</code></td><td><code>'comma' | 'chip'</code></td><td><code>'comma'</code></td><td>Defines display mode for multi-select: comma-separated text or removable badge chips.</td></tr>
+                  <tr><td><code>showSelectAll</code></td><td><code>boolean</code></td><td><code>false</code></td><td>When true, renders a "Select All" checkbox header in the overlay panel.</td></tr>
+                  <tr><td><code>selectionLimit</code></td><td><code>number</code></td><td><code>undefined</code></td><td>Maximum number of items the user is permitted to select.</td></tr>
+                  <tr><td><code>maxSelectedLabels</code></td><td><code>number</code></td><td><code>3</code></td><td>Threshold of selected item labels before switching to summary text.</td></tr>
+                  <tr><td><code>selectedItemsLabel</code></td><td><code>string</code></td><td><code>'&#123;0&#125; items selected'</code></td><td>Summary template displayed when selection exceeds <code>maxSelectedLabels</code>.</td></tr>
                   <tr><td><code>placeholder</code></td><td><code>string</code></td><td><code>undefined</code></td><td>Default placeholder text when no item is selected.</td></tr>
                   <tr><td><code>filter</code></td><td><code>boolean</code></td><td><code>false</code></td><td>When true, displays a search input field to filter items.</td></tr>
                   <tr><td><code>filterBy</code></td><td><code>string</code></td><td><code>undefined</code></td><td>Comma-separated list of fields to search against (e.g. <code>'name,code'</code>).</td></tr>
@@ -647,6 +755,8 @@
                   <tr><td><code>onShow</code></td><td><code>event: Event</code></td><td>Emitted when the dropdown panel opens.</td></tr>
                   <tr><td><code>onHide</code></td><td><code>event: Event</code></td><td>Emitted when the dropdown panel closes.</td></tr>
                   <tr><td><code>onClear</code></td><td><code>event: Event</code></td><td>Emitted when the clear icon is clicked.</td></tr>
+                  <tr><td><code>onSelectAllChange</code></td><td><code>event: SelectSelectAllChangeEvent</code></td><td>Emitted when "Select All" checkbox is toggled.</td></tr>
+                  <tr><td><code>onRemoveChip</code></td><td><code>event: SelectRemoveChipEvent</code></td><td>Emitted when a chip is removed via close button.</td></tr>
                   <tr><td><code>onLazyLoad</code></td><td><code>event: SelectLazyLoadEvent</code></td><td>Emitted when panel is scrolled near bottom for lazy loading.</td></tr>
                   <tr><td><code>overlayVisibleChange</code></td><td><code>visible: boolean</code></td><td>Enables two-way binding on <code>[(overlayVisible)]</code>.</td></tr>
                 </tbody>
@@ -668,6 +778,8 @@
                 <tbody>
                   <tr><td><code>#item</code></td><td><code>let-option</code></td><td>Custom template for each individual dropdown item.</td></tr>
                   <tr><td><code>#selectedItem</code></td><td><code>let-value</code></td><td>Custom template for displaying the currently selected value in the box.</td></tr>
+                  <tr><td><code>#chip</code></td><td><code>let-value</code></td><td>Custom template for rendering chips in multi-select mode.</td></tr>
+                  <tr><td><code>#headerCheckbox</code></td><td><code>let-checked</code></td><td>Custom template for rendering the "Select All" checkbox header.</td></tr>
                   <tr><td><code>#group</code></td><td><code>let-group</code></td><td>Custom template for option group headers.</td></tr>
                   <tr><td><code>#header</code></td><td>-</td><td>Injected above the search input and items list in the overlay.</td></tr>
                   <tr><td><code>#footer</code></td><td>-</td><td>Injected at the bottom of the dropdown overlay.</td></tr>
@@ -693,6 +805,6 @@
       <span>&bull;</span>
       <a href="https://opensource.org/licenses/MIT" class="text-decoration-none text-muted">MIT License</a>
     </div>
-    <p class="mb-0">Designed & built with <strong>Angular Standalone</strong> & <strong>Bootstrap 5</strong>.</p>
+    <p class="mb-0">Designed & built with <strong>Angular Standalone</strong> & <strong>Bootstrap 5</strong> &bull; v{{ appVersion }}</p>
   </footer>
 </div>

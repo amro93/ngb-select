@@ -48,5 +48,7 @@ To ensure WCAG compliance, the component must implement strict ARIA guidelines:
 - **Display Modes (Comma vs Chips):** Selected items can be rendered as comma-separated labels (e.g. `'New York, Rome'`) or removable Bootstrap badges/chips (`display="chip"`).
 - **Select All Header:** Optional sticky header checkbox (`showSelectAll="true"`) to toggle selection for all items, taking active search filter criteria into account.
 - **Selection Limits:** Restrict the maximum allowed selections using `selectionLimit`.
-- **Selected Items Summary:** Configurable threshold (`maxSelectedLabels`) displaying a concise summary (e.g. `'3 items selected'`) when multiple items exceed the threshold.
+- **RTL (Right-to-Left) & Arabic Support:** Built-in bidirectional support conforming to Bootstrap 5 RTL (`bootstrap.rtl.min.css` and `dir="rtl"`). Uses CSS logical utilities (`ms-*`, `me-*`, `ps-*`, `pe-*`) so triggers, carets, clear icons, search filters, and chips automatically mirror in RTL environments.
+- **Arabic Text Normalization & Filtering:** Intelligent Arabic search handling that normalizes Alef forms (`أ`, `إ`, `آ`, `ا`), Yaa forms (`ي`, `ى`), Taa Marbuta (`ة`, `ه`), and strips Arabic diacritics (Tashkeel) during client-side search.
+- **Arabic Showcase Demo:** Dedicated Arabic demo variant demonstrating RTL single/multi-select, Arabic grouped datasets (e.g. Arab League regions), and Arabic error states.
 - **Modern Forms & Signals:** First-class support for `FormControl`, `ReactiveFormsModule`, and Angular's modern `model()` Signals alongside standard `ngModel`.

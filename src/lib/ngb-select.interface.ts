@@ -1,3 +1,11 @@
+export type SelectSize = 'small' | 'medium' | 'large';
+
+export type SelectDisplayMode = 'comma' | 'chip';
+
+export type SelectVariant = 'filled' | 'outlined';
+
+export type SelectFilterMatchMode = 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals';
+
 export interface SelectOption {
   label?: string;
   value?: any;
@@ -9,12 +17,6 @@ export interface SelectOption {
   [key: string]: any; // Allow arbitrary custom metadata
 }
 
-export type SelectFilterMatchMode = 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals';
-
-export type SelectSize = 'small' | 'large';
-
-export type SelectVariant = 'filled' | 'outlined';
-
 export interface SelectChangeEvent<T = any> {
   originalEvent: Event | null;
   value: T;
@@ -25,8 +27,20 @@ export interface SelectFilterEvent {
   filter: string;
 }
 
+export interface SelectSelectAllChangeEvent {
+  originalEvent: Event;
+  checked: boolean;
+}
+
+export interface SelectRemoveChipEvent {
+  originalEvent: Event;
+  value: any;
+}
+
 export interface SelectLazyLoadEvent {
   first: number;
   last: number;
   [key: string]: any;
 }
+
+export const NGB_SELECT_VERSION = '0.1.1';

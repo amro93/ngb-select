@@ -133,6 +133,23 @@ Enable multiple selection, "Select All" header, and removable chip badges:
 </ngb-select>
 ```
 
+### 6. RTL (Right-to-Left) & Arabic Support
+Full compatibility with Bootstrap 5 RTL and Arabic search text normalization:
+```html
+<div dir="rtl" lang="ar">
+  <ngb-select 
+    [options]="arabicCountries" 
+    [(ngModel)]="selectedCountry" 
+    optionLabel="name" 
+    optionValue="code"
+    [filter]="true"
+    filterPlaceholder="ابحث عن دولة..."
+    placeholder="اختر الدولة"
+    emptyMessage="لا توجد نتائج">
+  </ngb-select>
+</div>
+```
+
 ## 📖 Deep-Dive Documentation
 For full API property lists, architecture decisions, and implementation strategies, refer to the [docs/](./docs) directory:
 - [Architecture & Features](./01-architecture-and-features.md)

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbSelectComponent } from '../lib/ngb-select.component';
 import { SelectOption, SelectFilterMatchMode } from '../lib/ngb-select.interface';
+import { APP_VERSION } from '../version';
 
 interface City {
   name: string;
@@ -24,6 +25,9 @@ interface Country {
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
+  // App Version bound to templates
+  public readonly appVersion = APP_VERSION;
+
   // Theme state
   isDarkMode = false;
 
@@ -46,7 +50,13 @@ export class App implements OnInit {
     city: new FormControl<City | null>(null, [Validators.required])
   });
 
-  // 3. Filtering & Match Modes
+  // 3. Multi-Select (Comma & Chips)
+  selectedMultiCities: City[] = [this.objectCities[0], this.objectCities[1]];
+  selectedChipsCities: City[] = [this.objectCities[0], this.objectCities[2], this.objectCities[4]];
+  selectedAllCountries: Country[] = [];
+  selectedLimitedCities: City[] = [this.objectCities[0]];
+
+  // 4. Filtering & Match Modes
   countries: Country[] = [
     { name: 'Australia', code: 'AU', flag: '🇦🇺', currency: 'AUD' },
     { name: 'Brazil', code: 'BR', flag: '🇧🇷', currency: 'BRL' },
@@ -63,10 +73,10 @@ export class App implements OnInit {
   selectedCountryFilter: string | null = 'SA';
   filterMatchMode: SelectFilterMatchMode = 'contains';
 
-  // 4. Custom Templating
+  // 5. Custom Templating
   selectedCountryTemplate: Country | null = this.countries[8];
 
-  // 5. Grouped Options
+  // 6. Grouped Options
   groupedCars = [
     {
       label: 'Germany',
@@ -100,28 +110,28 @@ export class App implements OnInit {
   ];
   selectedGroupedCar: string | null = 'Porsche';
 
-  // 6. Editable (Combobox)
+  // 7. Editable (Combobox)
   editableCity: string = 'San Francisco';
 
-  // 7. Float Label
+  // 8. Float Label
   floatCity: City | null = null;
 
-  // 8. Sizes & Variants
+  // 9. Sizes & Variants
   sizeCity: City | null = this.objectCities[0];
 
-  // 9. Loading State (Simulated API Fetch)
+  // 10. Loading State (Simulated API Fetch)
   loadingCities: City[] = [];
   isLoading = false;
   selectedLoadingCity: string | null = null;
 
-  // 10. Large Dataset / Virtual Scrolling Alternative
+  // 11. Large Dataset / Virtual Scrolling Alternative
   largeDataset: { label: string; value: number }[] = [];
   selectedLargeItem: number | null = null;
 
-  // 11. Focus on Open Index
+  // 12. Focus on Open Index
   focusCity: string | null = null;
 
-  // 12. Angular Signals Binding
+  // 13. Angular Signals Binding
   signalCity = signal<string>('TOK');
 
   // Code Tab state for examples
@@ -129,7 +139,6 @@ export class App implements OnInit {
   copiedSection: string | null = null;
 
   ngOnInit(): void {
-    // Generate 1000 items
     for (let i = 1; i <= 1000; i++) {
       this.largeDataset.push({ label: `Option Item #${i}`, value: i });
     }
@@ -183,6 +192,7 @@ export class App implements OnInit {
   placeholder="Select a City"
   [fluid]="true">
 </ngb-select>`,
+
     basicTs: `cities = [
   { name: 'New York', code: 'NY' },
   { name: 'Rome', code: 'RM' },
@@ -190,6 +200,40 @@ export class App implements OnInit {
   { name: 'Paris', code: 'PRS' }
 ];
 selectedCity = null;`,
+
+    multiCommaHtml: `<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCities" 
+  optionLabel="name" 
+  [multiple]="true"
+  [display]="'comma'"
+  [maxSelectedLabels]="3"
+  [showClear]="true"
+  placeholder="Select Multiple Cities"
+  [fluid]="true">
+</ngb-select>`,
+
+    multiChipsHtml: `<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCities" 
+  optionLabel="name" 
+  [multiple]="true"
+  [display]="'chip'"
+  [showClear]="true"
+  placeholder="Select Cities (Chips Mode)"
+  [fluid]="true">
+</ngb-select>`,
+
+    selectAllHtml: `<ngb-select 
+  [options]="countries" 
+  [(ngModel)]="selectedCountries" 
+  optionLabel="name" 
+  [multiple]="true"
+  [showSelectAll]="true"
+  [filter]="true"
+  placeholder="Select All Countries"
+  [fluid]="true">
+</ngb-select>`,
 
     reactiveHtml: `<form [formGroup]="userForm" (ngSubmit)="submit()">
   <ngb-select 

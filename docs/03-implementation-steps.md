@@ -198,18 +198,38 @@ The filtering mechanism should use a case-insensitive includes check.
   public filteredOptions: any[] = [];
   public filterValue: string = '';
 
+  @Input() filterNormalizeArabic: boolean = true;
+
   onFilterChange(event: Event): void {
     const rawValue = (event.target as HTMLInputElement).value;
-    this.filterValue = (rawValue || '').toLowerCase();
+    this.filterValue = this.processFilterString(rawValue || '');
     
     if (!this.filterValue) {
       this.filteredOptions = [...this.safeOptions];
     } else {
       this.filteredOptions = this.safeOptions.filter(opt => {
         const label = this.resolveOptionLabel(opt) || '';
-        return label.toString().toLowerCase().includes(this.filterValue);
+        const processedLabel = this.processFilterString(label.toString());
+        return processedLabel.includes(this.filterValue);
       });
     }
+  }
+
+  private processFilterString(str: string): string {
+    let result = str.toLowerCase();
+    if (this.filterNormalizeArabic) {
+      result = this.normalizeArabicText(result);
+    }
+    return result;
+  }
+
+  // Normalizes Arabic variants (Alef, Yaa, Taa Marbuta) & removes Tashkeel
+  private normalizeArabicText(text: string): string {
+    return text
+      .replace(/[\u064B-\u065F\u0670]/g, '') // Remove Arabic Tashkeel diacritics
+      .replace(/[إأآا]/g, 'ا') // Normalize Alef
+      .replace(/[يى]/g, 'ي')  // Normalize Yaa
+      .replace(/[ة]/g, 'ه');   // Normalize Taa Marbuta
   }
 ```
 
@@ -321,4 +341,115 @@ Demonstrating ARIA roles, float label integration, and template outlets.
     </ng-container>
   </div>
 </div>
+```
+
+---
+
+## 5. Arabic RTL Showcase Component Specification
+
+For the demo application, an Arabic RTL showcase component demonstrates complete bidirectional functionality with localized Arabic mock datasets:
+
+```typescript
+@Component({
+  selector: 'app-arabic-demo',
+  standalone: true,
+  imports: [NgbSelectComponent, FormsModule, ReactiveFormsModule, CommonModule],
+  template: `
+    <div class="card p-4 shadow-sm" dir="rtl" lang="ar">
+      <h3 class="mb-4">تجربة المكون باللغة العربية (RTL Showcase)</h3>
+
+      <!-- 1. Single Select Arabic -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">اختر دولة عربية:</label>
+        <ngb-select 
+          [options]="arabicCountries" 
+          [(ngModel)]="selectedCountry" 
+          optionLabel="name" 
+          optionValue="code"
+          [filter]="true"
+          filterPlaceholder="ابحث عن دولة..."
+          placeholder="-- اختر الدولة --"
+          emptyMessage="لا توجد نتائج"
+          emptyFilterMessage="لم يتم العثور على نتائج مطابقة">
+        </ngb-select>
+      </div>
+
+      <!-- 2. Multi-Select Arabic with Chips & Select All -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">اختر المدن (تحديد متعدد مع وسوم):</label>
+        <ngb-select 
+          [options]="arabicCities" 
+          [(ngModel)]="selectedCities" 
+          optionLabel="name" 
+          optionValue="id"
+          [multiple]="true"
+          display="chip"
+          [showSelectAll]="true"
+          selectAllLabel="تحديد الكل"
+          selectedItemsLabel="{0} مدن محددة"
+          [filter]="true"
+          filterPlaceholder="ابحث عن مدينة..."
+          placeholder="اختر المدن المراد زيارتها">
+        </ngb-select>
+      </div>
+
+      <!-- 3. Grouped Options Arabic -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">خيارات مجمعة حسب المنطقة:</label>
+        <ngb-select 
+          [options]="groupedRegions" 
+          [(ngModel)]="selectedRegionCity" 
+          [group]="true"
+          optionGroupLabel="region" 
+          optionGroupChildren="cities"
+          optionLabel="name"
+          placeholder="اختر المنطقة والمدينة">
+        </ngb-select>
+      </div>
+    </div>
+  `
+})
+export class ArabicDemoComponent {
+  selectedCountry: string = 'SA';
+  selectedCities: number[] = [1, 2];
+  selectedRegionCity: any = null;
+
+  arabicCountries = [
+    { name: 'المملكة العربية السعودية', code: 'SA' },
+    { name: 'الإمارات العربية المتحدة', code: 'AE' },
+    { name: 'جمهورية مصر العربية', code: 'EG' },
+    { name: 'المملكة الأردنية الهاشمية', code: 'JO' },
+    { name: 'دولة الكويت', code: 'KW' },
+    { name: 'دولة قطر', code: 'QA' },
+    { name: 'سلطنة عمان', code: 'OM' }
+  ];
+
+  arabicCities = [
+    { id: 1, name: 'الرياض' },
+    { id: 2, name: 'دبي' },
+    { id: 3, name: 'القاهرة' },
+    { id: 4, name: 'عمان' },
+    { id: 5, name: 'الدوحة' },
+    { id: 6, name: 'مسقط' }
+  ];
+
+  groupedRegions = [
+    {
+      region: 'دول الخليج العربي',
+      cities: [
+        { name: 'الرياض', code: 'RUH' },
+        { name: 'أبوظبي', code: 'AUH' },
+        { name: 'الكويت', code: 'KWI' }
+      ]
+    },
+    {
+      region: 'بلاد الشام وشمال أفريقيا',
+      cities: [
+        { name: 'القاهرة', code: 'CAI' },
+        { name: 'عمان', code: 'AMM' },
+        { name: 'بيروت', code: 'BEY' }
+      ]
+    }
+  ];
+}
 ```
