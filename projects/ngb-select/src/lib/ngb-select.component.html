@@ -183,18 +183,21 @@
                 type="button"
                 class="dropdown-item d-flex align-items-center py-2 px-3"
                 [class.active]="!multiple && isSelected(option)"
+                [class.bg-light]="multiple && isSelected(option)"
+                [class.fw-semibold]="multiple && isSelected(option)"
                 [class.disabled]="isOptionDisabled(option)"
                 [disabled]="isOptionDisabled(option)"
                 role="option"
                 [attr.aria-selected]="isSelected(option)"
+                [attr.aria-checked]="multiple ? isSelected(option) : null"
                 (click)="onOptionClick(option, $event)">
-          <!-- Checkbox in Multiple Mode -->
+          <!-- Checkbox in Multiple Mode synced to selection -->
           <input *ngIf="multiple"
                  type="checkbox"
-                 class="form-check-input me-2 mt-0 pointer-events-none"
+                 class="form-check-input me-2 mt-0"
+                 style="pointer-events: none;"
                  [checked]="isSelected(option)"
-                 tabindex="-1"
-                 (click)="$event.stopPropagation()">
+                 tabindex="-1">
           <ng-container *ngIf="itemTemplate; else defaultItemTpl">
             <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"></ng-container>
           </ng-container>
@@ -211,18 +214,21 @@
               type="button"
               class="dropdown-item d-flex align-items-center py-2 px-3"
               [class.active]="!multiple && isSelected(option)"
+              [class.bg-light]="multiple && isSelected(option)"
+              [class.fw-semibold]="multiple && isSelected(option)"
               [class.disabled]="isOptionDisabled(option)"
               [disabled]="isOptionDisabled(option)"
               role="option"
               [attr.aria-selected]="isSelected(option)"
+              [attr.aria-checked]="multiple ? isSelected(option) : null"
               (click)="onOptionClick(option, $event)">
-        <!-- Checkbox in Multiple Mode -->
+        <!-- Checkbox in Multiple Mode synced to selection -->
         <input *ngIf="multiple"
                type="checkbox"
-               class="form-check-input me-2 mt-0 pointer-events-none"
+               class="form-check-input me-2 mt-0"
+               style="pointer-events: none;"
                [checked]="isSelected(option)"
-               tabindex="-1"
-               (click)="$event.stopPropagation()">
+               tabindex="-1">
         <ng-container *ngIf="itemTemplate; else defaultFlatItemTpl">
           <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"></ng-container>
         </ng-container>

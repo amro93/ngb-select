@@ -592,5 +592,31 @@ describe('NgbSelectComponent', () => {
       expect(selectComponent.value.length).toBe(2);
       expect(selectComponent.value).toEqual(['NY', 'RM']);
     });
+
+    it('should strictly sync checkbox checked state with selected options in multiple mode', async () => {
+      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+        host.multiple = true;
+      });
+      hostComponent.form.get('selectedCity')?.setValue(['RM']);
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const checkboxes = fixture.debugElement.queryAll(By.css('.dropdown-item input[type="checkbox"]'));
+      expect(checkboxes.length).toBe(4);
+      expect(checkboxes[0].nativeElement.checked).toBe(false); // NY
+      expect(checkboxes[1].nativeElement.checked).toBe(true);  // RM
+      expect(checkboxes[2].nativeElement.checked).toBe(false); // LDN
+      expect(checkboxes[3].nativeElement.checked).toBe(false); // PRS
+
+      // Click on New York row
+      const items = fixture.debugElement.queryAll(By.css('.dropdown-item'));
+      items[0].nativeElement.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(checkboxes[0].nativeElement.checked).toBe(true);
+      expect(checkboxes[1].nativeElement.checked).toBe(true);
+    });
   });
 });

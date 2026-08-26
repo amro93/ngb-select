@@ -321,8 +321,18 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   areValuesEqual(val1: any, val2: any): boolean {
     if (val1 === val2) return true;
     if (val1 === null || val1 === undefined || val2 === null || val2 === undefined) return false;
-    if (this.dataKey && typeof val1 === 'object' && typeof val2 === 'object') {
-      return val1[this.dataKey] === val2[this.dataKey];
+    if (typeof val1 === 'object' && typeof val2 === 'object') {
+      if (this.dataKey && val1[this.dataKey] !== undefined && val2[this.dataKey] !== undefined) {
+        return val1[this.dataKey] === val2[this.dataKey];
+      }
+      if (this.optionValue && val1[this.optionValue] !== undefined && val2[this.optionValue] !== undefined) {
+        return val1[this.optionValue] === val2[this.optionValue];
+      }
+      try {
+        return JSON.stringify(val1) === JSON.stringify(val2);
+      } catch {
+        return false;
+      }
     }
     return false;
   }
