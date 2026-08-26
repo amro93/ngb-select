@@ -1,7 +1,7 @@
 # Ngb-Select (Angular Bootstrap Select Component)
 
 [![NPM Version](https://img.shields.io/npm/v/ngb-select.svg)](https://www.npmjs.com/package/ngb-select)
-[![CI/CD Pipeline](https://github.com/amro/ngb-select/actions/workflows/deploy.yml/badge.svg)](https://github.com/amro/ngb-select/actions)
+[![CI/CD Pipeline](https://github.com/amro93/ngb-select/actions/workflows/deploy.yml/badge.svg)](https://github.com/amro93/ngb-select/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A comprehensive, lightweight Angular Standalone select component that utilizes **pure Bootstrap 5 classes** (no external UI libraries required). It covers all advanced features found in the PrimeNG Select component, optimized for standard Bootstrap environments.
@@ -218,8 +218,8 @@ For full API property lists, architecture decisions, and implementation strategi
 
 ## 🧪 Live Preview & Sandbox
 
-- [View GitHub Pages Live Demo](https://amro.github.io/ngb-select/)
-- [Play with it on StackBlitz](https://stackblitz.com/github/amro/ngb-select/tree/main)
+- [View GitHub Pages Live Demo](https://amro93.github.io/ngb-select/)
+- [Play with it on StackBlitz](https://stackblitz.com/github/amro93/ngb-select)
 
 ## 🤝 Contributing
 

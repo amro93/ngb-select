@@ -855,8 +855,8 @@ Demonstrates using `appendTo="body"` to break out of modal dialog scroll boundar
   Open Edit Modal
 </button>
 
-<!-- Modal Dialog -->
-<div class="modal fade" id="editModal" tabindex="-1">
+<!-- Modal Dialog (data-bs-focus="false" allows body-appended dropdown searching) -->
+<div class="modal fade" id="editModal" data-bs-focus="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

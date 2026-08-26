@@ -8,3 +8,10 @@ body {
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
+
+/* Global dropdown focus highlighting */
+.dropdown-item.focus,
+.dropdown-item.focused {
+  color: var(--bs-dropdown-link-hover-color, inherit);
+  background-color: var(--bs-dropdown-link-hover-bg, var(--bs-tertiary-bg, #e9ecef)) !important;
+}

@@ -42,7 +42,10 @@
           >
             <ng-container *ngIf="chipTemplate; else defaultTriggerChipTpl">
               <ng-container
-                *ngTemplateOutlet="chipTemplate; context: { $implicit: val }"
+                *ngTemplateOutlet="
+                  chipTemplate;
+                  context: { $implicit: findOptionByValue(val) ?? val, value: val }
+                "
               ></ng-container>
             </ng-container>
             <ng-template #defaultTriggerChipTpl>
@@ -112,7 +115,10 @@
             >
               <ng-container *ngIf="chipTemplate; else defaultChipTpl">
                 <ng-container
-                  *ngTemplateOutlet="chipTemplate; context: { $implicit: val }"
+                  *ngTemplateOutlet="
+                    chipTemplate;
+                    context: { $implicit: findOptionByValue(val) ?? val, value: val }
+                  "
                 ></ng-container>
               </ng-container>
               <ng-template #defaultChipTpl>
@@ -135,7 +141,7 @@
                 <ng-container
                   *ngTemplateOutlet="
                     selectedItemTemplate || labelTemplate;
-                    context: { $implicit: value }
+                    context: { $implicit: findOptionByValue(value) ?? value, value: value }
                   "
                 ></ng-container>
               </ng-container>
@@ -194,7 +200,7 @@
   <!-- Overlay Dropdown Menu -->
   <div
     #dropdownMenu
-    class="dropdown-menu w-100 shadow-sm p-0"
+    class="dropdown-menu shadow-sm p-0"
     [class.show]="overlayVisible"
     [ngStyle]="panelStyle"
     [ngClass]="panelStyleClass"
@@ -262,7 +268,9 @@
     <ng-container *ngIf="group; else flatOptionsTpl">
       <div *ngFor="let groupOption of filteredOptions">
         <!-- Group Header -->
-        <h6 class="dropdown-header text-muted py-2 px-3 m-0 bg-light bg-opacity-75">
+        <h6
+          class="dropdown-header text-muted py-2 px-3 m-0 bg-light bg-opacity-75 d-flex align-items-center"
+        >
           <ng-container *ngIf="groupTemplate; else defaultGroupHeaderTpl">
             <ng-container
               *ngTemplateOutlet="groupTemplate; context: { $implicit: groupOption }"
@@ -281,6 +289,8 @@
           [class.active]="!multiple && isSelected(option)"
           [class.bg-light]="multiple && isSelected(option)"
           [class.fw-semibold]="multiple && isSelected(option)"
+          [class.focus]="isOptionFocused(option)"
+          [class.bg-body-secondary]="isOptionFocused(option) && !isSelected(option)"
           [class.disabled]="isOptionDisabled(option)"
           [disabled]="isOptionDisabled(option)"
           role="option"
@@ -297,12 +307,12 @@
             [checked]="isSelected(option)"
             tabindex="-1"
           />
-          <ng-container *ngIf="itemTemplate; else defaultItemTpl">
+          <ng-container *ngIf="itemTemplate; else defaultGroupItemTpl">
             <ng-container
               *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"
             ></ng-container>
           </ng-container>
-          <ng-template #defaultItemTpl>
+          <ng-template #defaultGroupItemTpl>
             <span>{{ resolveOptionLabel(option) }}</span>
           </ng-template>
         </button>
@@ -318,6 +328,8 @@
         [class.active]="!multiple && isSelected(option)"
         [class.bg-light]="multiple && isSelected(option)"
         [class.fw-semibold]="multiple && isSelected(option)"
+        [class.focus]="isOptionFocused(option)"
+        [class.bg-body-secondary]="isOptionFocused(option) && !isSelected(option)"
         [class.disabled]="isOptionDisabled(option)"
         [disabled]="isOptionDisabled(option)"
         role="option"

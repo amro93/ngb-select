@@ -43,6 +43,7 @@ import { NgbSelectComponent } from './ngb-select.component';
         [focusOnOpen]="focusOnOpen"
         [focusOnOpenStrategy]="focusOnOpenStrategy"
         [dir]="dir"
+        [appendTo]="appendTo"
         [(overlayVisible)]="overlayVisible"
         (onChange)="onSelectChange($event)"
         (onFilter)="onFilterChange($event)"
@@ -54,6 +55,7 @@ import { NgbSelectComponent } from './ngb-select.component';
 })
 class TestHostComponent {
   dir?: 'ltr' | 'rtl' | 'auto';
+  appendTo?: 'body' | HTMLElement | string;
   options: any[] = [
     { name: 'New York', code: 'NY' },
     { name: 'Rome', code: 'RM' },
@@ -753,6 +755,69 @@ describe('NgbSelectComponent', () => {
 
       const container = fixture.debugElement.query(By.css('.ngb-select-container'));
       expect(container.nativeElement.getAttribute('dir')).toBe('rtl');
+    });
+
+    it('should support grouped options in RTL layout', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.dir = 'rtl';
+        host.group = true;
+        host.optionGroupLabel = 'label';
+        host.optionGroupChildren = 'items';
+        host.options = [
+          {
+            label: 'دول الخليج العربي',
+            items: [
+              { id: 1, label: 'الرياض' },
+              { id: 2, label: 'أبوظبي' },
+            ],
+          },
+        ];
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      const headerEl = fixture.debugElement.query(By.css('.dropdown-header')).nativeElement;
+      expect(headerEl).toBeTruthy();
+      expect(headerEl.classList.contains('d-flex')).toBe(true);
+      expect(headerEl.textContent.trim()).toBe('دول الخليج العربي');
+    });
+
+    it('should highlight focused option with focus and bg-body-secondary classes during keyboard traversal', () => {
+      const { fixture, selectComponent } = createComponent();
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      // Trigger ArrowDown to focus item 0
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      container.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+      fixture.detectChanges();
+
+      expect(selectComponent.focusedIndex).toBe(0);
+      const items = fixture.debugElement.queryAll(By.css('.dropdown-item[role="option"]'));
+      expect(items[0].nativeElement.classList.contains('focus')).toBe(true);
+      expect(items[0].nativeElement.classList.contains('bg-body-secondary')).toBe(true);
+
+      // Move to item 1
+      container.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+      fixture.detectChanges();
+
+      expect(selectComponent.focusedIndex).toBe(1);
+      expect(items[1].nativeElement.classList.contains('focus')).toBe(true);
+      expect(items[1].nativeElement.classList.contains('bg-body-secondary')).toBe(true);
+    });
+
+    it('should set z-index 1060 when appendTo="body"', async () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.appendTo = 'body';
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 20));
+      fixture.detectChanges();
+
+      const dropdown = selectComponent.dropdownMenuElement?.nativeElement;
+      expect(dropdown).toBeTruthy();
+      expect(dropdown?.style.zIndex).toBe('1060');
     });
   });
 });

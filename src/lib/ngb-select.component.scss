@@ -159,8 +159,12 @@
         padding-right: 0.75rem;
         align-items: center;
 
-        &.form-select-sm { min-height: 31px; }
-        &.form-select-lg { min-height: 48px; }
+        &.form-select-sm {
+          min-height: 31px;
+        }
+        &.form-select-lg {
+          min-height: 48px;
+        }
       }
 
       > label {
@@ -192,36 +196,6 @@
     }
   }
 
-  .dropdown-menu {
-    top: 100%;
-    left: 0;
-    margin-top: 0.125rem;
-    z-index: 1050;
-
-    .dropdown-item {
-      cursor: pointer;
-      white-space: normal;
-      word-break: break-word;
-
-      &.disabled,
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
-
-      &.focused:not(.active) {
-        background-color: var(--bs-tertiary-bg, #f8f9fa);
-      }
-    }
-
-    .dropdown-header {
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-  }
-
   .ngb-select-clear-icon,
   .ngb-select-dropdown-icon {
     cursor: pointer;
@@ -247,5 +221,49 @@
     &:hover {
       opacity: 1;
     }
+  }
+}
+
+.dropdown-menu {
+  top: 100%;
+  left: 0;
+  width: 100%;
+  min-width: 100%;
+  margin-top: 0.125rem;
+  z-index: 1060;
+  box-sizing: border-box;
+  text-align: inherit;
+
+  .dropdown-item {
+    cursor: pointer;
+    white-space: normal;
+    word-break: break-word;
+    text-align: inherit;
+
+    &.disabled,
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &.focus,
+    &.focused,
+    &:focus {
+      color: var(--bs-dropdown-link-hover-color, inherit);
+      background-color: var(--bs-dropdown-link-hover-bg, var(--bs-tertiary-bg, #e9ecef)) !important;
+    }
+
+    &.active {
+      color: var(--bs-dropdown-link-active-color, #fff) !important;
+      background-color: var(--bs-dropdown-link-active-bg, #0d6efd) !important;
+    }
+  }
+
+  .dropdown-header {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-align: inherit;
   }
 }

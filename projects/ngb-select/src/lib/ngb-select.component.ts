@@ -398,6 +398,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       }
       this.handleFocusOnOpen();
       this.handleAppendTo();
+      this.cdr.markForCheck();
     });
   }
 
@@ -413,6 +414,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       this.updateFilteredOptions();
     }
     this.focusedIndex = -1;
+    this.cdr.markForCheck();
   }
 
   private handleFocusOnOpen(): void {
@@ -737,7 +739,12 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   onFilterKeydown(event: KeyboardEvent): void {
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter') {
+    if (
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowUp' ||
+      event.key === 'Enter' ||
+      event.key === 'Escape'
+    ) {
       this.onKeydown(event);
     }
   }
@@ -772,6 +779,16 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     }
   }
 
+  isOptionFocused(option: any): boolean {
+    if (this.focusedIndex < 0) return false;
+    const flat = this.getFlatFilteredOptions();
+    if (this.focusedIndex >= flat.length) return false;
+    return this.areValuesEqual(
+      this.resolveOptionValue(flat[this.focusedIndex]),
+      this.resolveOptionValue(option),
+    );
+  }
+
   onOverlayScroll(event: Event): void {
     if (!this.lazy) return;
     const target = event.target as HTMLElement;
@@ -803,15 +820,18 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     dropdown.style.top = `${triggerRect.bottom + 2}px`;
     dropdown.style.left = `${triggerRect.left}px`;
     dropdown.style.width = `${triggerRect.width}px`;
+    dropdown.style.minWidth = `${triggerRect.width}px`;
+    dropdown.style.maxWidth = `${triggerRect.width}px`;
+    dropdown.style.boxSizing = 'border-box';
+    dropdown.style.zIndex = '1060';
   }
 
   private cleanAppendTo(): void {
-    if (
-      this.appendTo &&
-      this.dropdownMenuElement &&
-      this.dropdownMenuElement.nativeElement.parentElement === document.body
-    ) {
-      document.body.removeChild(this.dropdownMenuElement.nativeElement);
+    if (this.appendTo && this.dropdownMenuElement) {
+      const el = this.dropdownMenuElement.nativeElement;
+      if (el.parentElement) {
+        el.parentElement.removeChild(el);
+      }
     }
   }
 
@@ -831,6 +851,20 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     } else {
       const trigger = this.elementRef.nativeElement.querySelector('.form-select');
       if (trigger) trigger.focus();
+    }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (this.overlayVisible && this.appendTo) {
+      this.repositionOverlay();
+    }
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (this.overlayVisible && this.appendTo) {
+      this.repositionOverlay();
     }
   }
 

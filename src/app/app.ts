@@ -457,6 +457,14 @@ export class App implements OnInit {
     }
   }
 
+  onAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.src =
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="%230d6efd"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="sans-serif" font-size="24" font-weight="bold">U</text></svg>';
+    }
+  }
+
   // --- Code Snippet Helpers ---
   snippets = {
     basicHtml: `<ngb-select 
@@ -513,7 +521,7 @@ selectedCity = null;`,
   [options]="cities" 
   [(ngModel)]="selectedCity" 
   optionLabel="name" 
-  [focusOnOpen]="3"
+  [focusOnOpen]="3" 
   [focusOnOpenStrategy]="'always'" 
   placeholder="Open to auto-focus index 3 (Istanbul)"
   [fluid]="true">
@@ -743,7 +751,7 @@ signalCity = signal<string>('TOK');`,
   </ng-template>
 </ngb-select>`,
 
-    tableEditHtml: `<!-- Table Cell In-Place Inline Editing -->
+    tableEditHtml: `<!-- Table Cell In-Place Inline Editing with Floating Dropdown -->
 <table class="table table-hover align-middle">
   <thead>
     <tr>
@@ -763,6 +771,7 @@ signalCity = signal<string>('TOK');`,
           size="small"
           optionLabel="label"
           optionValue="value"
+          appendTo="body"
           [fluid]="true">
         </ngb-select>
       </td>
@@ -770,11 +779,11 @@ signalCity = signal<string>('TOK');`,
   </tbody>
 </table>`,
 
-    modalHtml: `<!-- Bootstrap Modal with appendTo="body" -->
+    modalHtml: `<!-- Bootstrap Modal with appendTo="body" (data-bs-focus="false" allows body dropdown search) -->
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#demoModal">
   Open Modal Dialog
 </button>
-<div class="modal fade" id="demoModal" tabindex="-1">
+<div class="modal fade" id="demoModal" data-bs-focus="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -809,7 +818,7 @@ signalCity = signal<string>('TOK');`,
   [fluid]="true">
   <ng-template #chip let-user>
     <div class="d-inline-flex align-items-center gap-1">
-      <img [src]="user.avatar" class="rounded-circle" width="18" height="18" />
+      <img [src]="user.avatar" [alt]="user.name" class="rounded-circle" width="18" height="18" />
       <span class="fw-semibold">{{ user.name }}</span>
       <span class="badge bg-primary-subtle text-primary ms-1">{{ user.team }}</span>
     </div>

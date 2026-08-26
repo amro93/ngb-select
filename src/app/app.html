@@ -1315,13 +1315,17 @@
             <div class="card-body p-3">
               <ng-container *ngIf="getTab('float') === 'demo'">
                 <p class="text-muted small mb-3">
-                  Select supports 3 distinct floating label variants configured via <code>[floatLabel]="true"</code> and <code>floatLabelVariant="on" | "in" | "over"</code>:
+                  Select supports 3 distinct floating label variants configured via
+                  <code>[floatLabel]="true"</code> and
+                  <code>floatLabelVariant="on" | "in" | "over"</code>:
                 </p>
 
                 <!-- Variant 1: "on" (Outlined Border-Notched) -->
                 <div class="mb-4">
                   <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="form-label text-muted small fw-bold mb-0">1. Outlined Border (<code>floatLabelVariant="on"</code> - Default)</label>
+                    <label class="form-label text-muted small fw-bold mb-0"
+                      >1. Outlined Border (<code>floatLabelVariant="on"</code> - Default)</label
+                    >
                     <span class="badge bg-primary-subtle text-primary">Notched on Border</span>
                   </div>
                   <ngb-select
@@ -1332,13 +1336,31 @@
                     floatLabelVariant="on"
                     [showClear]="true"
                     placeholder="Destination City (on)"
-                    [fluid]="true">
+                    [fluid]="true"
+                  >
                   </ngb-select>
-                  <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded small mt-2">
-                    <span><strong>Value:</strong> <code>{{ floatCityOn ? floatCityOn.name : 'None' }}</code></span>
+                  <div
+                    class="d-flex align-items-center justify-content-between p-2 bg-light rounded small mt-2"
+                  >
+                    <span
+                      ><strong>Value:</strong>
+                      <code>{{ floatCityOn ? floatCityOn.name : 'None' }}</code></span
+                    >
                     <div class="d-flex gap-1">
-                      <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" (click)="floatCityOn = objectCities[0]">Set NY</button>
-                      <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" (click)="floatCityOn = null">Clear</button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-outline-secondary py-0 px-2"
+                        (click)="floatCityOn = objectCities[0]"
+                      >
+                        Set NY
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-outline-secondary py-0 px-2"
+                        (click)="floatCityOn = null"
+                      >
+                        Clear
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1346,8 +1368,12 @@
                 <!-- Variant 2: "in" (Classic Bootstrap In-Box) -->
                 <div class="mb-4">
                   <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="form-label text-muted small fw-bold mb-0">2. In-Box Floating (<code>floatLabelVariant="in"</code>)</label>
-                    <span class="badge bg-secondary-subtle text-secondary-emphasis">Inside Box</span>
+                    <label class="form-label text-muted small fw-bold mb-0"
+                      >2. In-Box Floating (<code>floatLabelVariant="in"</code>)</label
+                    >
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis"
+                      >Inside Box</span
+                    >
                   </div>
                   <ngb-select
                     [options]="objectCities"
@@ -1357,13 +1383,31 @@
                     floatLabelVariant="in"
                     [showClear]="true"
                     placeholder="Destination City (in)"
-                    [fluid]="true">
+                    [fluid]="true"
+                  >
                   </ngb-select>
-                  <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded small mt-2">
-                    <span><strong>Value:</strong> <code>{{ floatCityIn ? floatCityIn.name : 'None' }}</code></span>
+                  <div
+                    class="d-flex align-items-center justify-content-between p-2 bg-light rounded small mt-2"
+                  >
+                    <span
+                      ><strong>Value:</strong>
+                      <code>{{ floatCityIn ? floatCityIn.name : 'None' }}</code></span
+                    >
                     <div class="d-flex gap-1">
-                      <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" (click)="floatCityIn = objectCities[1]">Set Rome</button>
-                      <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" (click)="floatCityIn = null">Clear</button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-outline-secondary py-0 px-2"
+                        (click)="floatCityIn = objectCities[1]"
+                      >
+                        Set Rome
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-outline-secondary py-0 px-2"
+                        (click)="floatCityIn = null"
+                      >
+                        Clear
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1371,7 +1415,9 @@
                 <!-- Variant 3: "over" (Above Component) -->
                 <div>
                   <div class="d-flex align-items-center justify-content-between mb-1">
-                    <label class="form-label text-muted small fw-bold mb-0">3. Over / Above Field (<code>floatLabelVariant="over"</code>)</label>
+                    <label class="form-label text-muted small fw-bold mb-0"
+                      >3. Over / Above Field (<code>floatLabelVariant="over"</code>)</label
+                    >
                     <span class="badge bg-info-subtle text-info-emphasis">Above Field</span>
                   </div>
                   <ngb-select
@@ -1382,13 +1428,31 @@
                     floatLabelVariant="over"
                     [showClear]="true"
                     placeholder="Destination City (over)"
-                    [fluid]="true">
+                    [fluid]="true"
+                  >
                   </ngb-select>
-                  <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded small mt-2">
-                    <span><strong>Value:</strong> <code>{{ floatCityOver ? floatCityOver.name : 'None' }}</code></span>
+                  <div
+                    class="d-flex align-items-center justify-content-between p-2 bg-light rounded small mt-2"
+                  >
+                    <span
+                      ><strong>Value:</strong>
+                      <code>{{ floatCityOver ? floatCityOver.name : 'None' }}</code></span
+                    >
                     <div class="d-flex gap-1">
-                      <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" (click)="floatCityOver = objectCities[4]">Set Paris</button>
-                      <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" (click)="floatCityOver = null">Clear</button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-outline-secondary py-0 px-2"
+                        (click)="floatCityOver = objectCities[4]"
+                      >
+                        Set Paris
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-outline-secondary py-0 px-2"
+                        (click)="floatCityOver = null"
+                      >
+                        Clear
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -2011,6 +2075,7 @@
                             size="small"
                             optionLabel="label"
                             optionValue="value"
+                            appendTo="body"
                             [fluid]="true"
                           >
                           </ngb-select>
@@ -2094,7 +2159,7 @@
                 <div
                   class="modal fade"
                   id="demoModal"
-                  tabindex="-1"
+                  data-bs-focus="false"
                   aria-labelledby="demoModalLabel"
                   aria-hidden="true"
                 >
@@ -2204,11 +2269,34 @@
                   >
                     <ng-template #chip let-user>
                       <div class="d-inline-flex align-items-center gap-1">
-                        <img [src]="user.avatar" class="rounded-circle" width="20" height="20" />
+                        <img
+                          [src]="user.avatar"
+                          [alt]="user.name"
+                          (error)="onAvatarError($event)"
+                          class="rounded-circle border"
+                          width="20"
+                          height="20"
+                        />
                         <span class="fw-semibold">{{ user.name }}</span>
                         <span class="badge bg-primary-subtle text-primary ms-1 font-monospace">{{
                           user.team
                         }}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template #item let-user>
+                      <div class="d-flex align-items-center gap-2">
+                        <img
+                          [src]="user.avatar"
+                          [alt]="user.name"
+                          (error)="onAvatarError($event)"
+                          class="rounded-circle border"
+                          width="24"
+                          height="24"
+                        />
+                        <div>
+                          <div class="fw-semibold">{{ user.name }}</div>
+                          <small class="text-muted">{{ user.team }}</small>
+                        </div>
                       </div>
                     </ng-template>
                   </ngb-select>
@@ -2745,7 +2833,10 @@
                         <td><code>floatLabelVariant</code></td>
                         <td><code>'on' | 'in' | 'over'</code></td>
                         <td><code>'on'</code></td>
-                        <td>Floating label style variant: 'on' (outlined on border), 'in' (inside box), or 'over' (above field).</td>
+                        <td>
+                          Floating label style variant: 'on' (outlined on border), 'in' (inside
+                          box), or 'over' (above field).
+                        </td>
                       </tr>
                       <tr>
                         <td><code>invalid</code></td>
