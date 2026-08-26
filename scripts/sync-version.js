@@ -24,12 +24,17 @@ fs.writeFileSync(versionTsPath, `export const APP_VERSION = '${version}';\n`);
 const syncVersionConst = (filePath) => {
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf-8');
-    content = content.replace(/export const NGB_SELECT_VERSION = '.*?';/, `export const NGB_SELECT_VERSION = '${version}';`);
+    content = content.replace(
+      /export const NGB_SELECT_VERSION = '.*?';/,
+      `export const NGB_SELECT_VERSION = '${version}';`,
+    );
     fs.writeFileSync(filePath, content);
   }
 };
 
 syncVersionConst(path.join(__dirname, '..', 'src', 'lib', 'ngb-select.interface.ts'));
-syncVersionConst(path.join(__dirname, '..', 'projects', 'ngb-select', 'src', 'lib', 'ngb-select.interface.ts'));
+syncVersionConst(
+  path.join(__dirname, '..', 'projects', 'ngb-select', 'src', 'lib', 'ngb-select.interface.ts'),
+);
 
 console.log(`Successfully synced version v${version}!`);

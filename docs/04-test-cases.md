@@ -3,24 +3,29 @@
 This document provides extensive guidelines and code snippets for unit testing the `NgbSelectComponent`.
 
 ## Setup Requirements
+
 To properly test the component, import the `FormsModule` and construct a host component for `ngModel` interaction.
 
 ```typescript
 @Component({
   template: `
-    <ngb-select 
-      [options]="options" 
-      [(ngModel)]="selectedValue" 
+    <ngb-select
+      [options]="options"
+      [(ngModel)]="selectedValue"
       [filter]="true"
       optionLabel="name"
-      optionValue="id">
+      optionValue="id"
+    >
     </ngb-select>
   `,
   standalone: true,
-  imports: [NgbSelectComponent, FormsModule]
+  imports: [NgbSelectComponent, FormsModule],
 })
 class TestHostComponent {
-  options = [{id: 1, name: 'Apple'}, {id: 2, name: 'Banana'}];
+  options = [
+    { id: 1, name: 'Apple' },
+    { id: 2, name: 'Banana' },
+  ];
   selectedValue = 1;
 }
 ```
@@ -29,7 +34,7 @@ class TestHostComponent {
 
 - **Should create successfully:**
   Verify that `fixture.componentInstance` is truthy.
-  
+
 - **Should display correct placeholder when empty:**
   Set `selectedValue = null` and check that the DOM element matching `.text-muted` contains the correct text.
 
@@ -39,12 +44,13 @@ class TestHostComponent {
 ## Category 2: Interactions and Forms (ControlValueAccessor)
 
 - **Should update internal model when clicking an option:**
+
   ```typescript
   it('should update model on click', async () => {
     // Open dropdown
     fixture.debugElement.query(By.css('.form-select')).nativeElement.click();
     fixture.detectChanges();
-    
+
     // Click 'Banana'
     const items = fixture.debugElement.queryAll(By.css('.dropdown-item'));
     items[1].nativeElement.click();
@@ -61,17 +67,18 @@ class TestHostComponent {
 ## Category 3: Filtering and Search
 
 - **Should filter options array when typing:**
+
   ```typescript
   it('should filter items', () => {
-    component.options = [{label: 'Cat'}, {label: 'Dog'}, {label: 'Cow'}];
+    component.options = [{ label: 'Cat' }, { label: 'Dog' }, { label: 'Cow' }];
     component.filter = true;
     fixture.detectChanges();
-    
+
     const input = fixture.debugElement.query(By.css('.form-control')).nativeElement;
     input.value = 'c';
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    
+
     expect(component.filteredOptions.length).toBe(2); // Cat, Cow
   });
   ```
@@ -83,7 +90,7 @@ class TestHostComponent {
 
 - **Should render group headers:**
   Provide nested grouping data to `options`. Verify that `By.css('.dropdown-header')` exists and contains the correct `optionGroupLabel`.
-  
+
 - **Should prevent clicking group headers:**
   Ensure the `.dropdown-header` elements do not bind to `(click)="selectOption()"` and have no hover/active states.
 
@@ -91,7 +98,7 @@ class TestHostComponent {
 
 - **Should navigate options via keyboard (Arrow Down/Up):**
   Dispatch a `KeyboardEvent` (ArrowDown). Verify that the `active` index increments and the corresponding item receives visual focus or `.active` styling.
-  
+
 - **Should close dropdown on Escape:**
   While open, emit `KeyboardEvent(Escape)` and expect `overlayVisible` to be false.
 
@@ -99,7 +106,7 @@ class TestHostComponent {
 
 - **Should handle null or undefined options array gracefully without throwing errors:**
   Set `component.options = null` and invoke the filter method; verify no errors occur.
-  
+
 - **Should handle empty strings or nulls as valid values:**
   Bind `hostComponent.selectedValue = ''` or `null` and ensure the component renders the empty state or placeholder appropriately.
 
@@ -112,13 +119,17 @@ class TestHostComponent {
 ## Category 7: Advanced Features (Parity with PrimeNG)
 
 - **`dataKey` Equality Check:**
+
   ```typescript
   it('should correctly select objects using dataKey', () => {
     component.dataKey = 'id';
-    component.options = [{id: 1, name: 'A'}, {id: 2, name: 'B'}];
-    component.writeValue({id: 2, name: 'Different Object Reference'});
+    component.options = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+    ];
+    component.writeValue({ id: 2, name: 'Different Object Reference' });
     fixture.detectChanges();
-    
+
     // Validate that option {id: 2} is visually selected
     expect(component.isSelected(component.options[1])).toBeTrue();
   });
@@ -135,17 +146,22 @@ class TestHostComponent {
 
 - **AppendTo Body Constraint:**
   Assert that when `appendTo="body"`, the `.dropdown-menu` element is attached directly as a child of `document.body` instead of living inside the `.form-select` wrapper. This ensures it isn't clipped by overflow containers.
-  
+
 - **Two-way Overlay Visibility Binding:**
   Bind `[(overlayVisible)]="isOpen"` in the host component and verify that manually toggling `isOpen` opens/closes the dropdown, and that interacting with the component triggers the `overlayVisibleChange` emitter.
 
 ## Category 8: Multi-Select Testing Scenarios
 
 - **Multi-Select Value Array Initialization:**
+
   ```typescript
   it('should initialize multi-select with array of values', () => {
     component.multiple = true;
-    component.options = [{id: 1, name: 'A'}, {id: 2, name: 'B'}, {id: 3, name: 'C'}];
+    component.options = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+      { id: 3, name: 'C' },
+    ];
     component.writeValue([1, 2]);
     fixture.detectChanges();
 
@@ -159,14 +175,20 @@ class TestHostComponent {
   Verify that when `multiple=true` and `closeOnSelect=false` (default), selecting an item toggles its inclusion in `value` array and leaves `overlayVisible` true.
 
 - **Select All Checkbox Functionality:**
+
   ```typescript
   it('should select and deselect all options via Select All checkbox', () => {
     component.multiple = true;
     component.showSelectAll = true;
-    component.options = [{id: 1, name: 'A'}, {id: 2, name: 'B'}];
+    component.options = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+    ];
     fixture.detectChanges();
 
-    const selectAllCheckbox = fixture.debugElement.query(By.css('#selectAllCheckbox')).nativeElement;
+    const selectAllCheckbox = fixture.debugElement.query(
+      By.css('#selectAllCheckbox'),
+    ).nativeElement;
     selectAllCheckbox.checked = true;
     selectAllCheckbox.dispatchEvent(new Event('change'));
     fixture.detectChanges();
@@ -191,12 +213,13 @@ class TestHostComponent {
   Verify that when placed in an element with `dir="rtl"`, the component's internal container mirrors layout correctly using Bootstrap's directional CSS classes (`ms-*`, `me-*`, `text-start`).
 
 - **Arabic Text Search Normalization (Alef, Yaa, Taa Marbuta):**
+
   ```typescript
   it('should match Arabic search terms regardless of Alef forms or Tashkeel', () => {
     component.options = [
       { id: 1, name: 'الإمارات' },
       { id: 2, name: 'الْأُرْدُنّ' }, // with Tashkeel diacritics
-      { id: 3, name: 'مصر' }
+      { id: 3, name: 'مصر' },
     ];
     component.filter = true;
     component.filterNormalizeArabic = true;

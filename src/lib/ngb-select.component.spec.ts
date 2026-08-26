@@ -15,6 +15,8 @@ import { NgbSelectComponent } from './ngb-select.component';
         formControlName="selectedCity"
         [placeholder]="placeholder"
         [filter]="filter"
+        [filterInTrigger]="filterInTrigger"
+        [searchPlaceholder]="searchPlaceholder"
         [filterBy]="filterBy"
         [filterMatchMode]="filterMatchMode"
         [group]="group"
@@ -27,6 +29,7 @@ import { NgbSelectComponent } from './ngb-select.component';
         [disabled]="disabled"
         [loading]="loading"
         [floatLabel]="floatLabel"
+        [floatLabelVariant]="floatLabelVariant"
         [invalid]="invalid"
         [editable]="editable"
         [dataKey]="dataKey"
@@ -39,24 +42,29 @@ import { NgbSelectComponent } from './ngb-select.component';
         [closeOnSelect]="closeOnSelect"
         [focusOnOpen]="focusOnOpen"
         [focusOnOpenStrategy]="focusOnOpenStrategy"
+        [dir]="dir"
         [(overlayVisible)]="overlayVisible"
         (onChange)="onSelectChange($event)"
         (onFilter)="onFilterChange($event)"
-        (onClear)="onClearChange($event)">
+        (onClear)="onClearChange($event)"
+      >
       </ngb-select>
     </form>
-  `
+  `,
 })
 class TestHostComponent {
+  dir?: 'ltr' | 'rtl' | 'auto';
   options: any[] = [
     { name: 'New York', code: 'NY' },
     { name: 'Rome', code: 'RM' },
     { name: 'London', code: 'LDN', disabled: true },
-    { name: 'Paris', code: 'PRS' }
+    { name: 'Paris', code: 'PRS' },
   ];
 
   placeholder = 'Select a city';
   filter = false;
+  filterInTrigger = false;
+  searchPlaceholder?: string;
   filterBy?: string;
   filterMatchMode: any = 'contains';
   group = false;
@@ -69,6 +77,7 @@ class TestHostComponent {
   disabled = false;
   loading = false;
   floatLabel = false;
+  floatLabelVariant: any = 'on';
   invalid = false;
   editable = false;
   dataKey?: string;
@@ -84,7 +93,7 @@ class TestHostComponent {
   overlayVisible = false;
 
   form = new FormGroup({
-    selectedCity: new FormControl<any>(null)
+    selectedCity: new FormControl<any>(null),
   });
 
   lastChangeEvent: any = null;
@@ -116,13 +125,15 @@ describe('NgbSelectComponent', () => {
       configureHost(hostComponent);
     }
     fixture.detectChanges();
-    selectComponent = fixture.debugElement.query(By.directive(NgbSelectComponent)).componentInstance;
+    selectComponent = fixture.debugElement.query(
+      By.directive(NgbSelectComponent),
+    ).componentInstance;
     return { fixture, hostComponent, selectComponent };
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestHostComponent, NgbSelectComponent]
+      imports: [TestHostComponent, NgbSelectComponent],
     }).compileComponents();
   });
 
@@ -150,13 +161,28 @@ describe('NgbSelectComponent', () => {
       expect(items.length).toBe(4);
     });
 
-    it('should apply floating label class when floatLabel is true', () => {
-      const { fixture } = createComponent(host => {
+    it('should apply floating label class and variant classes when floatLabel is true', () => {
+      const { fixture: fixOn } = createComponent((host) => {
         host.floatLabel = true;
+        host.floatLabelVariant = 'on';
       });
+      const containerOn = fixOn.debugElement.query(By.css('.ngb-select-container'));
+      expect(containerOn.nativeElement.classList.contains('form-floating')).toBe(true);
+      expect(containerOn.nativeElement.classList.contains('float-variant-on')).toBe(true);
 
-      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
-      expect(container.nativeElement.classList.contains('form-floating')).toBe(true);
+      const { fixture: fixIn } = createComponent((host) => {
+        host.floatLabel = true;
+        host.floatLabelVariant = 'in';
+      });
+      const containerIn = fixIn.debugElement.query(By.css('.ngb-select-container'));
+      expect(containerIn.nativeElement.classList.contains('float-variant-in')).toBe(true);
+
+      const { fixture: fixOver } = createComponent((host) => {
+        host.floatLabel = true;
+        host.floatLabelVariant = 'over';
+      });
+      const containerOver = fixOver.debugElement.query(By.css('.ngb-select-container'));
+      expect(containerOver.nativeElement.classList.contains('float-variant-over')).toBe(true);
     });
   });
 
@@ -204,7 +230,7 @@ describe('NgbSelectComponent', () => {
   // ==========================================
   describe('Category 3: Filtering & Search', () => {
     it('should render search input when filter is true', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.filter = true;
       });
       selectComponent.openOverlay();
@@ -215,7 +241,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should filter options list based on filter input', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.filter = true;
       });
       selectComponent.openOverlay();
@@ -231,7 +257,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should display empty message when filter produces no matches', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.filter = true;
       });
       selectComponent.openOverlay();
@@ -248,7 +274,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should respect filterMatchMode="startsWith"', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.filter = true;
         host.filterMatchMode = 'startsWith';
       });
@@ -262,6 +288,36 @@ describe('NgbSelectComponent', () => {
 
       expect(selectComponent.filteredOptions.length).toBe(0);
     });
+
+    it('should respect custom searchPlaceholder as placeholder in filter input', () => {
+      const { fixture, selectComponent } = createComponent();
+      selectComponent.filter = true;
+      selectComponent.searchPlaceholder = 'Type to search cities...';
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      const input = fixture.debugElement.query(By.css('input.form-control'));
+      expect(input.nativeElement.placeholder).toBe('Type to search cities...');
+    });
+
+    it('should render and filter directly in the trigger when filterInTrigger is true', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.filter = true;
+        host.filterInTrigger = true;
+        host.searchPlaceholder = 'Search in trigger...';
+      });
+
+      const triggerInput = fixture.debugElement.query(By.css('.form-select input[type="text"]'));
+      expect(triggerInput).toBeTruthy();
+      expect(triggerInput.nativeElement.placeholder).toBe('Search in trigger...');
+
+      triggerInput.nativeElement.value = 'Paris';
+      triggerInput.nativeElement.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(selectComponent.filteredOptions.length).toBe(1);
+      expect(selectComponent.filteredOptions[0].name).toBe('Paris');
+    });
   });
 
   // ==========================================
@@ -269,7 +325,7 @@ describe('NgbSelectComponent', () => {
   // ==========================================
   describe('Category 4: Grouping', () => {
     it('should render group headers correctly', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.group = true;
         host.optionGroupLabel = 'country';
         host.optionGroupChildren = 'cities';
@@ -278,13 +334,13 @@ describe('NgbSelectComponent', () => {
             country: 'USA',
             cities: [
               { name: 'Chicago', code: 'CHI' },
-              { name: 'Los Angeles', code: 'LA' }
-            ]
+              { name: 'Los Angeles', code: 'LA' },
+            ],
           },
           {
             country: 'Italy',
-            cities: [{ name: 'Rome', code: 'RM' }]
-          }
+            cities: [{ name: 'Rome', code: 'RM' }],
+          },
         ];
       });
 
@@ -298,7 +354,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should allow selecting items inside groups', async () => {
-      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+      const { fixture, hostComponent, selectComponent } = createComponent((host) => {
         host.group = true;
         host.optionGroupLabel = 'country';
         host.optionGroupChildren = 'cities';
@@ -307,9 +363,9 @@ describe('NgbSelectComponent', () => {
             country: 'USA',
             cities: [
               { name: 'Chicago', code: 'CHI' },
-              { name: 'Los Angeles', code: 'LA' }
-            ]
-          }
+              { name: 'Los Angeles', code: 'LA' },
+            ],
+          },
         ];
       });
 
@@ -331,7 +387,7 @@ describe('NgbSelectComponent', () => {
   // ==========================================
   describe('Category 5: States & Actions', () => {
     it('should show clear icon when showClear is true and value is selected', () => {
-      const { fixture, hostComponent } = createComponent(host => {
+      const { fixture, hostComponent } = createComponent((host) => {
         host.showClear = true;
       });
       hostComponent.form.get('selectedCity')?.setValue('NY');
@@ -342,7 +398,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should reset value when clear icon is clicked', () => {
-      const { fixture, hostComponent } = createComponent(host => {
+      const { fixture, hostComponent } = createComponent((host) => {
         host.showClear = true;
       });
       hostComponent.form.get('selectedCity')?.setValue('NY');
@@ -357,7 +413,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should not open dropdown when disabled is true', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.form.get('selectedCity')?.disable();
       });
 
@@ -381,7 +437,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should display loading spinner when loading is true', () => {
-      const { fixture } = createComponent(host => {
+      const { fixture } = createComponent((host) => {
         host.loading = true;
       });
 
@@ -395,7 +451,7 @@ describe('NgbSelectComponent', () => {
   // ==========================================
   describe('Category 6: Robustness & Edge Cases', () => {
     it('should handle null or undefined options gracefully without error', () => {
-      const { selectComponent } = createComponent(host => {
+      const { selectComponent } = createComponent((host) => {
         host.options = null as any;
       });
 
@@ -406,7 +462,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should handle empty string as valid selection value', () => {
-      const { hostComponent, selectComponent } = createComponent(host => {
+      const { hostComponent, selectComponent } = createComponent((host) => {
         host.options = [{ name: 'None', code: '' }];
       });
       hostComponent.form.get('selectedCity')?.setValue('');
@@ -435,7 +491,7 @@ describe('NgbSelectComponent', () => {
       selectComponent.dataKey = 'code';
       selectComponent.options = [
         { name: 'New York', code: 'NY' },
-        { name: 'Rome', code: 'RM' }
+        { name: 'Rome', code: 'RM' },
       ];
       selectComponent.writeValue({ name: 'Rome (Different ref)', code: 'RM' });
       fixture.detectChanges();
@@ -444,7 +500,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should support editable combobox input typing', () => {
-      const { fixture, hostComponent } = createComponent(host => {
+      const { fixture, hostComponent } = createComponent((host) => {
         host.editable = true;
       });
 
@@ -459,19 +515,19 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should focus option on focusOnOpen index when opening popup', async () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.focusOnOpen = 1;
       });
 
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise(r => setTimeout(r, 20));
+      await new Promise((r) => setTimeout(r, 20));
 
       expect(selectComponent.focusedIndex).toBe(1);
     });
 
     it('should prioritize selected item over focusOnOpen when focusOnOpenStrategy is notSelected and value is present', async () => {
-      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+      const { fixture, hostComponent, selectComponent } = createComponent((host) => {
         host.focusOnOpen = 0; // NY is index 0
         host.focusOnOpenStrategy = 'notSelected';
       });
@@ -480,20 +536,20 @@ describe('NgbSelectComponent', () => {
 
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise(r => setTimeout(r, 20));
+      await new Promise((r) => setTimeout(r, 20));
 
       expect(selectComponent.focusedIndex).toBe(3); // Should focus selected PRS instead of focusOnOpen index 0
     });
 
     it('should use focusOnOpen when focusOnOpenStrategy is notSelected and no value is selected', async () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.focusOnOpen = 1; // Rome is index 1
         host.focusOnOpenStrategy = 'notSelected';
       });
 
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise(r => setTimeout(r, 20));
+      await new Promise((r) => setTimeout(r, 20));
 
       expect(selectComponent.focusedIndex).toBe(1);
     });
@@ -514,13 +570,13 @@ describe('NgbSelectComponent', () => {
   // ==========================================
   describe('Category 8: Multi-Select Scenarios', () => {
     it('should initialize multi-select with array of values', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.multiple = true;
       });
       selectComponent.options = [
         { name: 'New York', code: 'NY' },
         { name: 'Rome', code: 'RM' },
-        { name: 'Paris', code: 'PRS' }
+        { name: 'Paris', code: 'PRS' },
       ];
       selectComponent.writeValue(['NY', 'PRS']);
       fixture.detectChanges();
@@ -531,7 +587,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should toggle selection in multiple mode and remain open by default', async () => {
-      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+      const { fixture, hostComponent, selectComponent } = createComponent((host) => {
         host.multiple = true;
       });
       hostComponent.form.get('selectedCity')?.setValue(['NY']);
@@ -549,7 +605,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should render chips when display="chip"', () => {
-      const { fixture, hostComponent } = createComponent(host => {
+      const { fixture, hostComponent } = createComponent((host) => {
         host.multiple = true;
         host.display = 'chip';
       });
@@ -561,7 +617,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should select all and deselect all options via Select All checkbox', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.multiple = true;
         host.showSelectAll = true;
       });
@@ -578,7 +634,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should enforce selectionLimit in multi-select mode', () => {
-      const { fixture, selectComponent } = createComponent(host => {
+      const { fixture, selectComponent } = createComponent((host) => {
         host.multiple = true;
         host.selectionLimit = 2;
       });
@@ -594,7 +650,7 @@ describe('NgbSelectComponent', () => {
     });
 
     it('should strictly sync checkbox checked state with selected options in multiple mode', async () => {
-      const { fixture, hostComponent, selectComponent } = createComponent(host => {
+      const { fixture, hostComponent, selectComponent } = createComponent((host) => {
         host.multiple = true;
       });
       hostComponent.form.get('selectedCity')?.setValue(['RM']);
@@ -602,10 +658,12 @@ describe('NgbSelectComponent', () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
-      const checkboxes = fixture.debugElement.queryAll(By.css('.dropdown-item input[type="checkbox"]'));
+      const checkboxes = fixture.debugElement.queryAll(
+        By.css('.dropdown-item input[type="checkbox"]'),
+      );
       expect(checkboxes.length).toBe(4);
       expect(checkboxes[0].nativeElement.checked).toBe(false); // NY
-      expect(checkboxes[1].nativeElement.checked).toBe(true);  // RM
+      expect(checkboxes[1].nativeElement.checked).toBe(true); // RM
       expect(checkboxes[2].nativeElement.checked).toBe(false); // LDN
       expect(checkboxes[3].nativeElement.checked).toBe(false); // PRS
 
@@ -617,6 +675,84 @@ describe('NgbSelectComponent', () => {
 
       expect(checkboxes[0].nativeElement.checked).toBe(true);
       expect(checkboxes[1].nativeElement.checked).toBe(true);
+    });
+  });
+
+  // ==========================================
+  // Category 9: RTL & Arabic Localization Scenarios
+  // ==========================================
+  describe('Category 9: RTL & Arabic Localization', () => {
+    it('should match Arabic search terms regardless of Alef variants or Tashkeel diacritics', () => {
+      const { fixture, selectComponent } = createComponent();
+      selectComponent.options = [
+        { id: 1, name: 'الإمارات' },
+        { id: 2, name: 'الْأُرْدُنّ' }, // with Tashkeel diacritics
+        { id: 3, name: 'مصر' },
+      ];
+      selectComponent.filter = true;
+      selectComponent.filterNormalizeArabic = true;
+      selectComponent.optionLabel = 'name';
+      selectComponent.optionValue = 'id';
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      // Query with bare Alef 'امارات'
+      const input = fixture.debugElement.query(By.css('input.form-control')).nativeElement;
+      input.value = 'امارات';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(selectComponent.filteredOptions.length).toBe(1);
+      expect(selectComponent.filteredOptions[0].id).toBe(1);
+
+      // Query with plain 'الاردن' against 'الْأُرْدُنّ'
+      input.value = 'الاردن';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(selectComponent.filteredOptions.length).toBe(1);
+      expect(selectComponent.filteredOptions[0].id).toBe(2);
+    });
+
+    it('should match Arabic search terms with Yaa and Taa Marbuta variations', () => {
+      const { fixture, selectComponent } = createComponent();
+      selectComponent.options = [
+        { id: 1, name: 'القاهرة' },
+        { id: 2, name: 'دبي' },
+        { id: 3, name: 'مستشفى' },
+      ];
+      selectComponent.filter = true;
+      selectComponent.filterNormalizeArabic = true;
+      selectComponent.optionLabel = 'name';
+      selectComponent.optionValue = 'id';
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      // Query 'القاهره' with 'ه' against 'القاهرة' with 'ة'
+      const input = fixture.debugElement.query(By.css('input.form-control')).nativeElement;
+      input.value = 'القاهره';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(selectComponent.filteredOptions.length).toBe(1);
+      expect(selectComponent.filteredOptions[0].id).toBe(1);
+
+      // Query 'مستشفي' with 'ي' against 'مستشفى' with 'ى'
+      input.value = 'مستشفي';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(selectComponent.filteredOptions.length).toBe(1);
+      expect(selectComponent.filteredOptions[0].id).toBe(3);
+    });
+
+    it('should apply dir attribute when dir input is set', () => {
+      const { fixture } = createComponent((host) => {
+        host.dir = 'rtl';
+      });
+
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      expect(container.nativeElement.getAttribute('dir')).toBe('rtl');
     });
   });
 });

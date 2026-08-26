@@ -1,74 +1,151 @@
-<div class="ngb-select-container position-relative"
-     [class.form-floating]="floatLabel"
-     [class.floating-active]="hasSelectedValue() || overlayVisible"
-     [class.w-100]="fluid"
-     [ngStyle]="style"
-     [ngClass]="styleClass"
-     (keydown)="onKeydown($event)">
-
+<div
+  class="ngb-select-container position-relative"
+  [class.form-floating]="floatLabel"
+  [class.float-variant-on]="floatLabel && floatLabelVariant === 'on'"
+  [class.float-variant-in]="floatLabel && floatLabelVariant === 'in'"
+  [class.float-variant-over]="floatLabel && floatLabelVariant === 'over'"
+  [class.floating-active]="hasSelectedValue() || overlayVisible"
+  [class.w-100]="fluid"
+  [attr.dir]="dir || null"
+  [ngStyle]="style"
+  [ngClass]="styleClass"
+  (keydown)="onKeydown($event)"
+>
   <!-- Select Trigger Box -->
-  <div class="form-select d-flex align-items-center justify-content-between"
-       [class.is-invalid]="invalid"
-       [class.disabled]="disabled"
-       [class.form-select-sm]="size === 'small'"
-       [class.form-select-lg]="size === 'large'"
-       [class.bg-light]="variant === 'filled'"
-       [attr.id]="id"
-       [attr.tabindex]="disabled ? -1 : tabindex"
-       [attr.aria-label]="ariaLabel"
-       [attr.aria-labelledby]="ariaLabelledBy"
-       [attr.aria-expanded]="overlayVisible"
-       [attr.aria-haspopup]="'listbox'"
-       role="combobox"
-       (click)="onTriggerClick($event)"
-       (focus)="onTriggerFocus($event)"
-       (blur)="onTriggerBlur($event)">
-
+  <div
+    class="form-select d-flex align-items-center justify-content-between"
+    [class.is-invalid]="invalid"
+    [class.disabled]="disabled"
+    [class.form-select-sm]="size === 'small'"
+    [class.form-select-lg]="size === 'large'"
+    [class.bg-light]="variant === 'filled'"
+    [attr.id]="id"
+    [attr.tabindex]="disabled ? -1 : tabindex"
+    [attr.aria-label]="ariaLabel"
+    [attr.aria-labelledby]="ariaLabelledBy"
+    [attr.aria-expanded]="overlayVisible"
+    [attr.aria-haspopup]="'listbox'"
+    role="combobox"
+    (click)="onTriggerClick($event)"
+    (focus)="onTriggerFocus($event)"
+    (blur)="onTriggerBlur($event)"
+  >
     <!-- Selected Value / Input / Chips Area -->
     <span class="text-truncate flex-grow-1 me-2 d-flex flex-wrap align-items-center gap-1">
-      <!-- Editable Input (Single mode only) -->
-      <ng-container *ngIf="editable && !multiple; else displaySelectionTpl">
-        <input #editableInput
-               type="text"
-               class="form-control border-0 bg-transparent p-0 shadow-none"
-               [class.form-control-sm]="size === 'small'"
-               [class.form-control-lg]="size === 'large'"
-               [disabled]="disabled"
-               [readonly]="readonly"
-               [attr.maxlength]="maxLength"
-               [value]="getDisplayLabel()"
-               [placeholder]="placeholder || ''"
-               (input)="onEditableInput($event)"
-               (focus)="onEditableFocus($event)"
-               (click)="$event.stopPropagation()">
-      </ng-container>
-
-      <ng-template #displaySelectionTpl>
-        <!-- Multi-Select Chips Display Mode -->
-        <ng-container *ngIf="multiple && display === 'chip' && hasSelectedValue(); else standardTextTpl">
-          <span *ngFor="let val of value" class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2">
-            <ng-container *ngIf="chipTemplate; else defaultChipTpl">
-              <ng-container *ngTemplateOutlet="chipTemplate; context: { $implicit: val }"></ng-container>
+      <!-- Filter directly in Trigger Box -->
+      <ng-container *ngIf="filterInTrigger; else regularTriggerContentTpl">
+        <!-- Chips in multiple mode when filterInTrigger is active -->
+        <ng-container *ngIf="multiple && display === 'chip' && hasSelectedValue()">
+          <span
+            *ngFor="let val of value"
+            class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2"
+          >
+            <ng-container *ngIf="chipTemplate; else defaultTriggerChipTpl">
+              <ng-container
+                *ngTemplateOutlet="chipTemplate; context: { $implicit: val }"
+              ></ng-container>
             </ng-container>
-            <ng-template #defaultChipTpl>
+            <ng-template #defaultTriggerChipTpl>
               <span>{{ resolveOptionLabelByValue(val) }}</span>
             </ng-template>
-            <i *ngIf="!disabled && !readonly" class="bi bi-x ms-1 cursor-pointer fw-bold" (click)="removeChip(val, $event)"></i>
+            <i
+              *ngIf="!disabled && !readonly"
+              class="bi bi-x ms-1 cursor-pointer fw-bold"
+              (click)="removeChip(val, $event)"
+            ></i>
           </span>
         </ng-container>
 
-        <!-- Standard Single or Comma Multi-Select Text -->
-        <ng-template #standardTextTpl>
-          <ng-container *ngIf="hasSelectedValue(); else placeholderTpl">
-            <ng-container *ngIf="selectedItemTemplate || labelTemplate; else defaultSelectedLabelTpl">
-              <ng-container *ngTemplateOutlet="selectedItemTemplate || labelTemplate; context: { $implicit: value }"></ng-container>
-            </ng-container>
-            <ng-template #defaultSelectedLabelTpl>
-              <span>{{ getDisplayLabel() }}</span>
-            </ng-template>
+        <!-- Search Filter Input embedded inside the trigger -->
+        <input
+          #triggerFilterInput
+          type="text"
+          class="form-control border-0 bg-transparent p-0 shadow-none flex-grow-1"
+          style="min-width: 80px"
+          [class.form-control-sm]="size === 'small'"
+          [class.form-control-lg]="size === 'large'"
+          [disabled]="disabled"
+          [readonly]="readonly"
+          [value]="filterValue"
+          [placeholder]="
+            multiple && hasSelectedValue()
+              ? ''
+              : hasSelectedValue() && !overlayVisible
+                ? getDisplayLabel()
+                : effectiveSearchPlaceholder
+          "
+          (input)="onFilterChange($event)"
+          (keydown)="onFilterKeydown($event)"
+          (focus)="openOverlay($event)"
+          (click)="$event.stopPropagation()"
+        />
+      </ng-container>
+
+      <ng-template #regularTriggerContentTpl>
+        <!-- Editable Input (Single mode only) -->
+        <ng-container *ngIf="editable && !multiple; else displaySelectionTpl">
+          <input
+            #editableInput
+            type="text"
+            class="form-control border-0 bg-transparent p-0 shadow-none"
+            [class.form-control-sm]="size === 'small'"
+            [class.form-control-lg]="size === 'large'"
+            [disabled]="disabled"
+            [readonly]="readonly"
+            [attr.maxlength]="maxLength"
+            [value]="getDisplayLabel()"
+            [placeholder]="placeholder || ''"
+            (input)="onEditableInput($event)"
+            (focus)="onEditableFocus($event)"
+            (click)="$event.stopPropagation()"
+          />
+        </ng-container>
+
+        <ng-template #displaySelectionTpl>
+          <!-- Multi-Select Chips Display Mode -->
+          <ng-container
+            *ngIf="multiple && display === 'chip' && hasSelectedValue(); else standardTextTpl"
+          >
+            <span
+              *ngFor="let val of value"
+              class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2"
+            >
+              <ng-container *ngIf="chipTemplate; else defaultChipTpl">
+                <ng-container
+                  *ngTemplateOutlet="chipTemplate; context: { $implicit: val }"
+                ></ng-container>
+              </ng-container>
+              <ng-template #defaultChipTpl>
+                <span>{{ resolveOptionLabelByValue(val) }}</span>
+              </ng-template>
+              <i
+                *ngIf="!disabled && !readonly"
+                class="bi bi-x ms-1 cursor-pointer fw-bold"
+                (click)="removeChip(val, $event)"
+              ></i>
+            </span>
           </ng-container>
-          <ng-template #placeholderTpl>
-            <span class="text-muted">{{ floatLabel ? '' : (placeholder || '') }}</span>
+
+          <!-- Standard Single or Comma Multi-Select Text -->
+          <ng-template #standardTextTpl>
+            <ng-container *ngIf="hasSelectedValue(); else placeholderTpl">
+              <ng-container
+                *ngIf="selectedItemTemplate || labelTemplate; else defaultSelectedLabelTpl"
+              >
+                <ng-container
+                  *ngTemplateOutlet="
+                    selectedItemTemplate || labelTemplate;
+                    context: { $implicit: value }
+                  "
+                ></ng-container>
+              </ng-container>
+              <ng-template #defaultSelectedLabelTpl>
+                <span>{{ getDisplayLabel() }}</span>
+              </ng-template>
+            </ng-container>
+            <ng-template #placeholderTpl>
+              <span class="text-muted">{{ floatLabel ? '' : placeholder || '' }}</span>
+            </ng-template>
           </ng-template>
         </ng-template>
       </ng-template>
@@ -77,13 +154,15 @@
     <!-- Icons & Spinners Area -->
     <div class="d-flex align-items-center flex-shrink-0 gap-1 ms-auto">
       <!-- Clear Icon -->
-      <span *ngIf="showClear && hasSelectedValue() && !disabled && !readonly"
-            class="ngb-select-clear-icon text-muted me-1"
-            (click)="onClearClick($event)"
-            title="Clear"
-            tabindex="0"
-            role="button"
-            aria-label="Clear value">
+      <span
+        *ngIf="showClear && hasSelectedValue() && !disabled && !readonly"
+        class="ngb-select-clear-icon text-muted me-1"
+        (click)="onClearClick($event)"
+        title="Clear"
+        tabindex="0"
+        role="button"
+        aria-label="Clear value"
+      >
         <ng-container *ngIf="clearIconTemplate; else defaultClearIconTpl">
           <ng-container *ngTemplateOutlet="clearIconTemplate"></ng-container>
         </ng-container>
@@ -113,41 +192,52 @@
   <label *ngIf="floatLabel && placeholder" [attr.for]="id">{{ placeholder }}</label>
 
   <!-- Overlay Dropdown Menu -->
-  <div #dropdownMenu
-       class="dropdown-menu w-100 shadow-sm p-0"
-       [class.show]="overlayVisible"
-       [ngStyle]="panelStyle"
-       [ngClass]="panelStyleClass"
-       [style.max-height]="scrollHeight"
-       style="overflow-y: auto;"
-       role="listbox"
-       (scroll)="onOverlayScroll($event)"
-       (click)="$event.stopPropagation()">
-
+  <div
+    #dropdownMenu
+    class="dropdown-menu w-100 shadow-sm p-0"
+    [class.show]="overlayVisible"
+    [ngStyle]="panelStyle"
+    [ngClass]="panelStyleClass"
+    [style.max-height]="scrollHeight"
+    style="overflow-y: auto"
+    role="listbox"
+    (scroll)="onOverlayScroll($event)"
+    (click)="$event.stopPropagation()"
+  >
     <!-- Header Template -->
     <div *ngIf="headerTemplate" class="p-2 border-bottom">
       <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
     </div>
 
     <!-- Header: Select All Checkbox & Search / Filter Box -->
-    <div *ngIf="filter || (multiple && showSelectAll)" class="p-2 border-bottom bg-light bg-opacity-50">
+    <div
+      *ngIf="(filter && !filterInTrigger) || (multiple && showSelectAll)"
+      class="p-2 border-bottom bg-light bg-opacity-50"
+    >
       <!-- Select All Checkbox -->
       <div *ngIf="multiple && showSelectAll" class="d-flex align-items-center mb-2 px-1">
-        <input type="checkbox"
-               class="form-check-input me-2 mt-0 cursor-pointer"
-               [checked]="selectAll"
-               (change)="toggleSelectAll($event)"
-               id="selectAllCheckbox">
-        <label class="form-check-label small fw-semibold cursor-pointer user-select-none" for="selectAllCheckbox">
+        <input
+          type="checkbox"
+          class="form-check-input me-2 mt-0 cursor-pointer"
+          [checked]="selectAll"
+          (change)="toggleSelectAll($event)"
+          id="selectAllCheckbox"
+        />
+        <label
+          class="form-check-label small fw-semibold cursor-pointer user-select-none"
+          for="selectAllCheckbox"
+        >
           <ng-container *ngIf="headerCheckboxTemplate; else defaultHeaderCheckboxTpl">
-            <ng-container *ngTemplateOutlet="headerCheckboxTemplate; context: { $implicit: selectAll }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="headerCheckboxTemplate; context: { $implicit: selectAll }"
+            ></ng-container>
           </ng-container>
           <ng-template #defaultHeaderCheckboxTpl>Select All</ng-template>
         </label>
       </div>
 
       <!-- Search Box -->
-      <div *ngIf="filter" class="input-group input-group-sm">
+      <div *ngIf="filter && !filterInTrigger" class="input-group input-group-sm">
         <span class="input-group-text bg-transparent border-end-0">
           <ng-container *ngIf="filterIconTemplate; else defaultFilterIconTpl">
             <ng-container *ngTemplateOutlet="filterIconTemplate"></ng-container>
@@ -156,13 +246,15 @@
             <i class="bi bi-search text-muted"></i>
           </ng-template>
         </span>
-        <input #filterInput
-               type="text"
-               class="form-control border-start-0"
-               [placeholder]="filterPlaceholder || 'Search...'"
-               [value]="filterValue"
-               (input)="onFilterChange($event)"
-               (keydown)="onFilterKeydown($event)">
+        <input
+          #filterInput
+          type="text"
+          class="form-control border-start-0"
+          [placeholder]="effectiveSearchPlaceholder"
+          [value]="filterValue"
+          (input)="onFilterChange($event)"
+          (keydown)="onFilterKeydown($event)"
+        />
       </div>
     </div>
 
@@ -172,7 +264,9 @@
         <!-- Group Header -->
         <h6 class="dropdown-header text-muted py-2 px-3 m-0 bg-light bg-opacity-75">
           <ng-container *ngIf="groupTemplate; else defaultGroupHeaderTpl">
-            <ng-container *ngTemplateOutlet="groupTemplate; context: { $implicit: groupOption }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="groupTemplate; context: { $implicit: groupOption }"
+            ></ng-container>
           </ng-container>
           <ng-template #defaultGroupHeaderTpl>
             {{ resolveOptionGroupLabel(groupOption) }}
@@ -180,27 +274,33 @@
         </h6>
 
         <!-- Group Items -->
-        <button *ngFor="let option of resolveOptionGroupChildren(groupOption)"
-                type="button"
-                class="dropdown-item d-flex align-items-center py-2 px-3"
-                [class.active]="!multiple && isSelected(option)"
-                [class.bg-light]="multiple && isSelected(option)"
-                [class.fw-semibold]="multiple && isSelected(option)"
-                [class.disabled]="isOptionDisabled(option)"
-                [disabled]="isOptionDisabled(option)"
-                role="option"
-                [attr.aria-selected]="isSelected(option)"
-                [attr.aria-checked]="multiple ? isSelected(option) : null"
-                (click)="onOptionClick(option, $event)">
+        <button
+          *ngFor="let option of resolveOptionGroupChildren(groupOption)"
+          type="button"
+          class="dropdown-item d-flex align-items-center py-2 px-3"
+          [class.active]="!multiple && isSelected(option)"
+          [class.bg-light]="multiple && isSelected(option)"
+          [class.fw-semibold]="multiple && isSelected(option)"
+          [class.disabled]="isOptionDisabled(option)"
+          [disabled]="isOptionDisabled(option)"
+          role="option"
+          [attr.aria-selected]="isSelected(option)"
+          [attr.aria-checked]="multiple ? isSelected(option) : null"
+          (click)="onOptionClick(option, $event)"
+        >
           <!-- Checkbox in Multiple Mode synced to selection -->
-          <input *ngIf="multiple"
-                 type="checkbox"
-                 class="form-check-input me-2 mt-0"
-                 style="pointer-events: none;"
-                 [checked]="isSelected(option)"
-                 tabindex="-1">
+          <input
+            *ngIf="multiple"
+            type="checkbox"
+            class="form-check-input me-2 mt-0"
+            style="pointer-events: none"
+            [checked]="isSelected(option)"
+            tabindex="-1"
+          />
           <ng-container *ngIf="itemTemplate; else defaultItemTpl">
-            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"
+            ></ng-container>
           </ng-container>
           <ng-template #defaultItemTpl>
             <span>{{ resolveOptionLabel(option) }}</span>
@@ -211,27 +311,33 @@
 
     <!-- Flat Options Mode -->
     <ng-template #flatOptionsTpl>
-      <button *ngFor="let option of filteredOptions; let i = index"
-              type="button"
-              class="dropdown-item d-flex align-items-center py-2 px-3"
-              [class.active]="!multiple && isSelected(option)"
-              [class.bg-light]="multiple && isSelected(option)"
-              [class.fw-semibold]="multiple && isSelected(option)"
-              [class.disabled]="isOptionDisabled(option)"
-              [disabled]="isOptionDisabled(option)"
-              role="option"
-              [attr.aria-selected]="isSelected(option)"
-              [attr.aria-checked]="multiple ? isSelected(option) : null"
-              (click)="onOptionClick(option, $event)">
+      <button
+        *ngFor="let option of filteredOptions; let i = index"
+        type="button"
+        class="dropdown-item d-flex align-items-center py-2 px-3"
+        [class.active]="!multiple && isSelected(option)"
+        [class.bg-light]="multiple && isSelected(option)"
+        [class.fw-semibold]="multiple && isSelected(option)"
+        [class.disabled]="isOptionDisabled(option)"
+        [disabled]="isOptionDisabled(option)"
+        role="option"
+        [attr.aria-selected]="isSelected(option)"
+        [attr.aria-checked]="multiple ? isSelected(option) : null"
+        (click)="onOptionClick(option, $event)"
+      >
         <!-- Checkbox in Multiple Mode synced to selection -->
-        <input *ngIf="multiple"
-               type="checkbox"
-               class="form-check-input me-2 mt-0"
-               style="pointer-events: none;"
-               [checked]="isSelected(option)"
-               tabindex="-1">
+        <input
+          *ngIf="multiple"
+          type="checkbox"
+          class="form-check-input me-2 mt-0"
+          style="pointer-events: none"
+          [checked]="isSelected(option)"
+          tabindex="-1"
+        />
         <ng-container *ngIf="itemTemplate; else defaultFlatItemTpl">
-          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"></ng-container>
+          <ng-container
+            *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"
+          ></ng-container>
         </ng-container>
         <ng-template #defaultFlatItemTpl>
           <span>{{ resolveOptionLabel(option) }}</span>
@@ -245,7 +351,11 @@
         <ng-container *ngTemplateOutlet="emptyTemplate"></ng-container>
       </ng-container>
       <ng-template #defaultEmptyTpl>
-        <small>{{ filterValue ? (emptyFilterMessage || 'No results found') : (emptyMessage || 'No results found') }}</small>
+        <small>{{
+          filterValue
+            ? emptyFilterMessage || 'No results found'
+            : emptyMessage || 'No results found'
+        }}</small>
       </ng-template>
     </div>
 

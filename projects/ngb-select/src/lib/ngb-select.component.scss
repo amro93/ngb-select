@@ -40,63 +40,155 @@
     }
   }
 
-  // --- Outlined Floating Label Integration ---
+  // --- Floating Label Integration ---
   &.form-floating {
     display: block;
     width: 100%;
     position: relative;
-    margin-top: 0.35rem;
 
-    .form-select {
-      min-height: 38px;
-      height: auto;
-      padding-top: 0.375rem;
-      padding-bottom: 0.375rem;
-      padding-left: 0.75rem;
-      padding-right: 0.75rem;
-      align-items: center;
+    // 1. Variant "on" (Outlined Border-Notched - Default)
+    &.float-variant-on,
+    &:not(.float-variant-in):not(.float-variant-over) {
+      margin-top: 0.35rem;
 
-      &.form-select-sm {
-        min-height: 31px;
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
+      .form-select {
+        min-height: 38px;
+        height: auto;
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        align-items: center;
+
+        &.form-select-sm {
+          min-height: 31px;
+          padding-top: 0.25rem;
+          padding-bottom: 0.25rem;
+        }
+
+        &.form-select-lg {
+          min-height: 48px;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+        }
       }
 
-      &.form-select-lg {
-        min-height: 48px;
-        padding-top: 0.5rem;
+      > label {
+        position: absolute;
+        top: 50%;
+        left: 0.75rem;
+        transform: translateY(-50%);
+        height: auto;
+        padding: 0 0.35rem;
+        margin: 0;
+        line-height: 1;
+        font-size: 0.95rem;
+        color: var(--bs-secondary-color);
+        pointer-events: none;
+        border-radius: 0.25rem;
+        background-color: transparent;
+        transform-origin: left center;
+        transition:
+          transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+          top 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+          color 0.2s ease-in-out,
+          background-color 0.2s ease-in-out;
+        z-index: 5;
+      }
+
+      &.floating-active > label {
+        top: 0;
+        transform: translateY(-50%) scale(0.85);
+        background-color: var(--bs-body-bg);
+        color: var(--bs-primary);
+        font-weight: 600;
+      }
+    }
+
+    // 2. Variant "in" (Classic Bootstrap In-Box Floating Label)
+    &.float-variant-in {
+      .form-select {
+        height: calc(3.5rem + 2px);
+        min-height: calc(3.5rem + 2px);
+        padding-top: 1.625rem;
         padding-bottom: 0.5rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        align-items: flex-end;
+      }
+
+      > label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        height: 100%;
+        padding: 1rem 0.75rem;
+        overflow: hidden;
+        text-align: start;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition:
+          opacity 0.15s ease-in-out,
+          transform 0.15s ease-in-out,
+          color 0.15s ease-in-out;
+        color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.65);
+        transform: scale(1) translateY(0);
+      }
+
+      &.floating-active > label {
+        transform: scale(0.85) translateY(-0.65rem) translateX(0.15rem);
+        color: var(--bs-primary);
+        font-weight: 500;
       }
     }
 
-    > label {
-      position: absolute;
-      top: 50%;
-      left: 0.75rem;
-      transform: translateY(-50%);
-      height: auto;
-      padding: 0 0.35rem;
-      margin: 0;
-      line-height: 1;
-      font-size: 0.95rem;
-      color: var(--bs-secondary-color);
-      pointer-events: none;
-      border-radius: 0.25rem;
-      background-color: transparent;
-      transform-origin: left center;
-      transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
-                  top 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
-                  color 0.2s ease-in-out,
-                  background-color 0.2s ease-in-out;
-      z-index: 5;
-    }
+    // 3. Variant "over" (Over/Above Component Floating Label)
+    &.float-variant-over {
+      margin-top: 1.25rem;
 
-    &.floating-active > label {
-      top: 0;
-      transform: translateY(-50%) scale(0.85);
-      background-color: var(--bs-body-bg);
-      color: var(--bs-primary);
-      font-weight: 600;
+      .form-select {
+        min-height: 38px;
+        height: auto;
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        align-items: center;
+
+        &.form-select-sm { min-height: 31px; }
+        &.form-select-lg { min-height: 48px; }
+      }
+
+      > label {
+        position: absolute;
+        top: 50%;
+        left: 0.75rem;
+        transform: translateY(-50%);
+        height: auto;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        font-size: 0.95rem;
+        color: var(--bs-secondary-color);
+        pointer-events: none;
+        transform-origin: left center;
+        transition:
+          transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+          top 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+          color 0.2s ease-in-out;
+        z-index: 5;
+      }
+
+      &.floating-active > label {
+        top: -0.75rem;
+        transform: scale(0.85);
+        color: var(--bs-primary);
+        font-weight: 600;
+      }
     }
   }
 

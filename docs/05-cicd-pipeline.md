@@ -31,12 +31,14 @@ flowchart TD
 ## 1. NPM Package Registration & Setup
 
 ### Step 1: Create an NPM Account & Scope (Optional)
+
 1. Sign up or log in at [npmjs.com](https://www.npmjs.com/).
 2. If publishing under an organization scope (e.g. `@my-org/ngb-select`):
    - Go to your profile menu > **Add Organization**.
    - Create your organization.
 
 ### Step 2: Generate an NPM Access Token
+
 1. In your NPM account, navigate to **Access Tokens** (`https://www.npmjs.com/settings/<username>/tokens`).
 2. Click **Generate New Token** and choose either:
    - **Granular Access Token** (Recommended): Select **Read and Write** packages permissions and restrict to the package or organization.
@@ -44,12 +46,14 @@ flowchart TD
 3. Copy the generated token string.
 
 ### Step 3: Add NPM Token to GitHub Secrets
+
 1. In your GitHub repository, navigate to **Settings > Secrets and variables > Actions**.
 2. Click **New repository secret**.
 3. Name: `NPM_TOKEN`
 4. Value: Paste your NPM token.
 
 ### Step 4: Library `package.json` Configuration
+
 Inside the library package directory (`projects/ngb-select/package.json`), ensure metadata and publishing flags are set:
 
 ```json
@@ -134,12 +138,12 @@ Create `.releaserc.json` in the root repository:
 
 ### How Commit Types Trigger Releases
 
-| Commit Format | Example | SemVer Bump |
-| :--- | :--- | :--- |
-| `fix(...)` | `fix(dropdown): resolve overlay clipping issue` | **Patch** (`v1.0.0` $\rightarrow$ `v1.0.1`) |
-| `feat(...)` | `feat(filter): add filterMatchMode options` | **Minor** (`v1.0.0` $\rightarrow$ `v1.1.0`) |
-| `BREAKING CHANGE:` | `feat(api)!: rename optionKey to dataKey` | **Major** (`v1.0.0` $\rightarrow$ `v2.0.0`) |
-| `docs(...)`, `chore(...)`, `refactor(...)` | `docs(readme): add installation guide` | **No release** |
+| Commit Format                              | Example                                         | SemVer Bump                                 |
+| :----------------------------------------- | :---------------------------------------------- | :------------------------------------------ |
+| `fix(...)`                                 | `fix(dropdown): resolve overlay clipping issue` | **Patch** (`v1.0.0` $\rightarrow$ `v1.0.1`) |
+| `feat(...)`                                | `feat(filter): add filterMatchMode options`     | **Minor** (`v1.0.0` $\rightarrow$ `v1.1.0`) |
+| `BREAKING CHANGE:`                         | `feat(api)!: rename optionKey to dataKey`       | **Major** (`v1.0.0` $\rightarrow$ `v2.0.0`) |
+| `docs(...)`, `chore(...)`, `refactor(...)` | `docs(readme): add installation guide`          | **No release**                              |
 
 ---
 
@@ -154,7 +158,7 @@ name: PR Validation Checks
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   validate:
@@ -251,13 +255,17 @@ jobs:
 ## 4. GitHub Repository Configuration
 
 ### 4.1. Branch Protection Rules
+
 Navigate to **Settings > Branches > Add branch protection rule**:
+
 - **Branch pattern:** `main`
 - **Require a pull request before merging:** Enabled
 - **Require status checks to pass before merging:** Enabled (Select `PR Validation Checks`)
 
 ### 4.2. GitHub Pages Configuration
+
 Navigate to **Settings > Pages**:
+
 - **Build and deployment source:** `Deploy from a branch`
 - **Branch:** `gh-pages` / `/ (root)`
 

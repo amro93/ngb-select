@@ -8,6 +8,8 @@ export type SelectFilterMatchMode = 'contains' | 'startsWith' | 'endsWith' | 'eq
 
 export type FocusOnOpenStrategy = 'always' | 'notSelected';
 
+export type FloatLabelVariant = 'on' | 'in' | 'over';
+
 export interface SelectOption {
   label?: string;
   value?: any;

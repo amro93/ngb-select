@@ -13,7 +13,7 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ChangeDetectorRef
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
@@ -24,12 +24,13 @@ import {
   SelectVariant,
   SelectDisplayMode,
   FocusOnOpenStrategy,
+  FloatLabelVariant,
   SelectChangeEvent,
   SelectFilterEvent,
   SelectSelectAllChangeEvent,
   SelectRemoveChipEvent,
   SelectLazyLoadEvent,
-  NGB_SELECT_VERSION
+  NGB_SELECT_VERSION,
 } from './ngb-select.interface';
 
 @Component({
@@ -42,9 +43,9 @@ import {
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => NgbSelectComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
   // Library version constant
@@ -76,7 +77,10 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @Input() filterBy?: string;
   @Input() filterMatchMode: SelectFilterMatchMode = 'contains';
   @Input() filterLocale?: string;
+  @Input() filterNormalizeArabic: boolean = true;
   @Input() filterPlaceholder?: string;
+  @Input() searchPlaceholder?: string;
+  @Input() filterInTrigger: boolean = false;
   @Input() resetFilterOnHide: boolean = false;
   @Input() emptyMessage: string = 'No results found';
   @Input() emptyFilterMessage: string = 'No results found';
@@ -88,11 +92,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @Input() showClear: boolean = false;
   @Input() invalid: boolean = false;
   @Input() floatLabel: boolean = false;
+  @Input() floatLabelVariant: FloatLabelVariant = 'on';
   @Input() autofocus: boolean = false;
   @Input() tabindex: number = 0;
   @Input() id?: string;
   @Input() ariaLabel?: string;
   @Input() ariaLabelledBy?: string;
+  @Input() dir?: 'ltr' | 'rtl' | 'auto';
 
   // --- Display & Styling Inputs ---
   @Input() size?: SelectSize;
@@ -146,8 +152,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   // --- View References ---
   @ViewChild('filterInput') filterInputElement?: ElementRef<HTMLInputElement>;
+  @ViewChild('triggerFilterInput') triggerFilterInputElement?: ElementRef<HTMLInputElement>;
   @ViewChild('editableInput') editableInputElement?: ElementRef<HTMLInputElement>;
   @ViewChild('dropdownMenu') dropdownMenuElement?: ElementRef<HTMLDivElement>;
+
+  get effectiveSearchPlaceholder(): string {
+    return this.searchPlaceholder || this.filterPlaceholder || this.placeholder || 'Search...';
+  }
 
   // --- Internal State ---
   public value: any = null;
@@ -161,7 +172,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   constructor(
     public elementRef: ElementRef,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -234,7 +245,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       if (selectedList.length > this.maxSelectedLabels) {
         return this.selectedItemsLabel.replace('{0}', String(selectedList.length));
       }
-      return selectedList.map(val => this.resolveOptionLabelByValue(val)).join(', ');
+      return selectedList.map((val) => this.resolveOptionLabelByValue(val)).join(', ');
     }
 
     if (this.editable && typeof this.value === 'string') {
@@ -311,12 +322,14 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     if (this.group) {
       for (const grp of this.safeOptions) {
         const children = this.resolveOptionGroupChildren(grp);
-        const match = children.find(opt => this.areValuesEqual(this.resolveOptionValue(opt), val));
+        const match = children.find((opt) =>
+          this.areValuesEqual(this.resolveOptionValue(opt), val),
+        );
         if (match !== undefined) return match;
       }
       return undefined;
     }
-    return this.safeOptions.find(opt => this.areValuesEqual(this.resolveOptionValue(opt), val));
+    return this.safeOptions.find((opt) => this.areValuesEqual(this.resolveOptionValue(opt), val));
   }
 
   areValuesEqual(val1: any, val2: any): boolean {
@@ -326,7 +339,11 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       if (this.dataKey && val1[this.dataKey] !== undefined && val2[this.dataKey] !== undefined) {
         return val1[this.dataKey] === val2[this.dataKey];
       }
-      if (this.optionValue && val1[this.optionValue] !== undefined && val2[this.optionValue] !== undefined) {
+      if (
+        this.optionValue &&
+        val1[this.optionValue] !== undefined &&
+        val2[this.optionValue] !== undefined
+      ) {
         return val1[this.optionValue] === val2[this.optionValue];
       }
       try {
@@ -341,7 +358,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   isSelected(option: any): boolean {
     const optVal = this.resolveOptionValue(option);
     if (this.multiple && Array.isArray(this.value)) {
-      return this.value.some(item => this.areValuesEqual(item, optVal));
+      return this.value.some((item) => this.areValuesEqual(item, optVal));
     }
     return this.areValuesEqual(this.value, optVal);
   }
@@ -349,7 +366,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   isOptionsEmpty(): boolean {
     if (this.filteredOptions.length === 0) return true;
     if (this.group) {
-      return this.filteredOptions.every(grp => this.resolveOptionGroupChildren(grp).length === 0);
+      return this.filteredOptions.every((grp) => this.resolveOptionGroupChildren(grp).length === 0);
     }
     return false;
   }
@@ -377,7 +394,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     this.onModelTouched();
 
     setTimeout(() => {
-      if (this.filter && this.filterInputElement) {
+      if (this.filterInTrigger && this.triggerFilterInputElement) {
+        this.triggerFilterInputElement.nativeElement.focus();
+      } else if (this.filter && this.filterInputElement) {
         this.filterInputElement.nativeElement.focus();
       }
       this.handleFocusOnOpen();
@@ -404,9 +423,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     let targetIndex = -1;
 
     const hasSelection = this.hasSelectedValue();
-    const selectedIdx = flatItems.findIndex(opt => this.isSelected(opt));
+    const selectedIdx = flatItems.findIndex((opt) => this.isSelected(opt));
 
-    if (this.focusOnOpen !== undefined && this.focusOnOpen >= 0 && this.focusOnOpen < flatItems.length) {
+    if (
+      this.focusOnOpen !== undefined &&
+      this.focusOnOpen >= 0 &&
+      this.focusOnOpen < flatItems.length
+    ) {
       if (this.focusOnOpenStrategy === 'notSelected' && hasSelection && selectedIdx !== -1) {
         targetIndex = selectedIdx;
       } else {
@@ -418,7 +441,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
     if (targetIndex !== -1 && this.dropdownMenuElement) {
       this.focusedIndex = targetIndex;
-      const elements = this.dropdownMenuElement.nativeElement.querySelectorAll('.dropdown-item[role="option"]');
+      const elements = this.dropdownMenuElement.nativeElement.querySelectorAll(
+        '.dropdown-item[role="option"]',
+      );
       const targetElement = elements[targetIndex] as HTMLElement;
       if (targetElement && typeof targetElement.scrollIntoView === 'function') {
         targetElement.scrollIntoView({ block: 'nearest', inline: 'start' });
@@ -434,7 +459,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
     if (this.multiple) {
       let currentSelection: any[] = Array.isArray(this.value) ? [...this.value] : [];
-      const selectedIndex = currentSelection.findIndex(item => this.areValuesEqual(item, val));
+      const selectedIndex = currentSelection.findIndex((item) => this.areValuesEqual(item, val));
 
       if (selectedIndex !== -1) {
         currentSelection.splice(selectedIndex, 1);
@@ -462,7 +487,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     if (this.disabled || this.readonly) return;
 
     if (Array.isArray(this.value)) {
-      const nextVal = this.value.filter(item => !this.areValuesEqual(item, val));
+      const nextVal = this.value.filter((item) => !this.areValuesEqual(item, val));
       this.updateModel(nextVal, event);
       this.onRemoveChip.emit({ originalEvent: event, value: val });
       this.updateSelectAllState();
@@ -471,10 +496,12 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   toggleSelectAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    const targetOptions = this.getFlatFilteredOptions().filter(opt => !this.isOptionDisabled(opt));
+    const targetOptions = this.getFlatFilteredOptions().filter(
+      (opt) => !this.isOptionDisabled(opt),
+    );
 
     if (checked) {
-      let allValues = targetOptions.map(opt => this.resolveOptionValue(opt));
+      let allValues = targetOptions.map((opt) => this.resolveOptionValue(opt));
       if (this.selectionLimit !== undefined) {
         allValues = allValues.slice(0, this.selectionLimit);
       }
@@ -490,12 +517,14 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   updateSelectAllState(): void {
     if (!this.multiple || !this.showSelectAll) return;
-    const targetOptions = this.getFlatFilteredOptions().filter(opt => !this.isOptionDisabled(opt));
+    const targetOptions = this.getFlatFilteredOptions().filter(
+      (opt) => !this.isOptionDisabled(opt),
+    );
     if (targetOptions.length === 0) {
       this.selectAll = false;
       return;
     }
-    this.selectAll = targetOptions.every(opt => this.isSelected(opt));
+    this.selectAll = targetOptions.every((opt) => this.isSelected(opt));
   }
 
   private updateModel(val: any, event: Event | null): void {
@@ -503,7 +532,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     this.onModelChange(this.value);
     this.onChange.emit({
       originalEvent: event,
-      value: this.value
+      value: this.value,
     });
     this.cdr.markForCheck();
   }
@@ -540,7 +569,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     this.updateSelectAllState();
     this.onFilter.emit({
       originalEvent: event,
-      filter: this.filterValue
+      filter: this.filterValue,
     });
   }
 
@@ -554,17 +583,17 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
     if (this.group) {
       this.filteredOptions = this.safeOptions
-        .map(group => {
+        .map((group) => {
           const children = this.resolveOptionGroupChildren(group);
-          const filteredChildren = children.filter(opt => this.matchesFilter(opt, query));
+          const filteredChildren = children.filter((opt) => this.matchesFilter(opt, query));
           return {
             ...group,
-            [this.optionGroupChildren]: filteredChildren
+            [this.optionGroupChildren]: filteredChildren,
           };
         })
-        .filter(group => this.resolveOptionGroupChildren(group).length > 0);
+        .filter((group) => this.resolveOptionGroupChildren(group).length > 0);
     } else {
-      this.filteredOptions = this.safeOptions.filter(opt => this.matchesFilter(opt, query));
+      this.filteredOptions = this.safeOptions.filter((opt) => this.matchesFilter(opt, query));
     }
   }
 
@@ -572,7 +601,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     if (!option) return false;
     const fieldsToSearch = this.getFilterFields();
 
-    return fieldsToSearch.some(field => {
+    return fieldsToSearch.some((field) => {
       const val = this.resolveFieldData(option, field);
       if (val === null || val === undefined) return false;
 
@@ -583,7 +612,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   private getFilterFields(): string[] {
     if (this.filterBy) {
-      return this.filterBy.split(',').map(f => f.trim());
+      return this.filterBy.split(',').map((f) => f.trim());
     }
     return [this.optionLabel || 'label'];
   }
@@ -591,7 +620,11 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   private resolveFieldData(data: any, field: string): any {
     if (data && field) {
       if (field.indexOf('.') === -1) {
-        return data[field] !== undefined ? data[field] : (typeof data === 'string' || typeof data === 'number' ? data : null);
+        return data[field] !== undefined
+          ? data[field]
+          : typeof data === 'string' || typeof data === 'number'
+            ? data
+            : null;
       }
       const fields = field.split('.');
       let value = data;
@@ -604,9 +637,27 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     return null;
   }
 
-  private compareStrings(val: string, query: string, mode: SelectFilterMatchMode, locale?: string): boolean {
-    const v = locale ? val.toLocaleLowerCase(locale) : val.toLowerCase();
-    const q = locale ? query.toLocaleLowerCase(locale) : query.toLowerCase();
+  private normalizeArabicText(text: string): string {
+    return text
+      .replace(/[\u064B-\u065F\u0670\u0640]/g, '') // Remove Arabic Tashkeel diacritics & Tatweel
+      .replace(/[إأآا]/g, 'ا') // Normalize Alef forms
+      .replace(/[يى]/g, 'ي') // Normalize Yaa & Alef Maksura
+      .replace(/[ة]/g, 'ه'); // Normalize Taa Marbuta
+  }
+
+  private compareStrings(
+    val: string,
+    query: string,
+    mode: SelectFilterMatchMode,
+    locale?: string,
+  ): boolean {
+    let v = locale ? val.toLocaleLowerCase(locale) : val.toLowerCase();
+    let q = locale ? query.toLocaleLowerCase(locale) : query.toLowerCase();
+
+    if (this.filterNormalizeArabic) {
+      v = this.normalizeArabicText(v);
+      q = this.normalizeArabicText(q);
+    }
 
     switch (mode) {
       case 'startsWith':
@@ -659,7 +710,12 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
       case 'Enter':
       case ' ':
-        if (event.key === ' ' && this.filter && this.filterInputElement?.nativeElement === document.activeElement) {
+        if (
+          event.key === ' ' &&
+          ((this.filter && this.filterInputElement?.nativeElement === document.activeElement) ||
+            (this.filterInTrigger &&
+              this.triggerFilterInputElement?.nativeElement === document.activeElement))
+        ) {
           return;
         }
         event.preventDefault();
@@ -702,14 +758,20 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     if (nextIdx < 0) nextIdx = 0;
     if (nextIdx >= flatItems.length) nextIdx = flatItems.length - 1;
 
-    while (nextIdx >= 0 && nextIdx < flatItems.length && this.isOptionDisabled(flatItems[nextIdx])) {
+    while (
+      nextIdx >= 0 &&
+      nextIdx < flatItems.length &&
+      this.isOptionDisabled(flatItems[nextIdx])
+    ) {
       nextIdx += step;
     }
 
     if (nextIdx >= 0 && nextIdx < flatItems.length) {
       this.focusedIndex = nextIdx;
       if (this.dropdownMenuElement) {
-        const elements = this.dropdownMenuElement.nativeElement.querySelectorAll('.dropdown-item[role="option"]');
+        const elements = this.dropdownMenuElement.nativeElement.querySelectorAll(
+          '.dropdown-item[role="option"]',
+        );
         const targetElement = elements[nextIdx] as HTMLElement;
         if (targetElement && typeof targetElement.scrollIntoView === 'function') {
           targetElement.scrollIntoView({ block: 'nearest', inline: 'start' });
@@ -726,7 +788,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       const flat = this.getFlatFilteredOptions();
       this.onLazyLoad.emit({
         first: flat.length,
-        last: flat.length + 10
+        last: flat.length + 10,
       });
     }
   }
@@ -754,7 +816,11 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   private cleanAppendTo(): void {
-    if (this.appendTo && this.dropdownMenuElement && this.dropdownMenuElement.nativeElement.parentElement === document.body) {
+    if (
+      this.appendTo &&
+      this.dropdownMenuElement &&
+      this.dropdownMenuElement.nativeElement.parentElement === document.body
+    ) {
       document.body.removeChild(this.dropdownMenuElement.nativeElement);
     }
   }
@@ -769,7 +835,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   public focus(): void {
-    if (this.editable && !this.multiple && this.editableInputElement) {
+    if (this.filterInTrigger && this.triggerFilterInputElement) {
+      this.triggerFilterInputElement.nativeElement.focus();
+    } else if (this.editable && !this.multiple && this.editableInputElement) {
       this.editableInputElement.nativeElement.focus();
     } else {
       const trigger = this.elementRef.nativeElement.querySelector('.form-select');
@@ -780,7 +848,10 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (this.overlayVisible && !this.elementRef.nativeElement.contains(event.target)) {
-      if (this.dropdownMenuElement && this.dropdownMenuElement.nativeElement.contains(event.target as Node)) {
+      if (
+        this.dropdownMenuElement &&
+        this.dropdownMenuElement.nativeElement.contains(event.target as Node)
+      ) {
         return;
       }
       this.closeOverlay(event);
