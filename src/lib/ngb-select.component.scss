@@ -16,7 +16,21 @@
   .form-select {
     cursor: pointer;
     min-height: 38px;
-    background-image: none; // We render custom icons/spinners cleanly
+    background-image: none; // Disable Bootstrap default SVG caret background
+    padding-right: 0.75rem; // Override Bootstrap's 2.25rem reserved background space
+    padding-left: 0.75rem;
+
+    &.form-select-sm {
+      min-height: 31px;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+    }
+
+    &.form-select-lg {
+      min-height: 48px;
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
 
     &.disabled,
     &:disabled {
@@ -63,5 +77,23 @@
     align-items: center;
     justify-content: center;
     line-height: 1;
+    font-size: 0.875rem;
+
+    i {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    i.rotate-180 {
+      transform: rotate(180deg);
+    }
+  }
+
+  .ngb-select-clear-icon {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }

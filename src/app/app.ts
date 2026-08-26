@@ -31,6 +31,9 @@ export class App implements OnInit {
   // Theme state
   isDarkMode = false;
 
+  // API Reference active tab state
+  activeApiTab: 'inputs' | 'outputs' | 'templates' = 'inputs';
+
   // 1. Basic (Primitives & Objects)
   primitiveCities: string[] = ['New York', 'Rome', 'London', 'Istanbul', 'Paris', 'Tokyo'];
   selectedPrimitiveCity: string = 'Rome';
@@ -128,8 +131,9 @@ export class App implements OnInit {
   largeDataset: { label: string; value: number }[] = [];
   selectedLargeItem: number | null = null;
 
-  // 12. Focus on Open Index
-  focusCity: string | null = null;
+  // 12. Focus on Open Index Example
+  focusOpenIndex: number = 3; // Index 3 is 'Istanbul'
+  selectedFocusCity: City | null = null;
 
   // 13. Angular Signals Binding
   signalCity = signal<string>('TOK');
@@ -232,6 +236,15 @@ selectedCity = null;`,
   [showSelectAll]="true"
   [filter]="true"
   placeholder="Select All Countries"
+  [fluid]="true">
+</ngb-select>`,
+
+    focusOnOpenHtml: `<ngb-select 
+  [options]="cities" 
+  [(ngModel)]="selectedCity" 
+  optionLabel="name" 
+  [focusOnOpen]="3" 
+  placeholder="Open to auto-focus index 3 (Istanbul)"
   [fluid]="true">
 </ngb-select>`,
 
