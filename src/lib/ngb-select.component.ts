@@ -30,6 +30,8 @@ import {
   SelectSelectAllChangeEvent,
   SelectRemoveChipEvent,
   SelectLazyLoadEvent,
+  DropdownPosition,
+  DropdownDirection,
   NGB_SELECT_VERSION,
 } from './ngb-select.interface';
 
@@ -101,6 +103,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @Input() dir?: 'ltr' | 'rtl' | 'auto';
 
   // --- Display & Styling Inputs ---
+  @Input() dropdownPosition: DropdownPosition = 'auto';
+  @Input() dropdownDirection?: DropdownDirection;
+  @Input() direction?: DropdownDirection;
   @Input() size?: SelectSize;
   @Input() variant: SelectVariant = 'outlined';
   @Input() fluid: boolean = false;
@@ -110,6 +115,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @Input() panelStyle?: { [klass: string]: any } | null;
   @Input() panelStyleClass?: string;
   @Input() appendTo?: 'body' | HTMLElement | string;
+
+  // --- Modal / Popup Window Inputs ---
+  @Input() modal: boolean = false;
+  @Input() popup: boolean = false;
+  @Input() touchUI: boolean = false;
+  @Input() popupTitle?: string;
+  @Input() modalTitle?: string;
 
   // --- Advanced Features ---
   @Input() editable: boolean = false;
@@ -158,6 +170,23 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   get effectiveSearchPlaceholder(): string {
     return this.searchPlaceholder || this.filterPlaceholder || this.placeholder || 'Search...';
+  }
+
+  get effectiveDropdownPosition(): DropdownPosition {
+    return this.dropdownDirection || this.direction || this.dropdownPosition || 'auto';
+  }
+
+  public currentPlacement: 'bottom' | 'top' = 'bottom';
+  get isDropup(): boolean {
+    return this.currentPlacement === 'top';
+  }
+
+  get isModalMode(): boolean {
+    return this.modal || this.popup || this.touchUI;
+  }
+
+  get effectivePopupTitle(): string {
+    return this.popupTitle || this.modalTitle || this.placeholder || 'Select an Option';
   }
 
   // --- Internal State ---
@@ -385,6 +414,44 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     this.toggleOverlay(event);
   }
 
+  calculateDropdownPosition(): void {
+    const pref = this.effectiveDropdownPosition;
+    if (pref === 'top' || pref === 'up') {
+      this.currentPlacement = 'top';
+      return;
+    }
+    if (pref === 'bottom' || pref === 'down') {
+      this.currentPlacement = 'bottom';
+      return;
+    }
+
+    // Auto positioning based on viewport space
+    if (typeof window === 'undefined' || !this.elementRef?.nativeElement) {
+      this.currentPlacement = 'bottom';
+      return;
+    }
+
+    const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
+
+    let panelHeight = 200;
+    if (this.dropdownMenuElement?.nativeElement?.offsetHeight) {
+      panelHeight = this.dropdownMenuElement.nativeElement.offsetHeight;
+    } else if (this.scrollHeight) {
+      const parsed = parseInt(this.scrollHeight, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        panelHeight = parsed;
+      }
+    }
+
+    if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
+      this.currentPlacement = 'top';
+    } else {
+      this.currentPlacement = 'bottom';
+    }
+  }
+
   toggleOverlay(event?: Event): void {
     if (this.overlayVisible) {
       this.closeOverlay(event);
@@ -396,12 +463,14 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   openOverlay(event?: Event): void {
     if (this.disabled || this.readonly || this.overlayVisible) return;
 
+    this.calculateDropdownPosition();
     this.overlayVisible = true;
     this.overlayVisibleChange.emit(true);
     this.onShow.emit(event || null);
     this.onModelTouched();
 
     setTimeout(() => {
+      this.calculateDropdownPosition();
       if (this.filterInTrigger && this.triggerFilterInputElement) {
         this.triggerFilterInputElement.nativeElement.focus();
       } else if (this.filter && this.filterInputElement) {
@@ -838,17 +907,25 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   private repositionOverlay(): void {
-    if (!this.dropdownMenuElement) return;
+    if (!this.dropdownMenuElement || this.isModalMode) return;
+    this.calculateDropdownPosition();
     const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
     const dropdown = this.dropdownMenuElement.nativeElement;
     dropdown.style.position = 'fixed';
-    dropdown.style.top = `${triggerRect.bottom + 2}px`;
     dropdown.style.left = `${triggerRect.left}px`;
     dropdown.style.width = `${triggerRect.width}px`;
     dropdown.style.minWidth = `${triggerRect.width}px`;
     dropdown.style.maxWidth = `${triggerRect.width}px`;
     dropdown.style.boxSizing = 'border-box';
     dropdown.style.zIndex = '1060';
+
+    if (this.isDropup) {
+      dropdown.style.top = 'auto';
+      dropdown.style.bottom = `${window.innerHeight - triggerRect.top + 2}px`;
+    } else {
+      dropdown.style.top = `${triggerRect.bottom + 2}px`;
+      dropdown.style.bottom = 'auto';
+    }
   }
 
   private cleanAppendTo(): void {
@@ -882,15 +959,21 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   @HostListener('window:resize')
   onWindowResize(): void {
-    if (this.overlayVisible && this.appendTo) {
-      this.repositionOverlay();
+    if (this.overlayVisible) {
+      this.calculateDropdownPosition();
+      if (this.appendTo) {
+        this.repositionOverlay();
+      }
     }
   }
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
-    if (this.overlayVisible && this.appendTo) {
-      this.repositionOverlay();
+    if (this.overlayVisible) {
+      this.calculateDropdownPosition();
+      if (this.appendTo) {
+        this.repositionOverlay();
+      }
     }
   }
 

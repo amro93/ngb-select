@@ -42,6 +42,14 @@ import { NgbSelectComponent } from './ngb-select.component';
         [closeOnSelect]="closeOnSelect"
         [focusOnOpen]="focusOnOpen"
         [focusOnOpenStrategy]="focusOnOpenStrategy"
+        [dropdownPosition]="dropdownPosition"
+        [dropdownDirection]="dropdownDirection"
+        [direction]="direction"
+        [modal]="modal"
+        [popup]="popup"
+        [touchUI]="touchUI"
+        [popupTitle]="popupTitle"
+        [modalTitle]="modalTitle"
         [dir]="dir"
         [appendTo]="appendTo"
         [(overlayVisible)]="overlayVisible"
@@ -73,6 +81,14 @@ import { NgbSelectComponent } from './ngb-select.component';
   `,
 })
 class TestHostComponent {
+  dropdownPosition: any = 'auto';
+  dropdownDirection?: any;
+  direction?: any;
+  modal: boolean = false;
+  popup: boolean = false;
+  touchUI: boolean = false;
+  popupTitle?: string;
+  modalTitle?: string;
   dir?: 'ltr' | 'rtl' | 'auto';
   appendTo?: 'body' | HTMLElement | string;
   options: any[] = [
@@ -856,6 +872,135 @@ describe('NgbSelectComponent', () => {
       const dropdown = selectComponent.dropdownMenuElement?.nativeElement;
       expect(dropdown).toBeTruthy();
       expect(dropdown?.style.zIndex).toBe('1060');
+    });
+
+    it('should default dropdownPosition to auto', () => {
+      const { selectComponent } = createComponent();
+      expect(selectComponent.dropdownPosition()).toBe('auto');
+      expect(selectComponent.effectiveDropdownPosition()).toBe('auto');
+    });
+
+    it('should apply dropup class and set isDropup when dropdownPosition is "top" or "up"', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.dropdownPosition = 'top';
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      expect(selectComponent.isDropup()).toBe(true);
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      expect(container.nativeElement.classList.contains('dropup')).toBe(true);
+      expect(container.nativeElement.classList.contains('dropdown-up')).toBe(true);
+    });
+
+    it('should support dropdownDirection and direction input aliases for dropup', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.dropdownDirection = 'up';
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      expect(selectComponent.isDropup()).toBe(true);
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      expect(container.nativeElement.classList.contains('dropup')).toBe(true);
+    });
+
+    it('should open downwards when dropdownPosition is "bottom" or "down"', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.dropdownPosition = 'bottom';
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      expect(selectComponent.isDropup()).toBe(false);
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      expect(container.nativeElement.classList.contains('dropup')).toBe(false);
+    });
+
+    it('should position fixed overlay upwards when appendTo="body" and isDropup is true', async () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.appendTo = 'body';
+        host.dropdownPosition = 'top';
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 20));
+      fixture.detectChanges();
+
+      const dropdown = selectComponent.dropdownMenuElement?.nativeElement;
+      expect(dropdown).toBeTruthy();
+      expect(dropdown?.style.top).toBe('auto');
+      expect(dropdown?.style.bottom).toBeTruthy();
+    });
+
+    it('should render backdrop and modal dialog header when modal is true', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.modal = true;
+        host.popupTitle = 'Select City (Mobile View)';
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      expect(selectComponent.isModalMode()).toBe(true);
+      const modal = fixture.debugElement.query(By.css('.modal'));
+      expect(modal).toBeTruthy();
+
+      const modalHeader = fixture.debugElement.query(By.css('.modal-header'));
+      expect(modalHeader).toBeTruthy();
+      expect(modalHeader.nativeElement.textContent).toContain('Select City (Mobile View)');
+
+      const modalDialog = fixture.debugElement.query(By.css('.modal-dialog'));
+      expect(modalDialog).toBeTruthy();
+    });
+
+    it('should close overlay when clicking modal backdrop', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.modal = true;
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      const modal = fixture.debugElement.query(By.css('.modal'));
+      expect(modal).toBeTruthy();
+
+      modal.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(selectComponent.overlayVisible()).toBe(false);
+    });
+
+    it('should close overlay when clicking close button in modal header', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.popup = true;
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      const closeBtn = fixture.debugElement.query(By.css('.modal-header .btn-close'));
+      expect(closeBtn).toBeTruthy();
+
+      closeBtn.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(selectComponent.overlayVisible()).toBe(false);
+    });
+
+    it('should render modal footer with Done button when modal is true and multiple is true', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.touchUI = true;
+        host.multiple = true;
+      });
+      selectComponent.openOverlay();
+      fixture.detectChanges();
+
+      const doneBtn = fixture.debugElement.query(By.css('.modal-footer .btn-primary'));
+      expect(doneBtn).toBeTruthy();
+      expect(doneBtn.nativeElement.textContent).toContain('Done');
+
+      doneBtn.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(selectComponent.overlayVisible()).toBe(false);
     });
   });
 });

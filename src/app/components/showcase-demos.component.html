@@ -1,0 +1,1296 @@
+<div class="row g-4">
+  <!-- 1. Basic Single Selection -->
+  <div class="col-12" id="basic">
+    <app-example-card
+      title="1. Basic Single Selection"
+      icon="bi bi-check-circle-fill"
+      iconClass="text-primary"
+      [htmlCode]="snippets.basicHtml"
+      [tsCode]="snippets.basicTs"
+    >
+      <p class="text-muted small mb-3">
+        Standard single-value dropdown supporting arrays of primitives or complex objects.
+        Use <code>optionLabel</code> to specify the display property and
+        <code>dataKey</code> for object identity comparisons.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold">Select City</label>
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="selectedObjectCity"
+          optionLabel="name"
+          [dataKey]="'code'"
+          placeholder="Select a city"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Value:</strong> <code>{{ selectedObjectCity | json }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 2. Multi-Select & Chips Display -->
+  <div class="col-12" id="multi-select">
+    <app-example-card
+      title="2. Multi-Select & Chips Mode"
+      icon="bi bi-check-all"
+      iconClass="text-success"
+      [htmlCode]="snippets.multiChipsHtml"
+      [tsCode]="snippets.multiChipsTs"
+    >
+      <p class="text-muted small mb-3">
+        Enables multi-selection with checkboxes inside the list. When
+        <code>display="chip"</code>, selected items appear as removable Bootstrap badge
+        chips with individual close buttons.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold"
+          >Select Multiple Cities (Chips Mode)</label
+        >
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="selectedChipsCities"
+          optionLabel="name"
+          [dataKey]="'code'"
+          [multiple]="true"
+          display="chip"
+          [showClear]="true"
+          placeholder="Choose cities..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected ({{ selectedChipsCities.length }}):</strong>
+        <code>{{ selectedChipsCities | json }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 3. Multi-Select with "Select All" -->
+  <div class="col-12" id="select-all">
+    <app-example-card
+      title="3. Multi-Select with 'Select All'"
+      icon="bi bi-ui-checks-grid"
+      iconClass="text-primary"
+      [htmlCode]="snippets.selectAllHtml"
+      [tsCode]="snippets.selectAllTs"
+    >
+      <p class="text-muted small mb-3">
+        Renders a sticky header checkbox with <code>[showSelectAll]="true"</code>.
+        Toggling it selects or deselects all active items, respecting any active filter
+        search criteria.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold"
+          >Select Countries (Select All Enabled)</label
+        >
+        <ngb-select
+          [options]="countries"
+          [(ngModel)]="selectedAllCountries"
+          optionLabel="name"
+          [dataKey]="'code'"
+          [multiple]="true"
+          [showSelectAll]="true"
+          [filter]="true"
+          filterBy="name,currency"
+          [showClear]="true"
+          placeholder="Choose countries..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected Count:</strong>
+        <code>{{ selectedAllCountries.length }} / {{ countries.length }} countries</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 4. In-Trigger Search & Custom Placeholders -->
+  <div class="col-12" id="trigger-search">
+    <app-example-card
+      title="4. In-Trigger Search & Custom Search Placeholder"
+      icon="bi bi-search"
+      iconClass="text-warning"
+      cardClass="border-warning-subtle"
+      headerClass="bg-warning-subtle bg-opacity-10"
+      titleClass="text-warning-emphasis fw-bold"
+      [htmlCode]="snippets.triggerHtml"
+      [tsCode]="snippets.triggerTs"
+    >
+      <p class="text-muted small mb-3">
+        Embeds the filter input directly inside the main select box using
+        <code>[filterInTrigger]="true"</code> with custom
+        <code>searchPlaceholder</code> for seamless inline searchable autocomplete.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold">Inline Search Trigger:</label>
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="selectedTriggerCity"
+          optionLabel="name"
+          [filter]="true"
+          [filterInTrigger]="true"
+          searchPlaceholder="Type directly here to filter cities..."
+          [showClear]="true"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected City:</strong> <code>{{ selectedTriggerCity | json }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 5. Searchable Multi-Select -->
+  <div class="col-12" id="searchable-multi">
+    <app-example-card
+      title="5. Searchable Multi-Select with Chips & Select All"
+      icon="bi bi-filter-square-fill"
+      iconClass="text-info"
+      cardClass="border-info-subtle"
+      headerClass="bg-info-subtle bg-opacity-10"
+      titleClass="text-info-emphasis fw-bold"
+      [htmlCode]="snippets.searchableMultiHtml"
+      [tsCode]="snippets.searchableMultiTs"
+    >
+      <p class="text-muted small mb-3">
+        Combines multi-field search (<code>filterBy="name,code,currency"</code>),
+        removable chip badges (<code>display="chip"</code>), and sticky "Select All" header.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold"
+          >Select Multiple Countries (Multi-Field Filter):</label
+        >
+        <ngb-select
+          [options]="countries"
+          [(ngModel)]="selectedSearchableMulti"
+          optionLabel="name"
+          [multiple]="true"
+          display="chip"
+          [filter]="true"
+          filterBy="name,code,currency"
+          searchPlaceholder="Search by country, code, currency..."
+          [showSelectAll]="true"
+          selectAllLabel="Select All Matches"
+          [showClear]="true"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected ({{ selectedSearchableMulti.length }}):</strong>
+        <code>{{ selectedSearchableMulti | json }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 6. Focus on Open Example -->
+  <div class="col-12" id="focus-open">
+    <app-example-card
+      title="6. Focus on Open Index"
+      icon="bi bi-bullseye"
+      iconClass="text-danger"
+      [htmlCode]="snippets.focusOnOpenHtml"
+      [tsCode]="snippets.focusOnOpenTs"
+    >
+      <p class="text-muted small mb-3">
+        Configure <code>[focusOnOpen]="index"</code> and
+        <code>[focusOnOpenStrategy]</code> to choose whether target index is focused
+        <strong>always</strong>, or
+        <strong>only when no value is currently selected</strong> (if a value is selected,
+        it focuses the selected item instead).
+      </p>
+      <div class="row g-2 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label text-muted small fw-semibold mb-1">Target Focus Index</label>
+          <select class="form-select form-select-sm" [(ngModel)]="focusOpenIndex">
+            <option [ngValue]="0">0 - New York</option>
+            <option [ngValue]="1">1 - Rome</option>
+            <option [ngValue]="2">2 - London</option>
+            <option [ngValue]="3">3 - Istanbul</option>
+            <option [ngValue]="4">4 - Paris</option>
+            <option [ngValue]="5">5 - Tokyo</option>
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label text-muted small fw-semibold mb-1">Focus Strategy</label>
+          <select class="form-select form-select-sm" [(ngModel)]="focusOpenStrategy">
+            <option value="always">always (Always Target Index)</option>
+            <option value="notSelected">notSelected (Only If Not Selected)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="selectedFocusCity"
+          optionLabel="name"
+          [focusOnOpen]="focusOpenIndex"
+          [focusOnOpenStrategy]="focusOpenStrategy"
+          [showClear]="true"
+          placeholder="Click to open & auto-focus target"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected:</strong>
+        <code>{{ selectedFocusCity ? selectedFocusCity.name : 'None' }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 7. Reactive Forms & Validation -->
+  <div class="col-12" id="reactive-forms">
+    <app-example-card
+      title="7. Reactive Forms & Validation"
+      icon="bi bi-ui-radios"
+      iconClass="text-info"
+      [htmlCode]="snippets.reactiveHtml"
+      [tsCode]="snippets.reactiveTs"
+    >
+      <p class="text-muted small mb-3">
+        Implements Angular's <code>ControlValueAccessor</code> interface with full
+        validation status support. Highlights with <code>.is-invalid</code> and displays
+        field errors upon touched validation.
+      </p>
+      <form [formGroup]="userForm" (ngSubmit)="submitReactiveForm()">
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-semibold">City (Required)</label>
+          <ngb-select
+            [options]="objectCities"
+            formControlName="city"
+            optionLabel="name"
+            [invalid]="!!(userForm.get('city')?.invalid && userForm.get('city')?.touched)"
+            [showClear]="true"
+            placeholder="Select a city"
+            [fluid]="true"
+          >
+          </ngb-select>
+          @if (userForm.get('city')?.invalid && userForm.get('city')?.touched) {
+            <div class="text-danger small mt-1">
+              <i class="bi bi-exclamation-circle me-1"></i> City selection is required.
+            </div>
+          }
+        </div>
+        <div class="d-flex align-items-center justify-content-between">
+          <button type="submit" class="btn btn-primary btn-sm">Submit Form</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="userForm.reset()"
+          >
+            Reset
+          </button>
+        </div>
+      </form>
+    </app-example-card>
+  </div>
+
+  <!-- 8. Search & Filtering -->
+  <div class="col-12" id="filtering">
+    <app-example-card
+      title="8. Search & Filtering Options"
+      icon="bi bi-funnel"
+      iconClass="text-primary"
+      [htmlCode]="snippets.filterHtml"
+      [tsCode]="snippets.filterTs"
+    >
+      <p class="text-muted small mb-3">
+        Dynamic client-side filtering with configurable match mode (<code>contains</code>,
+        <code>startsWith</code>, <code>endsWith</code>, <code>equals</code>).
+      </p>
+      <div class="row g-2 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label text-muted small fw-semibold mb-1">Match Mode</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filterMatchMode">
+            <option value="contains">contains</option>
+            <option value="startsWith">startsWith</option>
+            <option value="endsWith">endsWith</option>
+            <option value="equals">equals</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <ngb-select
+          [options]="countries"
+          [(ngModel)]="selectedCountryFilter"
+          optionLabel="name"
+          optionValue="code"
+          [filter]="true"
+          filterBy="name,code"
+          [filterMatchMode]="filterMatchMode"
+          filterPlaceholder="Search country name or code..."
+          [showClear]="true"
+          placeholder="Filter country..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected Code:</strong> <code>{{ selectedCountryFilter }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 9. Custom Templates -->
+  <div class="col-12" id="templates">
+    <app-example-card
+      title="9. Custom Content Templates"
+      icon="bi bi-palette"
+      iconClass="text-warning"
+      [htmlCode]="snippets.templateHtml"
+      [tsCode]="snippets.templateTs"
+    >
+      <p class="text-muted small mb-3">
+        Customize item and selected item rendering using <code>#item</code> and
+        <code>#selectedItem</code> templates.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold">Team Members (Custom Items):</label>
+        <ngb-select [options]="members" [(ngModel)]="selectedMember" optionLabel="name" [fluid]="true">
+          <ng-template #selectedItem let-member>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge rounded-pill" [ngClass]="member.badge">{{ member.status }}</span>
+              <span class="fw-semibold">{{ member.name }}</span>
+              <span class="text-muted small">&bull; {{ member.role }}</span>
+            </div>
+          </ng-template>
+          <ng-template #item let-member>
+            <div class="d-flex align-items-center justify-content-between w-100 py-1">
+              <div>
+                <div class="fw-semibold">{{ member.name }}</div>
+                <small class="text-muted">{{ member.email }}</small>
+              </div>
+              <span class="badge" [ngClass]="member.badge">{{ member.role }}</span>
+            </div>
+          </ng-template>
+        </ngb-select>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 10. Grouped Options -->
+  <div class="col-12" id="grouping">
+    <app-example-card
+      title="10. Grouped Options"
+      icon="bi bi-folder2-open"
+      iconClass="text-danger"
+      [htmlCode]="snippets.groupHtml"
+      [tsCode]="snippets.groupTs"
+    >
+      <p class="text-muted small mb-3">
+        Organize options into categories using <code>[group]="true"</code>,
+        <code>optionGroupLabel</code>, and <code>optionGroupChildren</code>.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold">Select Car by Origin:</label>
+        <ngb-select
+          [options]="groupedCars"
+          [(ngModel)]="selectedGroupedCar"
+          [group]="true"
+          optionGroupLabel="label"
+          optionGroupChildren="items"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select a car..."
+          [showClear]="true"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected Car:</strong> <code>{{ selectedGroupedCar }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 11. Editable Combobox -->
+  <div class="col-12" id="editable">
+    <app-example-card
+      title="11. Editable Combobox"
+      icon="bi bi-pencil-square"
+      iconClass="text-secondary"
+      [htmlCode]="snippets.editableHtml"
+      [tsCode]="snippets.editableTs"
+    >
+      <p class="text-muted small mb-3">
+        Allows the user to select predefined options or freely type arbitrary custom text
+        values with <code>[editable]="true"</code>.
+      </p>
+      <div class="mb-3">
+        <ngb-select
+          [options]="primitiveCities"
+          [(ngModel)]="editableCity"
+          [editable]="true"
+          [showClear]="true"
+          placeholder="Type or select a city..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Current Value:</strong> <code>{{ editableCity }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 12. Floating Labels -->
+  <div class="col-12" id="float-label">
+    <app-example-card
+      title="12. Floating Labels"
+      icon="bi bi-textarea-resize"
+      iconClass="text-info"
+      [htmlCode]="snippets.floatLabelHtml"
+      [tsCode]="snippets.floatLabelTs"
+    >
+      <p class="text-muted small mb-3">
+        Select supports 3 distinct floating label variants configured via
+        <code>[floatLabel]="true"</code> and
+        <code>floatLabelVariant="on" | "in" | "over"</code>:
+      </p>
+      <div class="mb-3">
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="floatCityOn"
+          optionLabel="name"
+          [floatLabel]="true"
+          floatLabelVariant="on"
+          [showClear]="true"
+          placeholder="Outlined Border (on)"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="mb-3">
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="floatCityIn"
+          optionLabel="name"
+          [floatLabel]="true"
+          floatLabelVariant="in"
+          [showClear]="true"
+          placeholder="In-Box Floating (in)"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="mb-3">
+        <ngb-select
+          [options]="objectCities"
+          [(ngModel)]="floatCityOver"
+          optionLabel="name"
+          [floatLabel]="true"
+          floatLabelVariant="over"
+          [showClear]="true"
+          placeholder="Above Field (over)"
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 13. Sizes & Variants -->
+  <div class="col-12" id="sizes">
+    <div class="card example-card">
+      <div class="card-header p-3">
+        <i class="bi bi-bounding-box text-success me-2"></i>13. Sizes & Variants
+      </div>
+      <div class="card-body p-3 d-flex flex-column gap-3">
+        <p class="text-muted small mb-0">
+          Control the visual appearance and scale of the dropdown with Bootstrap sizing
+          (<code>.form-select-sm</code>, <code>.form-select-lg</code>) and background variants
+          (<code>variant="filled"</code>).
+        </p>
+        <div>
+          <label class="form-label text-muted small fw-semibold"
+            >Small Size (<code>size="small"</code>)</label
+          >
+          <ngb-select
+            [options]="objectCities"
+            [(ngModel)]="sizeCity"
+            optionLabel="name"
+            size="small"
+            [fluid]="true"
+          ></ngb-select>
+        </div>
+        <div>
+          <label class="form-label text-muted small fw-semibold"
+            >Large Size (<code>size="large"</code>)</label
+          >
+          <ngb-select
+            [options]="objectCities"
+            [(ngModel)]="sizeCity"
+            optionLabel="name"
+            size="large"
+            [fluid]="true"
+          ></ngb-select>
+        </div>
+        <div>
+          <label class="form-label text-muted small fw-semibold"
+            >Filled Variant (<code>variant="filled"</code>)</label
+          >
+          <ngb-select
+            [options]="objectCities"
+            [(ngModel)]="sizeCity"
+            optionLabel="name"
+            variant="filled"
+            [fluid]="true"
+          ></ngb-select>
+        </div>
+        <div>
+          <label class="form-label text-muted small fw-semibold"
+            >Dropdown Direction / Position (<code>dropdownPosition="{{ demoDropdownPosition }}"</code>)</label
+          >
+          <div class="btn-group btn-group-sm w-100 mb-2" role="group">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              [class.active]="demoDropdownPosition === 'auto'"
+              (click)="demoDropdownPosition = 'auto'"
+            >
+              Auto (Default)
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              [class.active]="demoDropdownPosition === 'top'"
+              (click)="demoDropdownPosition = 'top'"
+            >
+              Top (Dropup)
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              [class.active]="demoDropdownPosition === 'bottom'"
+              (click)="demoDropdownPosition = 'bottom'"
+            >
+              Bottom (Dropdown)
+            </button>
+          </div>
+          <ngb-select
+            [options]="objectCities"
+            [(ngModel)]="selectedPositionCity"
+            optionLabel="name"
+            [dropdownPosition]="demoDropdownPosition"
+            [fluid]="true"
+          ></ngb-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14. Loading State -->
+  <div class="col-12" id="loading">
+    <div class="card example-card">
+      <div class="card-header d-flex align-items-center justify-content-between p-3">
+        <span
+          ><i class="bi bi-arrow-repeat text-secondary me-2"></i>14. Loading State & Async
+          Fetch</span
+        >
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="reloadDynamicData()"
+          [disabled]="isLoading"
+        >
+          <i class="bi bi-arrow-clockwise me-1" [class.animate-spin]="isLoading"></i> Reload
+        </button>
+      </div>
+      <div class="card-body p-3">
+        <p class="text-muted small mb-3">
+          Displays a Bootstrap <code>.spinner-border</code> spinner in place of the chevron
+          caret when <code>[loading]="true"</code>.
+        </p>
+        <div class="mb-3">
+          <ngb-select
+            [options]="loadingCities"
+            [(ngModel)]="selectedLoadingCity"
+            optionLabel="name"
+            optionValue="code"
+            [loading]="isLoading"
+            placeholder="Loading dynamic cities..."
+            [fluid]="true"
+          >
+          </ngb-select>
+        </div>
+        <div class="p-2 bg-light rounded text-muted small">
+          <strong>Selected:</strong> <code>{{ selectedLoadingCity || 'None' }}</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15. Large Dataset -->
+  <div class="col-12" id="virtual-scroll">
+    <div class="card example-card">
+      <div class="card-header p-3">
+        <i class="bi bi-list-ol text-warning me-2"></i>15. Large Dataset (1,000 Items)
+      </div>
+      <div class="card-body p-3">
+        <p class="text-muted small mb-3">
+          Smooth scrolling container constrained with
+          <code>scrollHeight="250px"</code> effortlessly rendering 1,000 entries with instant
+          search capabilities.
+        </p>
+        <div class="mb-3">
+          <ngb-select
+            [options]="largeDataset"
+            [(ngModel)]="selectedLargeItem"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            scrollHeight="250px"
+            placeholder="Choose from 1,000 items..."
+            [fluid]="true"
+          >
+          </ngb-select>
+        </div>
+        <div class="p-2 bg-light rounded text-muted small">
+          <strong>Selected ID:</strong> <code>{{ selectedLargeItem || 'None' }}</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16. Modern Signals -->
+  <div class="col-12" id="signals">
+    <app-example-card
+      title="16. Modern Angular Signals"
+      icon="bi bi-lightning-charge-fill"
+      iconClass="text-warning"
+      [htmlCode]="snippets.signalsHtml"
+      [tsCode]="snippets.signalsTs"
+    >
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-4">
+        <div>
+          <p class="text-muted mb-0 small">
+            Seamless two-way reactivity with Angular's reactive Signals primitives (<code>signal()</code>
+            and <code>model()</code>) with zero change detection delays.
+          </p>
+        </div>
+        <div style="min-width: 280px">
+          <ngb-select
+            [options]="objectCities"
+            [ngModel]="signalCity()"
+            (ngModelChange)="signalCity.set($event)"
+            optionLabel="name"
+            optionValue="code"
+            [fluid]="true"
+          >
+          </ngb-select>
+        </div>
+        <div class="badge bg-primary fs-6 p-2">
+          Signal Value: <code>{{ signalCity() }}</code>
+        </div>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 17. Arabic (AR) RTL Showcase -->
+  <div class="col-12" id="arabic-showcase">
+    <app-example-card
+      title="17. Arabic (AR) RTL Showcase & Diacritics Normalization"
+      icon="bi bi-translate"
+      iconClass="text-success"
+      cardClass="border-success-subtle"
+      headerClass="bg-success-subtle bg-opacity-10"
+      titleClass="text-success-emphasis fw-bold"
+      [htmlCode]="snippets.arabicHtml"
+      [tsCode]="snippets.arabicTs"
+    >
+      <p class="text-muted small mb-3">
+        Demonstrates full bidirectional layout (<code>dir="rtl"</code>), Arabic mock
+        datasets, and intelligent Arabic text search normalization that ignores Tashkeel
+        diacritics and equates letter variants.
+      </p>
+      <div class="p-3 border rounded bg-white" dir="rtl" lang="ar">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-dark small"
+              >اختر دولة عربية (بحث مع تطبيع الحروف والتشكيل):</label
+            >
+            <ngb-select
+              [options]="arabicCountries"
+              [(ngModel)]="selectedArabicCountry"
+              optionLabel="name"
+              optionValue="code"
+              [filter]="true"
+              filterPlaceholder="ابحث عن دولة (مثال: مصر، الامارات، الاردن)..."
+              placeholder="-- اختر الدولة --"
+              emptyMessage="لا توجد نتائج"
+              emptyFilterMessage="لم يتم العثور على نتائج مطابقة"
+              [showClear]="true"
+              [fluid]="true"
+            >
+            </ngb-select>
+            <div class="mt-1 text-muted small">
+              <strong>الدولة المختارة:</strong> <code>{{ selectedArabicCountry }}</code>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-dark small"
+              >المدن المختارة (تحديد متعدد مع وسوم وخيار تحديد الكل):</label
+            >
+            <ngb-select
+              [options]="arabicCities"
+              [(ngModel)]="selectedArabicCities"
+              optionLabel="name"
+              optionValue="id"
+              [multiple]="true"
+              display="chip"
+              [showSelectAll]="true"
+              selectAllLabel="تحديد الكل"
+              selectedItemsLabel="{0} مدن محددة"
+              [filter]="true"
+              filterPlaceholder="ابحث عن مدينة..."
+              placeholder="اختر المدن المراد زيارتها"
+              [showClear]="true"
+              [fluid]="true"
+            >
+            </ngb-select>
+            <div class="mt-1 text-muted small">
+              <strong>المدن المحددة ({{ selectedArabicCities.length }}):</strong>
+              <code>{{ selectedArabicCities | json }}</code>
+            </div>
+          </div>
+          <div class="col-12 mt-3">
+            <label class="form-label fw-bold text-dark small"
+              >خيارات مجمعة حسب المنطقة الجغرافية:</label
+            >
+            <ngb-select
+              [options]="arabicGroupedRegions"
+              [(ngModel)]="selectedArabicRegionCity"
+              [group]="true"
+              optionGroupLabel="region"
+              optionGroupChildren="cities"
+              optionLabel="name"
+              [showClear]="true"
+              placeholder="اختر المدينة حسب المنطقة..."
+              [fluid]="true"
+            >
+            </ngb-select>
+          </div>
+        </div>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 18. Cascading / Dependent Dropdowns -->
+  <div class="col-12" id="cascading">
+    <app-example-card
+      title="18. Cascading / Dependent Dropdowns"
+      icon="bi bi-diagram-3-fill"
+      iconClass="text-primary"
+      [htmlCode]="snippets.cascadingHtml"
+      [tsCode]="snippets.cascadingTs"
+    >
+      <p class="text-muted small mb-3">
+        Dependent dropdown selection where selecting a parent Country automatically
+        filters the available child Cities.
+      </p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small">1. Select Country:</label>
+          <ngb-select
+            [options]="cascadingCountries"
+            [(ngModel)]="selectedCascadingCountry"
+            (onChange)="onCascadingCountryChange($event.value)"
+            optionLabel="name"
+            optionValue="code"
+            placeholder="Select Country..."
+            [showClear]="true"
+            [fluid]="true"
+          >
+          </ngb-select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold small">2. Select Dependent City:</label>
+          <ngb-select
+            [options]="cascadingAvailableCities"
+            [(ngModel)]="selectedCascadingCity"
+            [disabled]="!selectedCascadingCountry"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select City..."
+            [showClear]="true"
+            [fluid]="true"
+          >
+          </ngb-select>
+        </div>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small mt-3">
+        <strong>Selected:</strong> Country:
+        <code>{{ selectedCascadingCountry || 'None' }}</code>, City ID:
+        <code>{{ selectedCascadingCity || 'None' }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 19. Server-Side Debounced Async Search -->
+  <div class="col-12" id="async-search">
+    <app-example-card
+      title="19. Server-Side Debounced Async Search"
+      icon="bi bi-cloud-arrow-down-fill"
+      iconClass="text-info"
+      [htmlCode]="snippets.asyncSearchHtml"
+      [tsCode]="snippets.asyncSearchTs"
+    >
+      <p class="text-muted small mb-3">
+        Simulates debounced real-time server queries as the user types (e.g. searching
+        users via remote API).
+      </p>
+      <div class="mb-3">
+        <ngb-select
+          [options]="asyncSearchResults"
+          [(ngModel)]="selectedAsyncUser"
+          optionLabel="login"
+          optionValue="id"
+          [filter]="true"
+          [loading]="isAsyncSearching"
+          (onFilter)="onAsyncSearchFilter($event.filter)"
+          searchPlaceholder="Type at least 2 chars (e.g. dev, lead, alex)..."
+          emptyFilterMessage="No remote users found matching criteria"
+          placeholder="Search remote users..."
+          [fluid]="true"
+        >
+          <ng-template #item let-user>
+            <div class="d-flex align-items-center justify-content-between w-100">
+              <strong>{{ user.login }}</strong>
+              <span class="badge bg-primary-subtle text-primary">{{ user.role }}</span>
+            </div>
+          </ng-template>
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected User ID:</strong> <code>{{ selectedAsyncUser || 'None' }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 20. Custom Icon Templates -->
+  <div class="col-12" id="custom-icons">
+    <app-example-card
+      title="20. Custom Dropdown & Clear Icon Templates"
+      icon="bi bi-stars"
+      iconClass="text-warning"
+      [htmlCode]="snippets.customIconsHtml"
+      [tsCode]="snippets.customIconsTs"
+    >
+      <p class="text-muted small mb-3">
+        Customizes indicators using <code>#dropdownIcon</code> and
+        <code>#clearIcon</code> templates.
+      </p>
+      <div class="mb-3">
+        <ngb-select
+          [options]="browsers"
+          [(ngModel)]="selectedBrowser"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          placeholder="Choose Browser..."
+          [fluid]="true"
+        >
+          <ng-template #dropdownIcon>
+            <i class="bi bi-compass text-primary fw-bold"></i>
+          </ng-template>
+          <ng-template #clearIcon>
+            <i class="bi bi-trash-fill text-danger"></i>
+          </ng-template>
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected Browser:</strong> <code>{{ selectedBrowser }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 21. Table Cell In-Place Inline Editing -->
+  <div class="col-12" id="table-edit">
+    <app-example-card
+      title="21. Table Cell In-Place Inline Editing"
+      icon="bi bi-table"
+      iconClass="text-success"
+      [htmlCode]="snippets.tableEditHtml"
+      [tsCode]="snippets.tableEditTs"
+    >
+      <p class="text-muted small mb-3">
+        Compact <code>size="small"</code> selects seamlessly embedded inside data table rows.
+      </p>
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th style="width: 220px">Role (Inline Edit)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (member of tableMembers; track member.id) {
+              <tr>
+                <td class="fw-semibold">{{ member.name }}</td>
+                <td class="text-muted small">{{ member.email }}</td>
+                <td>
+                  <ngb-select
+                    [options]="roleOptions"
+                    [(ngModel)]="member.role"
+                    size="small"
+                    optionLabel="label"
+                    optionValue="value"
+                    appendTo="body"
+                    [fluid]="true"
+                  >
+                  </ngb-select>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 22. Bootstrap Modal Dialog Integration -->
+  <div class="col-12" id="modal-dialog">
+    <app-example-card
+      title="22. Bootstrap Modal Dialog Integration"
+      icon="bi bi-window-stack"
+      iconClass="text-secondary"
+      [htmlCode]="snippets.modalHtml"
+      [tsCode]="snippets.modalTs"
+    >
+      <p class="text-muted small mb-3">
+        Using <code>appendTo="body"</code> ensures overlays display above modal dialogs without
+        clipping.
+      </p>
+      <button
+        type="button"
+        class="btn btn-outline-primary shadow-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        <i class="bi bi-box-arrow-up-right me-1"></i> Open Bootstrap Modal
+      </button>
+
+      <!-- Modal Dialog Container -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        data-bs-focus="false"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="exampleModalLabel">
+                <i class="bi bi-person-plus-fill me-2"></i>Assign Member Department
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body p-4">
+              <label class="form-label fw-semibold text-muted small">Select Department</label>
+              <ngb-select
+                [options]="departments"
+                [(ngModel)]="selectedModalDept"
+                optionLabel="name"
+                optionValue="name"
+                appendTo="body"
+                [filter]="true"
+                placeholder="Choose department..."
+                [fluid]="true"
+              >
+              </ngb-select>
+            </div>
+            <div class="modal-footer bg-light">
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">
+                Save Selection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 23. Custom Chip Badges -->
+  <div class="col-12" id="custom-chip-user">
+    <app-example-card
+      title="23. Custom Chip Template with Avatars"
+      icon="bi bi-person-badge"
+      iconClass="text-primary"
+      [htmlCode]="snippets.customChipHtml"
+      [tsCode]="snippets.customChipTs"
+    >
+      <p class="text-muted small mb-3">
+        Custom rendering for selected chip badges via the <code>#chip</code> template ref.
+      </p>
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-semibold">Add Team Members:</label>
+        <ngb-select
+          [options]="collaborators"
+          [(ngModel)]="selectedCollaborators"
+          optionLabel="name"
+          optionValue="id"
+          [multiple]="true"
+          display="chip"
+          placeholder="Assign collaborators..."
+          [fluid]="true"
+        >
+          <ng-template #chip let-user>
+            <div class="d-inline-flex align-items-center gap-1">
+              <img
+                [src]="user.avatar"
+                [alt]="user.name"
+                class="rounded-circle"
+                width="18"
+                height="18"
+                (error)="onAvatarError($event)"
+              />
+              <span class="fw-semibold">{{ user.name }}</span>
+              <span class="badge bg-primary-subtle text-primary ms-1">{{ user.team }}</span>
+            </div>
+          </ng-template>
+        </ngb-select>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 24. Dark Mode Theme -->
+  <div class="col-12" id="dark-mode">
+    <app-example-card
+      title="24. Dark Mode Theme Support"
+      icon="bi bi-moon-stars-fill"
+      iconClass="text-dark"
+      [htmlCode]="snippets.darkThemeHtml"
+      [tsCode]="snippets.darkThemeTs"
+    >
+      <p class="text-muted small mb-3">
+        Inherits Bootstrap 5 dark theme CSS variables automatically when
+        <code>data-bs-theme="dark"</code> is applied to ancestor elements.
+      </p>
+      <div class="p-4 rounded-3 bg-dark text-light shadow-sm" data-bs-theme="dark">
+        <label class="form-label small fw-semibold text-light">Dark Mode Select</label>
+        <ngb-select
+          [options]="themeOptions"
+          [(ngModel)]="activeDemoTheme"
+          optionLabel="label"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          placeholder="Select Theme Mode..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 25. Accessibility (A11y) -->
+  <div class="col-12" id="a11y">
+    <app-example-card
+      title="25. Accessibility (A11y) & ARIA Labels"
+      icon="bi bi-universal-access"
+      iconClass="text-info"
+      [htmlCode]="snippets.a11yHtml"
+      [tsCode]="snippets.a11yTs"
+    >
+      <p class="text-muted small mb-3">
+        Full ARIA attribute support including <code>ariaLabel</code>,
+        <code>ariaLabelledBy</code>, and screen reader roles.
+      </p>
+      <div class="mb-3">
+        <label id="paymentMethodLabel" class="form-label text-muted small fw-semibold"
+          >Select Payment Method</label
+        >
+        <ngb-select
+          [options]="paymentMethods"
+          [(ngModel)]="selectedPayment"
+          ariaLabelledBy="paymentMethodLabel"
+          optionLabel="name"
+          optionValue="code"
+          placeholder="Payment Options..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 26. Form Reset & Dynamic Disabling -->
+  <div class="col-12" id="form-reset">
+    <app-example-card
+      title="26. Form Reset & Dynamic Disabling"
+      icon="bi bi-arrow-counterclockwise"
+      iconClass="text-danger"
+      [htmlCode]="snippets.formResetHtml"
+      [tsCode]="snippets.formResetTs"
+    >
+      <p class="text-muted small mb-3">
+        Demonstrates programmatic form resetting, setting disabled states dynamically, and
+        clean reactive sync.
+      </p>
+      <form [formGroup]="accountForm">
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Subscription Plan:</label>
+          <ngb-select
+            [options]="plans"
+            formControlName="plan"
+            optionLabel="name"
+            optionValue="id"
+            [fluid]="true"
+          >
+          </ngb-select>
+        </div>
+        <div class="d-flex gap-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            (click)="toggleAccountPlanDisable()"
+          >
+            {{ accountForm.get('plan')?.disabled ? 'Enable Select' : 'Disable Select' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            (click)="resetAccountPlanForm()"
+          >
+            Reset to Default
+          </button>
+        </div>
+      </form>
+    </app-example-card>
+  </div>
+
+  <!-- 27. Hierarchical Grouped Multi-Select -->
+  <div class="col-12" id="grouped-multi">
+    <app-example-card
+      title="27. Hierarchical Grouped Multi-Select"
+      icon="bi bi-layers-fill"
+      iconClass="text-primary"
+      [htmlCode]="snippets.groupedMultiHtml"
+      [tsCode]="snippets.groupedMultiTs"
+    >
+      <p class="text-muted small mb-3">
+        Multi-selection within categorized nested groups with sticky "Select All" and chip
+        rendering.
+      </p>
+      <div class="mb-3">
+        <ngb-select
+          [options]="groupedPermissions"
+          [(ngModel)]="selectedGroupedPermissions"
+          [group]="true"
+          optionGroupLabel="category"
+          optionGroupChildren="permissions"
+          optionLabel="name"
+          optionValue="key"
+          [multiple]="true"
+          [showSelectAll]="true"
+          display="chip"
+          placeholder="Assign categorized permissions..."
+          [fluid]="true"
+        >
+        </ngb-select>
+      </div>
+      <div class="p-2 bg-light rounded text-muted small">
+        <strong>Selected Permissions:</strong>
+        <code>{{ selectedGroupedPermissions | json }}</code>
+      </div>
+    </app-example-card>
+  </div>
+
+  <!-- 28. Mobile Modal & Modal-in-Modal -->
+  <div class="col-12" id="mobile-modal">
+    <app-example-card
+      title="28. Mobile Modal & Modal-in-Modal"
+      icon="bi bi-phone"
+      iconClass="text-success"
+      [htmlCode]="snippets.mobileModalHtml"
+      [tsCode]="snippets.mobileModalTs"
+    >
+      <p class="text-muted small mb-3">
+        Use <code>[modal]="true"</code> to render options in a centered popup dialog.
+        Native Bootstrap <code>.modal</code> is generated internally, allowing <strong>Modal-in-Modal</strong> support without z-index conflicts.
+      </p>
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label text-muted small fw-semibold">Standalone Modal Dialog</label>
+          <ngb-select
+            [options]="countries"
+            [(ngModel)]="modalSingleCountryCode"
+            optionLabel="name"
+            optionValue="code"
+            [filter]="true"
+            placeholder="Select a country..."
+            popupTitle="Choose Country (Mobile Dialog)"
+            [modal]="true"
+            [showClear]="true"
+            [fluid]="true"
+          ></ngb-select>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label text-muted small fw-semibold">Trigger Parent Bootstrap Modal</label>
+          <div>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#parentModalDemo">
+              Open Parent Modal
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parent Bootstrap Modal -->
+      <div class="modal fade" id="parentModalDemo" tabindex="-1" aria-labelledby="parentModalDemoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="parentModalDemoLabel">Create New Event</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label text-muted small fw-semibold">Event Name</label>
+                <input type="text" class="form-control" placeholder="e.g. Project Sync">
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small fw-semibold">Target Audience (Modal in Modal)</label>
+                <ngb-select
+                  [options]="countries"
+                  [(ngModel)]="modalMultiCountryCodes"
+                  optionLabel="name"
+                  optionValue="code"
+                  [multiple]="true"
+                  [showSelectAll]="true"
+                  display="chip"
+                  [filter]="true"
+                  placeholder="Add regions..."
+                  popupTitle="Select Target Regions"
+                  [modal]="true"
+                  [fluid]="true"
+                ></ngb-select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-example-card>
+  </div>
+</div>

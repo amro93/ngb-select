@@ -10,6 +10,10 @@ export type FocusOnOpenStrategy = 'always' | 'notSelected';
 
 export type FloatLabelVariant = 'on' | 'in' | 'over';
 
+export type DropdownDirection = 'auto' | 'up' | 'down' | 'top' | 'bottom';
+export type DropdownPosition = DropdownDirection;
+export type SelectDropdownPosition = DropdownDirection;
+
 export interface SelectOption {
   label?: string;
   value?: any;

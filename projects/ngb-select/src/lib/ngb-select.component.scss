@@ -222,6 +222,16 @@
       opacity: 1;
     }
   }
+
+  &.dropup,
+  &.dropdown-up {
+    .dropdown-menu {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: 0.125rem;
+    }
+  }
 }
 
 .dropdown-menu {

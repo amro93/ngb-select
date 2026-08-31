@@ -5,6 +5,8 @@
   [class.float-variant-in]="floatLabel && floatLabelVariant === 'in'"
   [class.float-variant-over]="floatLabel && floatLabelVariant === 'over'"
   [class.floating-active]="hasSelectedValue() || overlayVisible"
+  [class.dropup]="isDropup"
+  [class.dropdown-up]="isDropup"
   [class.w-100]="fluid"
   [attr.dir]="dir || null"
   [ngStyle]="style"
@@ -191,19 +193,7 @@
     <label [attr.for]="id">{{ placeholder }}</label>
   }
 
-  <!-- Overlay Dropdown Menu -->
-  <div
-    #dropdownMenu
-    class="dropdown-menu shadow-sm p-0"
-    [class.show]="overlayVisible"
-    [ngStyle]="panelStyle"
-    [ngClass]="panelStyleClass"
-    [style.max-height]="scrollHeight"
-    style="overflow-y: auto"
-    role="listbox"
-    (scroll)="onOverlayScroll($event)"
-    (click)="$event.stopPropagation()"
-  >
+  <ng-template #dropdownContent>
     <!-- Header Template -->
     @if (headerTemplate) {
       <div class="p-2 border-bottom">
@@ -354,8 +344,6 @@
       }
     }
 
-    <!-- Flat Options Mode -->
-
     <!-- Empty State Message -->
     @if (isOptionsEmpty()) {
       <div class="dropdown-item text-muted text-center py-3">
@@ -370,12 +358,92 @@
         }
       </div>
     }
+  </ng-template>
 
-    <!-- Footer Template -->
-    @if (footerTemplate) {
-      <div class="p-2 border-top">
-        <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+  @if (isModalMode) {
+    <!-- Bootstrap Modal Overlay -->
+    @if (overlayVisible) {
+      <div
+        class="modal fade show d-block"
+        tabindex="-1"
+        role="dialog"
+        aria-modal="true"
+        style="background-color: rgba(0, 0, 0, 0.45); z-index: 1075"
+        (click)="closeOverlay($event)"
+      >
+        <div
+          class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+          role="document"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="modal-content shadow" [ngClass]="panelStyleClass" [ngStyle]="panelStyle">
+            <!-- Modal Header -->
+            <div class="modal-header bg-light bg-opacity-50 py-2 px-3">
+              <h6 class="modal-title m-0 fw-semibold text-truncate">{{ effectivePopupTitle }}</h6>
+              <button
+                type="button"
+                class="btn-close"
+                aria-label="Close"
+                (click)="closeOverlay($event)"
+              ></button>
+            </div>
+
+            <!-- Modal Body (Options Content) -->
+            <div
+              class="modal-body p-0"
+              #dropdownMenu
+              role="listbox"
+              (scroll)="onOverlayScroll($event)"
+            >
+              <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+            </div>
+
+            <!-- Modal Footer (Custom Template or Done Button) -->
+            @if (footerTemplate || multiple) {
+              <div
+                class="modal-footer p-2 bg-light bg-opacity-50 d-flex align-items-center justify-content-end"
+              >
+                @if (footerTemplate) {
+                  <div class="w-100">
+                    <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+                  </div>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-primary px-3"
+                    (click)="closeOverlay($event)"
+                  >
+                    Done
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
       </div>
     }
-  </div>
+  } @else {
+    <!-- Standard Dropdown Menu -->
+    <div
+      #dropdownMenu
+      class="dropdown-menu shadow-sm p-0"
+      [class.show]="overlayVisible"
+      [ngStyle]="panelStyle"
+      [ngClass]="panelStyleClass"
+      [style.max-height]="scrollHeight"
+      style="overflow-y: auto"
+      role="listbox"
+      (scroll)="onOverlayScroll($event)"
+      (click)="$event.stopPropagation()"
+    >
+      <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
+
+      <!-- Footer Template -->
+      @if (footerTemplate) {
+        <div class="p-2 border-top">
+          <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+        </div>
+      }
+    </div>
+  }
 </div>
