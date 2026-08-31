@@ -1,25 +1,27 @@
-﻿name: Release and Deploy
+name: Release and Deploy Demo
 
 on:
   push:
     branches:
       - main
 
-jobs:
-  release:
-    name: Build, Release & Publish
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      id-token: write
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  # 1. Build and Publish Library to NPM
+  build-and-publish:
+    name: Build & Publish Package
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,18 +36,43 @@ jobs:
       - name: Build ngb-select Library
         run: npm run build:lib
 
-      - name: Run Semantic Release & Publish to NPM
+      - name: Publish to NPM
+        run: npm publish ./dist/ngb-select --access public
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        continue-on-error: true # Prevents pipeline failure if this version is already published
 
-      - name: Build Demo Application
+  # 2. Build Demo Application and Deploy to GitHub Pages
+  build-and-deploy-demo:
+    name: Build & Deploy Demo App
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Demo App
         run: npm run build:demo -- --base-href=/ngb-select/
 
-      - name: Deploy Demo to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/ngb-select-app/browser
+          path: ./dist/ngb-select-app/browser
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
