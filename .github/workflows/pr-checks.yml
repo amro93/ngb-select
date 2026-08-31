@@ -32,3 +32,6 @@ jobs:
 
       - name: Verify Library Build
         run: npm run build:lib
+
+      - name: Verify Demo Build
+        run: npm run build:demo -- --base-href=/ngb-select/

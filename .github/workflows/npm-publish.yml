@@ -1,13 +1,52 @@
-name: Publish NPM Package
+name: CI & Publish NPM Package
 
 on:
+  push:
+    branches:
+      - main
+      - master
   release:
     types: [published]
   workflow_dispatch:
 
+# Never let two publishes race; a queued run is pointless once a newer
+# commit is publishing, but don't cancel one mid-upload.
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
 jobs:
+  # Verify across every Node version we claim to support. The publish job
+  # below is gated on this, so a red build never reaches the registry.
+  test:
+    name: Test & Build (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      - name: Build ngb-select Library
+        run: npm run build:lib
+
   publish:
     name: Build and Publish to NPM
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,9 +71,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Run Unit Tests
-        run: npm run test
 
       - name: Build ngb-select Library
         run: npm run build:lib
