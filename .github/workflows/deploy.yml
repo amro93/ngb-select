@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - master
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
 
 permissions:
   contents: write
@@ -64,6 +66,10 @@ jobs:
 
       - name: Build Demo App
         run: npm run build:demo -- --base-href=/ngb-select/
+
+      # SPA Fallback for GitHub Pages routing
+      - name: Copy index.html to 404.html
+        run: cp ./dist/ngb-select-app/browser/index.html ./dist/ngb-select-app/browser/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
