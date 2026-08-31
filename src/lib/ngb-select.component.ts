@@ -164,6 +164,14 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   public value: any = null;
   public filteredOptions: any[] = [];
   public filterValue: string = '';
+
+  get effectiveFilterValue(): string {
+    return this.overlayVisible
+      ? this.filterValue
+      : this.hasSelectedValue()
+        ? ''
+        : this.filterValue;
+  }
   public focusedIndex: number = -1;
 
   // --- ControlValueAccessor Callbacks ---
@@ -480,6 +488,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       }
     } else {
       this.updateModel(val, event);
+      if (this.filterInTrigger) {
+        this.filterValue = '';
+        this.updateFilteredOptions();
+        if (this.triggerFilterInputElement) {
+          this.triggerFilterInputElement.nativeElement.value = '';
+        }
+      }
       this.closeOverlay(event);
     }
   }

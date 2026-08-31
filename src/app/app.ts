@@ -495,6 +495,10 @@ selectedCity = null;`,
   [fluid]="true">
 </ngb-select>`,
 
+    multiCommaTs: `3 = ...;
+cities = ...;
+selectedCities = ...;`,
+
     multiChipsHtml: `<ngb-select 
   [options]="cities" 
   [(ngModel)]="selectedCities" 
@@ -505,6 +509,9 @@ selectedCity = null;`,
   placeholder="Select Cities (Chips Mode)"
   [fluid]="true">
 </ngb-select>`,
+
+    multiChipsTs: `cities = ...;
+selectedCities = ...;`,
 
     selectAllHtml: `<ngb-select 
   [options]="countries" 
@@ -517,6 +524,21 @@ selectedCity = null;`,
   [fluid]="true">
 </ngb-select>`,
 
+    selectAllTs: `selectedCountries = ...;
+countries = [
+    { name: 'Australia', code: 'AU', flag: '🇦🇺', currency: 'AUD' },
+    { name: 'Brazil', code: 'BR', flag: '🇧🇷', currency: 'BRL' },
+    { name: 'Canada', code: 'CA', flag: '🇨🇦', currency: 'CAD' },
+    { name: 'Egypt', code: 'EG', flag: '🇪🇬', currency: 'EGP' },
+    { name: 'France', code: 'FR', flag: '🇫🇷', currency: 'EUR' },
+    { name: 'Germany', code: 'DE', flag: '🇩🇪', currency: 'EUR' },
+    { name: 'India', code: 'IN', flag: '🇮🇳', currency: 'INR' },
+    { name: 'Japan', code: 'JP', flag: '🇯🇵', currency: 'JPY' },
+    { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦', currency: 'SAR' },
+    { name: 'United Kingdom', code: 'UK', flag: '🇬🇧', currency: 'GBP' },
+    { name: 'United States', code: 'US', flag: '🇺🇸', currency: 'USD' },
+  ];`,
+
     focusOnOpenHtml: `<ngb-select 
   [options]="cities" 
   [(ngModel)]="selectedCity" 
@@ -526,6 +548,10 @@ selectedCity = null;`,
   placeholder="Open to auto-focus index 3 (Istanbul)"
   [fluid]="true">
 </ngb-select>`,
+
+    focusOnOpenTs: `selectedCity = ...;
+cities = ...;
+3 = ...;`,
 
     reactiveHtml: `<form [formGroup]="userForm" (ngSubmit)="submit()">
   <ngb-select 
@@ -540,6 +566,11 @@ selectedCity = null;`,
   <button type="submit" class="btn btn-primary mt-2">Submit</button>
 </form>`,
 
+    reactiveTs: `userForm = new FormGroup({
+    city: new FormControl<City | null>(null, [Validators.required]),
+  });
+cities = ...;`,
+
     filterHtml: `<ngb-select 
   [options]="countries" 
   [(ngModel)]="selectedCountry" 
@@ -553,6 +584,21 @@ selectedCity = null;`,
   placeholder="Select a Country"
   [fluid]="true">
 </ngb-select>`,
+
+    filterTs: `selectedCountry = ...;
+countries = [
+    { name: 'Australia', code: 'AU', flag: '🇦🇺', currency: 'AUD' },
+    { name: 'Brazil', code: 'BR', flag: '🇧🇷', currency: 'BRL' },
+    { name: 'Canada', code: 'CA', flag: '🇨🇦', currency: 'CAD' },
+    { name: 'Egypt', code: 'EG', flag: '🇪🇬', currency: 'EGP' },
+    { name: 'France', code: 'FR', flag: '🇫🇷', currency: 'EUR' },
+    { name: 'Germany', code: 'DE', flag: '🇩🇪', currency: 'EUR' },
+    { name: 'India', code: 'IN', flag: '🇮🇳', currency: 'INR' },
+    { name: 'Japan', code: 'JP', flag: '🇯🇵', currency: 'JPY' },
+    { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦', currency: 'SAR' },
+    { name: 'United Kingdom', code: 'UK', flag: '🇬🇧', currency: 'GBP' },
+    { name: 'United States', code: 'US', flag: '🇺🇸', currency: 'USD' },
+  ];`,
 
     templateHtml: `<!-- 1. Single Custom Selected Item / Label Template -->
 <ngb-select [options]="members" [(ngModel)]="selectedMember" optionLabel="name" [fluid]="true">
@@ -584,6 +630,52 @@ selectedCity = null;`,
   </ng-template>
 </ngb-select>`,
 
+    templateTs: `selectedMember = this.members[0];
+selectedChips = ...;
+members = [
+    {
+      name: 'Sarah Connor',
+      email: 'sarah@example.com',
+      role: 'Lead Architect',
+      status: 'online',
+      badge: 'bg-primary',
+    },
+    {
+      name: 'John Doe',
+      email: 'john@example.com',
+      role: 'Frontend Engineer',
+      status: 'busy',
+      badge: 'bg-danger',
+    },
+    {
+      name: 'Alex Rivera',
+      email: 'alex@example.com',
+      role: 'Product Designer',
+      status: 'away',
+      badge: 'bg-warning text-dark',
+    },
+    {
+      name: 'Elena Rostova',
+      email: 'elena@example.com',
+      role: 'DevOps Engineer',
+      status: 'offline',
+      badge: 'bg-secondary',
+    },
+  ];
+countries = [
+    { name: 'Australia', code: 'AU', flag: '🇦🇺', currency: 'AUD' },
+    { name: 'Brazil', code: 'BR', flag: '🇧🇷', currency: 'BRL' },
+    { name: 'Canada', code: 'CA', flag: '🇨🇦', currency: 'CAD' },
+    { name: 'Egypt', code: 'EG', flag: '🇪🇬', currency: 'EGP' },
+    { name: 'France', code: 'FR', flag: '🇫🇷', currency: 'EUR' },
+    { name: 'Germany', code: 'DE', flag: '🇩🇪', currency: 'EUR' },
+    { name: 'India', code: 'IN', flag: '🇮🇳', currency: 'INR' },
+    { name: 'Japan', code: 'JP', flag: '🇯🇵', currency: 'JPY' },
+    { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦', currency: 'SAR' },
+    { name: 'United Kingdom', code: 'UK', flag: '🇬🇧', currency: 'GBP' },
+    { name: 'United States', code: 'US', flag: '🇺🇸', currency: 'USD' },
+  ];`,
+
     groupHtml: `<ngb-select 
   [options]="groupedCars" 
   [(ngModel)]="selectedCar" 
@@ -593,6 +685,39 @@ selectedCity = null;`,
   placeholder="Select a Car"
   [fluid]="true">
 </ngb-select>`,
+
+    groupTs: `selectedCar = ...;
+groupedCars = [
+    {
+      label: 'Germany',
+      value: 'de',
+      items: [
+        { label: 'Audi', value: 'Audi' },
+        { label: 'BMW', value: 'BMW' },
+        { label: 'Mercedes-Benz', value: 'Mercedes' },
+        { label: 'Porsche', value: 'Porsche' },
+      ],
+    },
+    {
+      label: 'USA',
+      value: 'us',
+      items: [
+        { label: 'Cadillac', value: 'Cadillac' },
+        { label: 'Chevrolet', value: 'Chevrolet' },
+        { label: 'Ford', value: 'Ford' },
+        { label: 'Tesla', value: 'Tesla' },
+      ],
+    },
+    {
+      label: 'Japan',
+      value: 'jp',
+      items: [
+        { label: 'Honda', value: 'Honda' },
+        { label: 'Nissan', value: 'Nissan' },
+        { label: 'Toyota', value: 'Toyota' },
+      ],
+    },
+  ];`,
 
     editableHtml: `<ngb-select 
   [options]="cities" 
@@ -605,6 +730,9 @@ selectedCity = null;`,
   [fluid]="true">
 </ngb-select>`,
 
+    editableTs: `customCity = ...;
+cities = ...;`,
+
     floatLabelHtml: `<!-- 1. Float Label Variant: "on" (Outlined Border-Notched) -->
 <ngb-select [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [floatLabel]="true" floatLabelVariant="on" placeholder="Outlined Border (on)" [fluid]="true"></ngb-select>
 
@@ -613,6 +741,9 @@ selectedCity = null;`,
 
 <!-- 3. Float Label Variant: "over" (Over/Above Field) -->
 <ngb-select [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" [floatLabel]="true" floatLabelVariant="over" placeholder="Over Field (over)" [fluid]="true"></ngb-select>`,
+
+    floatLabelTs: `selectedCity = ...;
+cities = ...;`,
 
     signalsHtml: `<!-- Template -->
 <ngb-select 
@@ -626,6 +757,8 @@ selectedCity = null;`,
 
 <!-- Component TS -->
 signalCity = signal<string>('TOK');`,
+
+    signalsTs: `cities = ...;`,
 
     arabicHtml: `<!-- Arabic (AR) Localized Select with RTL layout & Diacritics Normalization -->
 <div dir="rtl" lang="ar">
@@ -660,6 +793,26 @@ signalCity = signal<string>('TOK');`,
   </ngb-select>
 </div>`,
 
+    arabicTs: `arabicCountries = [
+    { name: 'المملكة العربية السعودية', code: 'SA' },
+    { name: 'الإمارات العربية المتحدة', code: 'AE' },
+    { name: 'جمهورية مصر العربية', code: 'EG' },
+    { name: 'المملكة الأردنية الهاشمية', code: 'JO' },
+    { name: 'دولة الكويت', code: 'KW' },
+    { name: 'دولة قطر', code: 'QA' },
+    { name: 'سلطنة عمان', code: 'OM' },
+  ];
+selectedArabicCities = [1, 2];
+selectedArabicCountry = 'SA';
+arabicCities = [
+    { id: 1, name: 'الرياض' },
+    { id: 2, name: 'دبي' },
+    { id: 3, name: 'القاهرة' },
+    { id: 4, name: 'عمان' },
+    { id: 5, name: 'الدوحة' },
+    { id: 6, name: 'مسقط' },
+  ];`,
+
     triggerHtml: `<!-- In-Trigger Inline Filter & Custom Search Placeholder -->
 <ngb-select
   [options]="cities"
@@ -671,6 +824,9 @@ signalCity = signal<string>('TOK');`,
   [showClear]="true"
   [fluid]="true">
 </ngb-select>`,
+
+    triggerTs: `selectedCity = ...;
+cities = ...;`,
 
     searchableMultiHtml: `<!-- Searchable Multi-Select with Chips & Select All -->
 <ngb-select
@@ -687,6 +843,21 @@ signalCity = signal<string>('TOK');`,
   [showClear]="true"
   [fluid]="true">
 </ngb-select>`,
+
+    searchableMultiTs: `selectedCountries = ...;
+countries = [
+    { name: 'Australia', code: 'AU', flag: '🇦🇺', currency: 'AUD' },
+    { name: 'Brazil', code: 'BR', flag: '🇧🇷', currency: 'BRL' },
+    { name: 'Canada', code: 'CA', flag: '🇨🇦', currency: 'CAD' },
+    { name: 'Egypt', code: 'EG', flag: '🇪🇬', currency: 'EGP' },
+    { name: 'France', code: 'FR', flag: '🇫🇷', currency: 'EUR' },
+    { name: 'Germany', code: 'DE', flag: '🇩🇪', currency: 'EUR' },
+    { name: 'India', code: 'IN', flag: '🇮🇳', currency: 'INR' },
+    { name: 'Japan', code: 'JP', flag: '🇯🇵', currency: 'JPY' },
+    { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦', currency: 'SAR' },
+    { name: 'United Kingdom', code: 'UK', flag: '🇬🇧', currency: 'GBP' },
+    { name: 'United States', code: 'US', flag: '🇺🇸', currency: 'USD' },
+  ];`,
 
     cascadingHtml: `<!-- Cascading / Dependent Dropdowns -->
 <div class="row g-3">
@@ -718,6 +889,15 @@ signalCity = signal<string>('TOK');`,
   </div>
 </div>`,
 
+    cascadingTs: `selectedCascadingCity = null;
+cascadingCountries = [
+    { name: 'United States', code: 'US' },
+    { name: 'United Kingdom', code: 'UK' },
+    { name: 'Germany', code: 'DE' },
+  ];
+selectedCascadingCountry = null;
+cascadingAvailableCities = [];`,
+
     asyncSearchHtml: `<!-- Server-Side Debounced Async Search -->
 <ngb-select
   [options]="asyncSearchResults"
@@ -735,6 +915,10 @@ signalCity = signal<string>('TOK');`,
   </ng-template>
 </ngb-select>`,
 
+    asyncSearchTs: `asyncSearchResults = [];
+selectedAsyncUser = null;
+isAsyncSearching = false;`,
+
     customIconsHtml: `<!-- Custom Dropdown & Clear Icons -->
 <ngb-select
   [options]="browsers"
@@ -750,6 +934,14 @@ signalCity = signal<string>('TOK');`,
     <i class="bi bi-trash text-danger"></i>
   </ng-template>
 </ngb-select>`,
+
+    customIconsTs: `browsers = [
+    { id: 'chrome', name: 'Google Chrome', engine: 'Blink' },
+    { id: 'firefox', name: 'Mozilla Firefox', engine: 'Gecko' },
+    { id: 'safari', name: 'Apple Safari', engine: 'WebKit' },
+    { id: 'edge', name: 'Microsoft Edge', engine: 'Blink' },
+  ];
+selectedBrowser = 'chrome';`,
 
     tableEditHtml: `<!-- Table Cell In-Place Inline Editing with Floating Dropdown -->
 <table class="table table-hover align-middle">
@@ -779,6 +971,12 @@ signalCity = signal<string>('TOK');`,
   </tbody>
 </table>`,
 
+    tableEditTs: `roleOptions = [
+    { label: 'Administrator', value: 'admin' },
+    { label: 'Editor', value: 'editor' },
+    { label: 'Viewer', value: 'viewer' },
+  ];`,
+
     modalHtml: `<!-- Bootstrap Modal with appendTo="body" (data-bs-focus="false" allows body dropdown search) -->
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#demoModal">
   Open Modal Dialog
@@ -806,6 +1004,14 @@ signalCity = signal<string>('TOK');`,
   </div>
 </div>`,
 
+    modalTs: `departments = [
+    { id: 1, name: 'Engineering' },
+    { id: 2, name: 'Product Design' },
+    { id: 3, name: 'Marketing' },
+    { id: 4, name: 'Sales & Growth' },
+  ];
+selectedModalDept = 'Engineering';`,
+
     customChipHtml: `<!-- Multi-Select with Custom Chip Template -->
 <ngb-select
   [options]="collaborators"
@@ -825,6 +1031,31 @@ signalCity = signal<string>('TOK');`,
   </ng-template>
 </ngb-select>`,
 
+    customChipTs: `collaborators = [
+    {
+      id: 1,
+      name: 'Sarah Connor',
+      team: 'Platform',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces',
+    },
+    {
+      id: 2,
+      name: 'John Doe',
+      team: 'Mobile',
+      avatar:
+        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop&crop=faces',
+    },
+    {
+      id: 3,
+      name: 'Alex Rivera',
+      team: 'Core UI',
+      avatar:
+        'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=64&h=64&fit=crop&crop=faces',
+    },
+  ];
+selectedCollaborators = [1, 2];`,
+
     darkThemeHtml: `<!-- Dark Mode Theme Integration -->
 <div class="p-3 rounded bg-dark text-light border" data-bs-theme="dark">
   <ngb-select
@@ -839,6 +1070,13 @@ signalCity = signal<string>('TOK');`,
   </ngb-select>
 </div>`,
 
+    darkThemeTs: `activeDemoTheme = 'dark';
+themeOptions = [
+    { id: 'light', label: 'Light Theme' },
+    { id: 'dark', label: 'Dark Theme' },
+    { id: 'system', label: 'System Default' },
+  ];`,
+
     a11yHtml: `<!-- Accessibility & Screen Reader Label -->
 <label id="paymentLabel" class="form-label fw-bold">Payment Method:</label>
 <ngb-select
@@ -850,6 +1088,14 @@ signalCity = signal<string>('TOK');`,
   placeholder="Select Payment"
   [fluid]="true">
 </ngb-select>`,
+
+    a11yTs: `selectedPayment = 'cc';
+paymentMethods = [
+    { name: 'Credit / Debit Card', code: 'cc' },
+    { name: 'PayPal', code: 'pp' },
+    { name: 'Apple Pay / Google Pay', code: 'wallet' },
+    { name: 'Bank Wire Transfer', code: 'bank' },
+  ];`,
 
     formResetHtml: `<!-- Form Reset & Dynamic Disabling -->
 <form [formGroup]="accountForm">
@@ -870,7 +1116,16 @@ signalCity = signal<string>('TOK');`,
   </div>
 </form>`,
 
-    groupedMultiHtml: `<!-- Hierarchical Grouped Multi-Select -->
+    formResetTs: `accountForm = new FormGroup({
+    plan: new FormControl('pro', [Validators.required]),
+  });
+plans = [
+    { id: 'free', name: 'Free Starter' },
+    { id: 'pro', name: 'Professional ($29/mo)' },
+    { id: 'enterprise', name: 'Enterprise Cloud' },
+  ];`,
+
+groupedMultiHtml: `<!-- Hierarchical Grouped Multi-Select -->
 <ngb-select
   [options]="groupedPermissions"
   [(ngModel)]="selectedGroupedPermissions"
@@ -885,5 +1140,16 @@ signalCity = signal<string>('TOK');`,
   placeholder="Assign categorized permissions"
   [fluid]="true">
 </ngb-select>`,
+
+    groupedMultiTs: `groupedPermissions = [
+    {
+      category: 'System Admin',
+      permissions: [
+        { name: 'View Users', key: 'view_users' },
+        { name: 'Manage Roles', key: 'manage_roles' },
+      ],
+    },
+  ];
+selectedGroupedPermissions = ['view_users'];`,
   };
 }

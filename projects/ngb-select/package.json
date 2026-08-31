@@ -13,6 +13,15 @@
     "standalone",
     "ngb-select"
   ],
+  "author": "amro93",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amro93/ngb-select.git"
+  },
+  "bugs": {
+    "url": "https://github.com/amro93/ngb-select/issues"
+  },
+  "homepage": "https://github.com/amro93/ngb-select#readme",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

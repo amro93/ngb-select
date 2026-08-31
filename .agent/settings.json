@@ -1,0 +1,21 @@
+﻿{
+  "permissions": {
+    "allow": [
+      "command(python)",
+      "command(python *)",
+      "command(python*)",
+      "command(py)",
+      "command(py *)",
+      "command(py*)",
+      "command(python3)",
+      "command(python3 *)",
+      "command(python3*)",
+      "command(python.exe)",
+      "command(python.exe *)",
+      "command(python.exe*)",
+      "command(py.exe)",
+      "command(py.exe *)",
+      "command(py.exe*)"
+    ]
+  }
+}

@@ -21,6 +21,8 @@ A comprehensive, lightweight Angular Standalone select component that utilizes *
 
 ## 📦 Installation
 
+For a complete, step-by-step setup (including how to configure styles and use Reactive Forms), see the full **[Installation Guide](./docs/08-installation-guide.md)**.
+
 Install `ngb-select` along with peer dependencies:
 
 ```bash
@@ -215,6 +217,7 @@ For full API property lists, architecture decisions, and implementation strategi
 - [05. CI/CD Configuration](./docs/05-cicd-pipeline.md)
 - [06. Git & StackBlitz](./docs/06-git-and-stackblitz.md)
 - [07. Demo Examples Catalog](./docs/07-demo-examples.md)
+- [08. Installation Guide](./docs/08-installation-guide.md)
 
 ## 🧪 Live Preview & Sandbox
 

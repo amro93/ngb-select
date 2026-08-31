@@ -15,6 +15,8 @@ A comprehensive, lightweight Angular Standalone select component that utilizes *
 
 ## 📦 Installation
 
+For a complete, step-by-step setup, see the full **[Installation Guide](./08-installation-guide.md)**.
+
 Install the library via NPM:
 
 ```bash
@@ -176,7 +178,7 @@ implementation strategies, refer to the [docs/](./docs) directory: - [Architectu
 Features](./01-architecture-and-features.md) - [API & Interfaces](./02-api-and-interfaces.md) -
 [Implementation Code](./03-implementation-steps.md) - [Test Strategy](./04-test-cases.md) - [CI/CD
 Configuration](./05-cicd-pipeline.md) - [Git & StackBlitz](./06-git-and-stackblitz.md) - [Demo
-Examples Catalog](./07-demo-examples.md) ## 🧪 Live Preview & Sandbox - [View GitHub Pages
+Examples Catalog](./07-demo-examples.md) - [Installation Guide](./08-installation-guide.md) ## 🧪 Live Preview & Sandbox - [View GitHub Pages
 Demo](https://{username}.github.io/ngb-select/) - [Play with it on
 StackBlitz](https://stackblitz.com/github/{username}/ngb-select/tree/main) ## 🤝 Contributing 1.
 Fork the repository. 2. Create your feature branch (`git checkout -b feature/amazing-feature`). 3.
