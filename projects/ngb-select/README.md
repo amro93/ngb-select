@@ -1,64 +1,235 @@
-# NgbSelect
+# Ngb-Select (Angular Bootstrap Select Component)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+[![NPM Version](https://img.shields.io/npm/v/@amro93/ngb-select.svg)](https://www.npmjs.com/package/@amro93/ngb-select)
+[![CI/CD Pipeline](https://github.com/amro93/ngb-select/actions/workflows/deploy.yml/badge.svg)](https://github.com/amro93/ngb-select/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Code scaffolding
+A comprehensive, lightweight Angular Standalone select component that utilizes **pure Bootstrap 5 classes** (no external UI libraries required). It covers all advanced features found in modern select components, optimized for standard Bootstrap environments.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## 🚀 Features at a Glance
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- 📦 **Standalone Architecture** - Modern Angular 15+ design, easy to import without NgModules.
+- 🎨 **Pure Bootstrap 5** - Uses `.form-select`, `.dropdown-menu`, and `.list-group` internally. No extra CSS payload.
+- 🔍 **Filtering & Match Modes** - Fast, client-side search supporting `contains`, `startsWith`, `endsWith`, `equals`.
+- 🗂️ **Grouping** - Categorize options with nested headers.
+- 🛠️ **Advanced Templating** - Replace default text with fully custom DOM for items, headers, footers, and selected states.
+- ⌨️ **Forms Native & Signals** - Implements `ControlValueAccessor` for seamless `ngModel`, `FormControl` (Reactive Forms), and modern Angular `model()` Signal support.
+- 🛡️ **Robust Fallbacks** - Defensively programmed to gracefully handle `null`, `undefined`, and empty strings across inputs.
+- ♿ **Accessible** - ARIA roles implemented (`combobox`, `listbox`, `option`) alongside keyboard navigation.
+- ⚡ **Editable Combobox** - Allows custom user typing directly into the select input.
+- 🎯 **Focus on Open** - Programmatically scroll and focus a specific option index when the popup opens.
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## 📦 Installation
 
-To build the library, run:
-
-```bash
-ng build ngb-select
-```
-
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
-
-### Publishing the Library
-
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-
-   ```bash
-   cd dist/ngb-select
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Install `@amro93/ngb-select` along with peer dependencies:
 
 ```bash
-ng test
+npm install @amro93/ngb-select bootstrap bootstrap-icons
 ```
 
-## Running end-to-end tests
+Ensure Bootstrap 5 CSS is included in your `angular.json` or `src/styles.scss`:
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```scss
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 💻 Usage Examples
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### 1. Basic Setup (Template Driven)
+
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgbSelectComponent } from '@amro93/ngb-select';
+
+@Component({
+  standalone: true,
+  imports: [NgbSelectComponent, FormsModule],
+  template: `
+    <ngb-select
+      [options]="cities"
+      [(ngModel)]="selectedCity"
+      optionLabel="name"
+      optionValue="code"
+      placeholder="Select a City"
+    >
+    </ngb-select>
+  `,
+})
+export class AppComponent {
+  cities = [
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+  ];
+  selectedCity: string = 'NY';
+}
+```
+
+---
+
+### 2. Reactive Forms with Validation
+
+```typescript
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { NgbSelectComponent } from '@amro93/ngb-select';
+
+@Component({
+  standalone: true,
+  imports: [NgbSelectComponent, ReactiveFormsModule],
+  template: `
+    <form [formGroup]="form">
+      <ngb-select
+        [options]="countries"
+        formControlName="selectedCountry"
+        optionLabel="name"
+        optionValue="code"
+        [invalid]="form.get('selectedCountry')?.invalid && form.get('selectedCountry')?.touched"
+        [showClear]="true"
+        placeholder="Select Country"
+      >
+      </ngb-select>
+    </form>
+  `,
+})
+export class AppComponent {
+  form = new FormGroup({
+    selectedCountry: new FormControl(null, [Validators.required]),
+  });
+}
+```
+
+---
+
+### 3. Filtering and Custom Search Modes
+
+```html
+<ngb-select
+  [options]="countries"
+  [(ngModel)]="selectedCountry"
+  optionLabel="name"
+  [filter]="true"
+  filterBy="name,code"
+  filterMatchMode="startsWith"
+  filterPlaceholder="Search countries..."
+  [showClear]="true"
+  placeholder="Select a Country"
+>
+</ngb-select>
+```
+
+---
+
+### 4. Custom Templating
+
+Override default rendering for options and the selected value using `<ng-template>`:
+
+```html
+<ngb-select [options]="users" [(ngModel)]="selectedUser" optionLabel="name">
+  <!-- Custom Selected Item -->
+  <ng-template #selectedItem let-user>
+    <div class="d-flex align-items-center gap-2">
+      <img [src]="user.avatar" class="rounded-circle" width="22" height="22" />
+      <strong>{{ user.name }}</strong>
+    </div>
+  </ng-template>
+
+  <!-- Custom Dropdown Item -->
+  <ng-template #item let-user>
+    <div class="d-flex align-items-center justify-content-between w-100 py-1">
+      <div class="d-flex align-items-center gap-2">
+        <img [src]="user.avatar" class="rounded-circle" width="28" height="28" />
+        <div>
+          <div class="fw-semibold">{{ user.name }}</div>
+          <small class="text-muted">{{ user.email }}</small>
+        </div>
+      </div>
+      <span class="badge bg-primary-subtle text-primary-emphasis">{{ user.role }}</span>
+    </div>
+  </ng-template>
+</ngb-select>
+```
+
+---
+
+### 5. Searchable Multi-Select with Checkboxes & Chips
+
+```html
+<ngb-select
+  [options]="countries"
+  [(ngModel)]="selectedCountries"
+  optionLabel="name"
+  optionValue="code"
+  [multiple]="true"
+  display="chip"
+  [filter]="true"
+  filterBy="name,code"
+  searchPlaceholder="Search countries by name or code..."
+  [showSelectAll]="true"
+  [showClear]="true"
+  placeholder="Select Countries"
+>
+</ngb-select>
+```
+
+---
+
+### 6. Grouped Options
+
+```html
+<ngb-select
+  [options]="groupedCars"
+  [(ngModel)]="selectedCar"
+  [group]="true"
+  optionGroupLabel="brand"
+  optionGroupChildren="cars"
+  optionLabel="name"
+  optionValue="value"
+  placeholder="Choose vehicle brand"
+>
+</ngb-select>
+```
+
+---
+
+### 7. RTL (Right-to-Left) & Arabic Support
+
+```html
+<div dir="rtl" lang="ar">
+  <ngb-select
+    [options]="arabicCountries"
+    [(ngModel)]="selectedCountry"
+    optionLabel="name"
+    optionValue="code"
+    [filter]="true"
+    filterPlaceholder="ابحث عن دولة..."
+    placeholder="اختر الدولة"
+    emptyMessage="لا توجد نتائج"
+  >
+  </ngb-select>
+</div>
+```
+
+---
+
+## 📖 Documentation & Links
+
+- 🌐 **[Live Demo & Showcase](https://amro93.github.io/ngb-select/)**
+- ⚡ **[StackBlitz Sandbox](https://stackblitz.com/github/amro93/ngb-select)**
+- 📘 **[Architecture & Features Guide](https://github.com/amro93/ngb-select/blob/main/docs/01-architecture-and-features.md)**
+- 📘 **[API & Interfaces Reference](https://github.com/amro93/ngb-select/blob/main/docs/02-api-and-interfaces.md)**
+- 📘 **[Installation & Setup Guide](https://github.com/amro93/ngb-select/blob/main/docs/08-installation-guide.md)**
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See [LICENSE](https://github.com/amro93/ngb-select/blob/main/LICENSE) for more information.

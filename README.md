@@ -1,6 +1,6 @@
 # Ngb-Select (Angular Bootstrap Select Component)
 
-[![NPM Version](https://img.shields.io/npm/v/ngb-select.svg)](https://www.npmjs.com/package/ngb-select)
+[![NPM Version](https://img.shields.io/npm/v/@amro93/ngb-select.svg)](https://www.npmjs.com/package/@amro93/ngb-select)
 [![CI/CD Pipeline](https://github.com/amro93/ngb-select/actions/workflows/deploy.yml/badge.svg)](https://github.com/amro93/ngb-select/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -23,10 +23,10 @@ A comprehensive, lightweight Angular Standalone select component that utilizes *
 
 For a complete, step-by-step setup (including how to configure styles and use Reactive Forms), see the full **[Installation Guide](./docs/08-installation-guide.md)**.
 
-Install `ngb-select` along with peer dependencies:
+Install `@amro93/ngb-select` along with peer dependencies:
 
 ```bash
-npm install ngb-select bootstrap bootstrap-icons
+npm install @amro93/ngb-select bootstrap bootstrap-icons
 ```
 
 Ensure Bootstrap 5 CSS is included in your `angular.json` or `src/styles.scss`:
@@ -43,7 +43,7 @@ Ensure Bootstrap 5 CSS is included in your `angular.json` or `src/styles.scss`:
 ```typescript
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbSelectComponent } from './lib/ngb-select.component';
+import { NgbSelectComponent } from '@amro93/ngb-select';
 
 @Component({
   standalone: true,
@@ -74,7 +74,7 @@ export class AppComponent {
 ```typescript
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { NgbSelectComponent } from './lib/ngb-select.component';
+import { NgbSelectComponent } from '@amro93/ngb-select';
 
 @Component({
   standalone: true,
