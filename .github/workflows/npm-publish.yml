@@ -26,7 +26,6 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
         run: npm ci
@@ -37,7 +36,5 @@ jobs:
       - name: Build ngb-select Library
         run: npm run build:lib
 
-      - name: Publish to NPM (Trusted Publishing / Provenance)
+      - name: Publish to NPM
         run: npm publish ./dist/ngb-select --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
