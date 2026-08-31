@@ -51,4 +51,4 @@ export interface SelectLazyLoadEvent {
   [key: string]: any;
 }
 
-export const NGB_SELECT_VERSION = '0.1.3';
+export const NGB_SELECT_VERSION = '0.1.4';
