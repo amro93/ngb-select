@@ -24,7 +24,11 @@ import { CommonModule } from '@angular/common';
             (click)="themeToggle.emit()"
             [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
           >
-            <i class="bi" [class.bi-moon-stars-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
+            <i
+              class="bi"
+              [class.bi-moon-stars-fill]="!isDarkMode"
+              [class.bi-sun-fill]="isDarkMode"
+            ></i>
           </button>
 
           <!-- StackBlitz Live Edit -->

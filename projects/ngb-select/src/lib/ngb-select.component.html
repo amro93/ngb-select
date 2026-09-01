@@ -76,7 +76,7 @@
             multiple() && hasSelectedValue()
               ? ''
               : hasSelectedValue() && !overlayVisible()
-                ? getDisplayLabel()
+                ? displayLabel()
                 : effectiveSearchPlaceholder()
           "
           (input)="onFilterChange($event)"
@@ -96,7 +96,7 @@
             [disabled]="disabled()"
             [readonly]="readonly()"
             [attr.maxlength]="maxLength()"
-            [value]="getDisplayLabel()"
+            [value]="displayLabel()"
             [placeholder]="placeholder() || ''"
             (input)="onEditableInput($event)"
             (focus)="onEditableFocus($event)"
@@ -137,7 +137,7 @@
                   "
                 ></ng-container>
               } @else {
-                <span>{{ getDisplayLabel() }}</span>
+                <span>{{ displayLabel() }}</span>
               }
             } @else {
               <span class="text-muted">{{ floatLabel() ? '' : placeholder() || '' }}</span>
@@ -254,7 +254,10 @@
 
     <!-- Grouped Options Mode -->
     @if (group()) {
-      @for (groupOption of filteredOptions(); track groupOption) {
+      @for (
+        groupOption of filteredOptions();
+        track resolveOptionGroupLabel(groupOption) || $index
+      ) {
         <div>
           <!-- Group Header -->
           <h6
@@ -269,7 +272,10 @@
             }
           </h6>
           <!-- Group Items -->
-          @for (option of resolveOptionGroupChildren(groupOption); track option) {
+          @for (
+            option of resolveOptionGroupChildren(groupOption);
+            track resolveOptionTrackKey(option, $index)
+          ) {
             <button
               type="button"
               class="dropdown-item d-flex align-items-center py-2 px-3"
@@ -307,7 +313,11 @@
         </div>
       }
     } @else {
-      @for (option of filteredOptions(); track option; let i = $index) {
+      @for (
+        option of filteredOptions();
+        track resolveOptionTrackKey(option, $index);
+        let i = $index
+      ) {
         <button
           type="button"
           class="dropdown-item d-flex align-items-center py-2 px-3"

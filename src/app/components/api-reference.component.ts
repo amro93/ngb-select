@@ -77,25 +77,34 @@ import { CommonModule } from '@angular/common';
                     <td><code>dataKey</code></td>
                     <td><code>string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Property identifier used to uniquely compare object options instead of reference equality.</td>
+                    <td>
+                      Property identifier used to uniquely compare object options instead of
+                      reference equality.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>group</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Whether options are categorized into groups with non-selectable headers.</td>
+                    <td>
+                      Whether options are categorized into groups with non-selectable headers.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>optionDisabled</code></td>
                     <td><code>string</code></td>
                     <td><code>'disabled'</code></td>
-                    <td>Property field name in option object determining if the item is disabled.</td>
+                    <td>
+                      Property field name in option object determining if the item is disabled.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>optionGroupChildren</code></td>
                     <td><code>string</code></td>
                     <td><code>'items'</code></td>
-                    <td>Property field name containing the nested array of options in grouped mode.</td>
+                    <td>
+                      Property field name containing the nested array of options in grouped mode.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>optionGroupLabel</code></td>
@@ -107,19 +116,26 @@ import { CommonModule } from '@angular/common';
                     <td><code>optionLabel</code></td>
                     <td><code>string</code></td>
                     <td><code>'label'</code></td>
-                    <td>Property field name used to extract the display label from an option object.</td>
+                    <td>
+                      Property field name used to extract the display label from an option object.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>optionValue</code></td>
                     <td><code>string</code></td>
                     <td><code>'value'</code></td>
-                    <td>Property field name to extract the bound value. When undefined, the full object is bound.</td>
+                    <td>
+                      Property field name to extract the bound value. When undefined, the full
+                      object is bound.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>options</code></td>
                     <td><code>any[]</code></td>
                     <td><code>[]</code></td>
-                    <td>An array of objects or primitive values to display as selectable options.</td>
+                    <td>
+                      An array of objects or primitive values to display as selectable options.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>placeholder</code></td>
@@ -138,31 +154,44 @@ import { CommonModule } from '@angular/common';
                     <td><code>closeOnSelect</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Whether to automatically close the overlay panel after an option is selected in multi-select mode.</td>
+                    <td>
+                      Whether to automatically close the overlay panel after an option is selected
+                      in multi-select mode.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>display</code></td>
                     <td><code>'comma' | 'chip'</code></td>
                     <td><code>'comma'</code></td>
-                    <td>Display mode for multiple selections: comma-separated text or removable badge chips.</td>
+                    <td>
+                      Display mode for multiple selections: comma-separated text or removable badge
+                      chips.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>maxSelectedLabels</code></td>
                     <td><code>number</code></td>
                     <td><code>3</code></td>
-                    <td>Threshold count of selected items before condensing labels into summary text.</td>
+                    <td>
+                      Threshold count of selected items before condensing labels into summary text.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>multiple</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Enables multi-selection mode with checkbox controls; binds model to an array.</td>
+                    <td>
+                      Enables multi-selection mode with checkbox controls; binds model to an array.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>selectedItemsLabel</code></td>
                     <td><code>string</code></td>
                     <td><code>'&#123;0&#125; items selected'</code></td>
-                    <td>Summary template text displayed when selections exceed <code>maxSelectedLabels</code>.</td>
+                    <td>
+                      Summary template text displayed when selections exceed
+                      <code>maxSelectedLabels</code>.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>selectionLimit</code></td>
@@ -174,7 +203,9 @@ import { CommonModule } from '@angular/common';
                     <td><code>showSelectAll</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Renders a "Select All" checkbox in the dropdown header in multi-select mode.</td>
+                    <td>
+                      Renders a "Select All" checkbox in the dropdown header in multi-select mode.
+                    </td>
                   </tr>
 
                   <!-- Group: Filtering & Search -->
@@ -193,7 +224,9 @@ import { CommonModule } from '@angular/common';
                     <td><code>emptyMessage</code></td>
                     <td><code>string</code></td>
                     <td><code>'No results found'</code></td>
-                    <td>Text displayed inside the panel when the <code>options</code> array is empty.</td>
+                    <td>
+                      Text displayed inside the panel when the <code>options</code> array is empty.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>filter</code></td>
@@ -205,13 +238,19 @@ import { CommonModule } from '@angular/common';
                     <td><code>filterBy</code></td>
                     <td><code>string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Comma-separated list of object fields to search against (e.g., <code>'name,code'</code>).</td>
+                    <td>
+                      Comma-separated list of object fields to search against (e.g.,
+                      <code>'name,code'</code>).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>filterInTrigger</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Renders the search filter input directly inside the select trigger box instead of the dropdown panel.</td>
+                    <td>
+                      Renders the search filter input directly inside the select trigger box instead
+                      of the dropdown panel.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>filterLocale</code></td>
@@ -221,7 +260,9 @@ import { CommonModule } from '@angular/common';
                   </tr>
                   <tr>
                     <td><code>filterMatchMode</code></td>
-                    <td><code>'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals'</code></td>
+                    <td>
+                      <code>'contains' | 'startsWith' | 'endsWith' | 'equals' | 'notEquals'</code>
+                    </td>
                     <td><code>'contains'</code></td>
                     <td>Matching algorithm used when filtering items against the search query.</td>
                   </tr>
@@ -229,7 +270,10 @@ import { CommonModule } from '@angular/common';
                     <td><code>filterNormalizeArabic</code></td>
                     <td><code>boolean</code></td>
                     <td><code>true</code></td>
-                    <td>Normalizes Arabic diacritics and character variants (أ إ آ -> ا, ة -> ه, etc.) for intuitive search.</td>
+                    <td>
+                      Normalizes Arabic diacritics and character variants (أ إ آ -> ا, ة -> ه, etc.)
+                      for intuitive search.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>filterPlaceholder</code> / <code>searchPlaceholder</code></td>
@@ -241,7 +285,9 @@ import { CommonModule } from '@angular/common';
                     <td><code>resetFilterOnHide</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Clears the active filter query automatically when the dropdown panel closes.</td>
+                    <td>
+                      Clears the active filter query automatically when the dropdown panel closes.
+                    </td>
                   </tr>
 
                   <!-- Group: State, Forms & Accessibility -->
@@ -254,13 +300,18 @@ import { CommonModule } from '@angular/common';
                     <td><code>ariaLabel</code></td>
                     <td><code>string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Defines an <code>aria-label</code> attribute for assistive technologies.</td>
+                    <td>
+                      Defines an <code>aria-label</code> attribute for assistive technologies.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>ariaLabelledBy</code></td>
                     <td><code>string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Specifies the ID of the element that labels the select component for screen readers.</td>
+                    <td>
+                      Specifies the ID of the element that labels the select component for screen
+                      readers.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>autofocus</code></td>
@@ -278,7 +329,10 @@ import { CommonModule } from '@angular/common';
                     <td><code>disabled</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Disables the component preventing user interaction. Supported as two-way model.</td>
+                    <td>
+                      Disables the component preventing user interaction. Supported as two-way
+                      model.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>floatLabel</code></td>
@@ -290,7 +344,10 @@ import { CommonModule } from '@angular/common';
                     <td><code>floatLabelVariant</code></td>
                     <td><code>'on' | 'in' | 'over'</code></td>
                     <td><code>'on'</code></td>
-                    <td>Floating label positioning: 'on' (on top border), 'in' (inside box), or 'over' (floating above).</td>
+                    <td>
+                      Floating label positioning: 'on' (on top border), 'in' (inside box), or 'over'
+                      (floating above).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>id</code></td>
@@ -302,7 +359,10 @@ import { CommonModule } from '@angular/common';
                     <td><code>invalid</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Applies Bootstrap <code>.is-invalid</code> styling and border highlight to the trigger box.</td>
+                    <td>
+                      Applies Bootstrap <code>.is-invalid</code> styling and border highlight to the
+                      trigger box.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>loading</code></td>
@@ -320,7 +380,9 @@ import { CommonModule } from '@angular/common';
                     <td><code>showClear</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Displays a clear icon allowing users to reset the current selection to null.</td>
+                    <td>
+                      Displays a clear icon allowing users to reset the current selection to null.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>tabindex</code></td>
@@ -339,43 +401,65 @@ import { CommonModule } from '@angular/common';
                     <td><code>appendTo</code></td>
                     <td><code>'body' | HTMLElement | string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Appends overlay panel to a target container (e.g., <code>'body'</code>) to bypass parent overflow clipping.</td>
+                    <td>
+                      Appends overlay panel to a target container (e.g., <code>'body'</code>) to
+                      bypass parent overflow clipping.
+                    </td>
                   </tr>
                   <tr>
-                    <td><code>dropdownPosition</code> / <code>dropdownDirection</code> / <code>direction</code></td>
+                    <td>
+                      <code>dropdownPosition</code> / <code>dropdownDirection</code> /
+                      <code>direction</code>
+                    </td>
                     <td><code>'auto' | 'top' | 'bottom' | 'up' | 'down'</code></td>
                     <td><code>'auto'</code></td>
-                    <td>Overlay panel positioning. <code>'auto'</code> detects available screen viewport and flips upwards when bottom space is constrained.</td>
+                    <td>
+                      Overlay panel positioning. <code>'auto'</code> detects available screen
+                      viewport and flips upwards when bottom space is constrained.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>fluid</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Expands select width to 100% (<code>.w-100</code>) of its parent container.</td>
+                    <td>
+                      Expands select width to 100% (<code>.w-100</code>) of its parent container.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>panelStyle</code></td>
                     <td><code>object</code></td>
                     <td><code>undefined</code></td>
-                    <td>Inline CSS styles applied directly to the dropdown/modal overlay panel element.</td>
+                    <td>
+                      Inline CSS styles applied directly to the dropdown/modal overlay panel
+                      element.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>panelStyleClass</code></td>
                     <td><code>string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Custom CSS class names applied to the dropdown/modal overlay panel element.</td>
+                    <td>
+                      Custom CSS class names applied to the dropdown/modal overlay panel element.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>scrollHeight</code></td>
                     <td><code>string</code></td>
                     <td><code>'200px'</code></td>
-                    <td>Maximum scrollable height of the dropdown options list before vertical scrolling occurs.</td>
+                    <td>
+                      Maximum scrollable height of the dropdown options list before vertical
+                      scrolling occurs.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>size</code></td>
                     <td><code>'small' | 'large'</code></td>
                     <td><code>undefined</code></td>
-                    <td>Component sizing (<code>.form-select-sm</code> or <code>.form-select-lg</code>).</td>
+                    <td>
+                      Component sizing (<code>.form-select-sm</code> or
+                      <code>.form-select-lg</code>).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>style</code></td>
@@ -406,13 +490,19 @@ import { CommonModule } from '@angular/common';
                     <td><code>modal</code> / <code>popup</code> / <code>touchUI</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Renders options inside a centered native Bootstrap <code>.modal</code> dialog with backdrop (ideal for mobile / touch UI & nested modal-in-modal).</td>
+                    <td>
+                      Renders options inside a centered native Bootstrap <code>.modal</code> dialog
+                      with backdrop (ideal for mobile / touch UI & nested modal-in-modal).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>popupTitle</code> / <code>modalTitle</code></td>
                     <td><code>string</code></td>
                     <td><code>undefined</code></td>
-                    <td>Title text rendered inside the Bootstrap modal header in modal mode (defaults to <code>placeholder</code>).</td>
+                    <td>
+                      Title text rendered inside the Bootstrap modal header in modal mode (defaults
+                      to <code>placeholder</code>).
+                    </td>
                   </tr>
 
                   <!-- Group: Advanced & Keyboard Navigation -->
@@ -425,49 +515,72 @@ import { CommonModule } from '@angular/common';
                     <td><code>autoOptionFocus</code></td>
                     <td><code>boolean</code></td>
                     <td><code>true</code></td>
-                    <td>Automatically highlights and focuses the selected option when opening the overlay panel.</td>
+                    <td>
+                      Automatically highlights and focuses the selected option when opening the
+                      overlay panel.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>editable</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Combobox mode: allows users to type custom text values not in the predefined options list.</td>
+                    <td>
+                      Combobox mode: allows users to type custom text values not in the predefined
+                      options list.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>focusOnOpen</code></td>
                     <td><code>number</code></td>
                     <td><code>undefined</code></td>
-                    <td>Zero-based index of option to automatically focus and scroll into view when opening the panel.</td>
+                    <td>
+                      Zero-based index of option to automatically focus and scroll into view when
+                      opening the panel.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>focusOnOpenStrategy</code></td>
                     <td><code>'always' | 'notSelected'</code></td>
                     <td><code>'always'</code></td>
-                    <td>Determines whether <code>focusOnOpen</code> triggers always or only when no item is selected.</td>
+                    <td>
+                      Determines whether <code>focusOnOpen</code> triggers always or only when no
+                      item is selected.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>lazy</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Enables lazy loading mode, emitting <code>onLazyLoad</code> events on scroll without client-side slicing.</td>
+                    <td>
+                      Enables lazy loading mode, emitting <code>onLazyLoad</code> events on scroll
+                      without client-side slicing.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>maxLength</code></td>
                     <td><code>number</code></td>
                     <td><code>undefined</code></td>
-                    <td>Maximum character limit for the input element in <code>editable</code> mode.</td>
+                    <td>
+                      Maximum character limit for the input element in <code>editable</code> mode.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>overlayVisible</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Two-way bound model (<code>[(overlayVisible)]</code>) controlling the open/close visibility state of the overlay.</td>
+                    <td>
+                      Two-way bound model (<code>[(overlayVisible)]</code>) controlling the
+                      open/close visibility state of the overlay.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>selectOnFocus</code></td>
                     <td><code>boolean</code></td>
                     <td><code>false</code></td>
-                    <td>Automatically selects the focused option when navigating items with arrow keys.</td>
+                    <td>
+                      Automatically selects the focused option when navigating items with arrow
+                      keys.
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -505,7 +618,9 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>onRemoveChip</code></td>
                     <td><code>event: SelectRemoveChipEvent</code></td>
-                    <td>Emitted when a selected chip badge is dismissed in multi-select chip mode.</td>
+                    <td>
+                      Emitted when a selected chip badge is dismissed in multi-select chip mode.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>onSelectAllChange</code></td>
@@ -532,17 +647,24 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>onHide</code></td>
                     <td><code>event: Event | null</code></td>
-                    <td>Emitted immediately after the dropdown overlay or modal dialog is closed.</td>
+                    <td>
+                      Emitted immediately after the dropdown overlay or modal dialog is closed.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>onShow</code></td>
                     <td><code>event: Event | null</code></td>
-                    <td>Emitted immediately after the dropdown overlay or modal dialog is opened.</td>
+                    <td>
+                      Emitted immediately after the dropdown overlay or modal dialog is opened.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>overlayVisibleChange</code></td>
                     <td><code>visible: boolean</code></td>
-                    <td>Emitted when overlay visibility changes to support <code>[(overlayVisible)]</code> two-way binding.</td>
+                    <td>
+                      Emitted when overlay visibility changes to support
+                      <code>[(overlayVisible)]</code> two-way binding.
+                    </td>
                   </tr>
 
                   <!-- Group: Search & Data Loading -->
@@ -554,12 +676,18 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>onFilter</code></td>
                     <td><code>event: SelectFilterEvent</code></td>
-                    <td>Emitted when the user types in the filter search input (supports custom backend search).</td>
+                    <td>
+                      Emitted when the user types in the filter search input (supports custom
+                      backend search).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>onLazyLoad</code></td>
                     <td><code>event: SelectLazyLoadEvent</code></td>
-                    <td>Emitted when the user scrolls near the bottom of the dropdown panel in lazy mode.</td>
+                    <td>
+                      Emitted when the user scrolls near the bottom of the dropdown panel in lazy
+                      mode.
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -587,12 +715,18 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>#chip</code></td>
                     <td><code>let-value</code>, <code>let-option</code></td>
-                    <td>Custom template for rendering individual selected chip badges in multi-select mode.</td>
+                    <td>
+                      Custom template for rendering individual selected chip badges in multi-select
+                      mode.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#empty</code></td>
                     <td>-</td>
-                    <td>Custom content displayed when no options match the filter or when options list is empty.</td>
+                    <td>
+                      Custom content displayed when no options match the filter or when options list
+                      is empty.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#group</code></td>
@@ -602,12 +736,18 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>#item</code></td>
                     <td><code>let-option</code></td>
-                    <td>Custom template for rendering each individual option item inside the dropdown list.</td>
+                    <td>
+                      Custom template for rendering each individual option item inside the dropdown
+                      list.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#selectedItem</code> / <code>#label</code></td>
                     <td><code>let-value</code>, <code>let-option</code></td>
-                    <td>Custom template for rendering the selected value / label inside the trigger box.</td>
+                    <td>
+                      Custom template for rendering the selected value / label inside the trigger
+                      box.
+                    </td>
                   </tr>
 
                   <!-- Group: Panel Headers & Footers -->
@@ -619,12 +759,18 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>#footer</code></td>
                     <td>-</td>
-                    <td>Custom content template injected at the bottom of the dropdown overlay panel or modal footer.</td>
+                    <td>
+                      Custom content template injected at the bottom of the dropdown overlay panel
+                      or modal footer.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#header</code></td>
                     <td>-</td>
-                    <td>Custom content template injected at the top of the dropdown overlay above search and items.</td>
+                    <td>
+                      Custom content template injected at the top of the dropdown overlay above
+                      search and items.
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#headerCheckbox</code></td>
@@ -641,17 +787,26 @@ import { CommonModule } from '@angular/common';
                   <tr>
                     <td><code>#clearIcon</code></td>
                     <td>-</td>
-                    <td>Custom template to replace the default clear button icon (<code>bi-x-circle-fill</code>).</td>
+                    <td>
+                      Custom template to replace the default clear button icon
+                      (<code>bi-x-circle-fill</code>).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#dropdownIcon</code></td>
                     <td>-</td>
-                    <td>Custom template to replace the default dropdown caret chevron (<code>bi-chevron-down</code>).</td>
+                    <td>
+                      Custom template to replace the default dropdown caret chevron
+                      (<code>bi-chevron-down</code>).
+                    </td>
                   </tr>
                   <tr>
                     <td><code>#filterIcon</code></td>
                     <td>-</td>
-                    <td>Custom template to replace the search magnifying glass icon (<code>bi-search</code>).</td>
+                    <td>
+                      Custom template to replace the search magnifying glass icon
+                      (<code>bi-search</code>).
+                    </td>
                   </tr>
                 </tbody>
               </table>

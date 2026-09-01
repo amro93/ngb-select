@@ -5,6 +5,7 @@ This guide provides step-by-step instructions on how to install and configure th
 ## Prerequisites
 
 Before installing `ngb-select`, ensure your project meets the following requirements:
+
 - Angular 15 or higher (the component is built as a Standalone Component).
 - Bootstrap 5 CSS (the component uses pure Bootstrap 5 classes).
 
@@ -71,15 +72,16 @@ import { NgbSelectComponent } from 'ngb-select';
       [(ngModel)]="selectedValue"
       optionLabel="label"
       optionValue="value"
-      placeholder="Select an option">
+      placeholder="Select an option"
+    >
     </ngb-select>
-  `
+  `,
 })
 export class MyComponent {
   myOptions = [
     { label: 'Option 1', value: 1 },
     { label: 'Option 2', value: 2 },
-    { label: 'Option 3', value: 3 }
+    { label: 'Option 3', value: 3 },
   ];
   selectedValue: number;
 }
@@ -103,15 +105,16 @@ import { NgbSelectComponent } from 'ngb-select';
       [options]="myOptions"
       [formControl]="myControl"
       optionLabel="label"
-      optionValue="value">
+      optionValue="value"
+    >
     </ngb-select>
-  `
+  `,
 })
 export class MyReactiveFormComponent {
   myControl = new FormControl(null);
   myOptions = [
     { label: 'Option 1', value: 1 },
-    { label: 'Option 2', value: 2 }
+    { label: 'Option 2', value: 2 },
   ];
 }
 ```

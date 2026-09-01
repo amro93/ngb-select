@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BasicDemosComponent } from './demos/basic-demos.component';
 import { FeaturesDemosComponent } from './demos/features-demos.component';
@@ -8,6 +8,7 @@ import { AdvancedDemosComponent } from './demos/advanced-demos.component';
   selector: 'app-showcase-demos',
   standalone: true,
   imports: [CommonModule, BasicDemosComponent, FeaturesDemosComponent, AdvancedDemosComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="row g-4">
       <!-- 1-8: Basic, Multi-select, Reactive forms, Filtering, Focus on open -->

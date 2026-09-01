@@ -60,7 +60,9 @@ import { NgbSelectComponent } from '../../lib/ngb-select.component';
         </div>
         <div class="col-md-4 d-none d-md-block text-center">
           <div class="bg-white p-4 rounded-4 shadow-lg text-dark text-start">
-            <label class="form-label text-muted small fw-bold mb-1">Live Multi-Select Preview</label>
+            <label class="form-label text-muted small fw-bold mb-1"
+              >Live Multi-Select Preview</label
+            >
             <ngb-select
               [options]="countries"
               [ngModel]="selectedCountries"

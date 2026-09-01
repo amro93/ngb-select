@@ -8,7 +8,10 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="card example-card" [ngClass]="cardClass">
-      <div class="card-header d-flex align-items-center justify-content-between p-3" [ngClass]="headerClass">
+      <div
+        class="card-header d-flex align-items-center justify-content-between p-3"
+        [ngClass]="headerClass"
+      >
         <span>
           <i [class]="icon" [ngClass]="iconClass + ' me-2'"></i>
           <span [ngClass]="titleClass">{{ title }}</span>
@@ -36,11 +39,7 @@ import { CommonModule } from '@angular/common';
           }
           @if (tsCode) {
             <li class="nav-item">
-              <button
-                class="nav-link"
-                [class.active]="activeTab() === 'ts'"
-                (click)="setTab('ts')"
-              >
+              <button class="nav-link" [class.active]="activeTab() === 'ts'" (click)="setTab('ts')">
                 TS
               </button>
             </li>

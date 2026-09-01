@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbSelectComponent } from '../../../lib/ngb-select.component';
@@ -16,6 +16,7 @@ import {
   selector: 'app-features-demos',
   standalone: true,
   imports: [CommonModule, FormsModule, NgbSelectComponent, ExampleCardComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- 9. Custom Templates -->
     <div class="col-12" id="templates">
@@ -31,8 +32,15 @@ import {
           <code>#selectedItem</code> templates.
         </p>
         <div class="mb-3">
-          <label class="form-label text-muted small fw-semibold">Team Members (Custom Items):</label>
-          <ngb-select [options]="members" [(ngModel)]="selectedMember" optionLabel="name" [fluid]="true">
+          <label class="form-label text-muted small fw-semibold"
+            >Team Members (Custom Items):</label
+          >
+          <ngb-select
+            [options]="members"
+            [(ngModel)]="selectedMember"
+            optionLabel="name"
+            [fluid]="true"
+          >
             <ng-template #selectedItem let-member>
               <div class="d-flex align-items-center gap-2">
                 <span class="badge rounded-pill" [ngClass]="member.badge">{{ member.status }}</span>
@@ -99,8 +107,8 @@ import {
         [tsCode]="snippets.editableTs"
       >
         <p class="text-muted small mb-3">
-          Allows the user to select predefined options or freely type arbitrary custom text
-          values with <code>[editable]="true"</code>.
+          Allows the user to select predefined options or freely type arbitrary custom text values
+          with <code>[editable]="true"</code>.
         </p>
         <div class="mb-3">
           <ngb-select
@@ -130,8 +138,7 @@ import {
       >
         <p class="text-muted small mb-3">
           Select supports 3 distinct floating label variants configured via
-          <code>[floatLabel]="true"</code> and
-          <code>floatLabelVariant="on" | "in" | "over"</code>:
+          <code>[floatLabel]="true"</code> and <code>floatLabelVariant="on" | "in" | "over"</code>:
         </p>
         <div class="mb-3">
           <ngb-select
@@ -225,7 +232,9 @@ import {
           </div>
           <div>
             <label class="form-label text-muted small fw-semibold"
-              >Dropdown Direction / Position (<code>dropdownPosition="{{ demoDropdownPosition }}"</code>)</label
+              >Dropdown Direction / Position (<code
+                >dropdownPosition="{{ demoDropdownPosition }}"</code
+              >)</label
             >
             <div class="btn-group btn-group-sm w-100 mb-2" role="group">
               <button
@@ -283,8 +292,8 @@ import {
         </div>
         <div class="card-body p-3">
           <p class="text-muted small mb-3">
-            Displays a Bootstrap <code>.spinner-border</code> spinner in place of the chevron
-            caret when <code>[loading]="true"</code>.
+            Displays a Bootstrap <code>.spinner-border</code> spinner in place of the chevron caret
+            when <code>[loading]="true"</code>.
           </p>
           <div class="mb-3">
             <ngb-select
@@ -349,7 +358,9 @@ import {
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-4">
           <div>
             <p class="text-muted mb-0 small">
-              Seamless two-way reactivity with Angular's reactive Signals primitives (<code>signal()</code>
+              Seamless two-way reactivity with Angular's reactive Signals primitives (<code
+                >signal()</code
+              >
               and <code>model()</code>) with zero change detection delays.
             </p>
           </div>

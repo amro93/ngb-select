@@ -1,19 +1,20 @@
 import {
   Component,
   forwardRef,
-  Input,
-  Output,
-  EventEmitter,
   ElementRef,
   ViewChild,
   ContentChild,
   TemplateRef,
-  HostListener,
   OnInit,
-  OnChanges,
   OnDestroy,
-  SimpleChanges,
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  NgZone,
+  input,
+  output,
+  model,
+  signal,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
@@ -41,6 +42,7 @@ import {
   imports: [CommonModule, FormsModule],
   templateUrl: './ngb-select.component.html',
   styleUrls: ['./ngb-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -49,104 +51,101 @@ import {
     },
   ],
 })
-export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
-  // Library version constant
+export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestroy {
   public static readonly VERSION = NGB_SELECT_VERSION;
 
   // --- Basic & Data Inputs ---
-  @Input() options: any[] = [];
-  @Input() optionLabel: string = 'label';
-  @Input() optionValue: string = 'value';
-  @Input() optionDisabled: string = 'disabled';
-  @Input() optionGroupLabel: string = 'label';
-  @Input() optionGroupChildren: string = 'items';
-  @Input() group: boolean = false;
-  @Input() dataKey?: string;
-  @Input() placeholder?: string;
+  options = input<any[]>([]);
+  optionLabel = input<string>('label');
+  optionValue = input<string>('value');
+  optionDisabled = input<string>('disabled');
+  optionGroupLabel = input<string>('label');
+  optionGroupChildren = input<string>('items');
+  group = input<boolean>(false);
+  dataKey = input<string | undefined>(undefined);
+  placeholder = input<string | undefined>(undefined);
 
   // --- Multi-Select Inputs ---
-  @Input() multiple: boolean = false;
-  @Input() display: SelectDisplayMode = 'comma';
-  @Input() showSelectAll: boolean = false;
-  @Input() selectAll: boolean | null = null;
-  @Input() maxSelectedLabels: number = 3;
-  @Input() selectedItemsLabel: string = '{0} items selected';
-  @Input() selectionLimit?: number;
-  @Input() closeOnSelect: boolean = false;
+  multiple = input<boolean>(false);
+  display = input<SelectDisplayMode>('comma');
+  showSelectAll = input<boolean>(false);
+  maxSelectedLabels = input<number>(3);
+  selectedItemsLabel = input<string>('{0} items selected');
+  selectionLimit = input<number | undefined>(undefined);
+  closeOnSelect = input<boolean>(false);
 
   // --- Filtering Inputs ---
-  @Input() filter: boolean = false;
-  @Input() filterBy?: string;
-  @Input() filterMatchMode: SelectFilterMatchMode = 'contains';
-  @Input() filterLocale?: string;
-  @Input() filterNormalizeArabic: boolean = true;
-  @Input() filterPlaceholder?: string;
-  @Input() searchPlaceholder?: string;
-  @Input() filterInTrigger: boolean = false;
-  @Input() resetFilterOnHide: boolean = false;
-  @Input() emptyMessage: string = 'No results found';
-  @Input() emptyFilterMessage: string = 'No results found';
+  filter = input<boolean>(false);
+  filterBy = input<string | undefined>(undefined);
+  filterMatchMode = input<SelectFilterMatchMode>('contains');
+  filterLocale = input<string | undefined>(undefined);
+  filterNormalizeArabic = input<boolean>(true);
+  filterPlaceholder = input<string | undefined>(undefined);
+  searchPlaceholder = input<string | undefined>(undefined);
+  filterInTrigger = input<boolean>(false);
+  resetFilterOnHide = input<boolean>(false);
+  emptyMessage = input<string>('No results found');
+  emptyFilterMessage = input<string>('No results found');
 
   // --- State & Form Inputs ---
-  @Input() disabled: boolean = false;
-  @Input() readonly: boolean = false;
-  @Input() loading: boolean = false;
-  @Input() showClear: boolean = false;
-  @Input() invalid: boolean = false;
-  @Input() floatLabel: boolean = false;
-  @Input() floatLabelVariant: FloatLabelVariant = 'on';
-  @Input() autofocus: boolean = false;
-  @Input() tabindex: number = 0;
-  @Input() id?: string;
-  @Input() ariaLabel?: string;
-  @Input() ariaLabelledBy?: string;
-  @Input() dir?: 'ltr' | 'rtl' | 'auto';
+  disabled = model<boolean>(false);
+  readonly = input<boolean>(false);
+  loading = input<boolean>(false);
+  showClear = input<boolean>(false);
+  invalid = input<boolean>(false);
+  floatLabel = input<boolean>(false);
+  floatLabelVariant = input<FloatLabelVariant>('on');
+  autofocus = input<boolean>(false);
+  tabindex = input<number>(0);
+  id = input<string | undefined>(undefined);
+  ariaLabel = input<string | undefined>(undefined);
+  ariaLabelledBy = input<string | undefined>(undefined);
+  dir = input<'ltr' | 'rtl' | 'auto' | undefined>(undefined);
 
   // --- Display & Styling Inputs ---
-  @Input() dropdownPosition: DropdownPosition = 'auto';
-  @Input() dropdownDirection?: DropdownDirection;
-  @Input() direction?: DropdownDirection;
-  @Input() size?: SelectSize;
-  @Input() variant: SelectVariant = 'outlined';
-  @Input() fluid: boolean = false;
-  @Input() scrollHeight: string = '200px';
-  @Input() style?: { [klass: string]: any } | null;
-  @Input() styleClass?: string;
-  @Input() panelStyle?: { [klass: string]: any } | null;
-  @Input() panelStyleClass?: string;
-  @Input() appendTo?: 'body' | HTMLElement | string;
+  dropdownPosition = input<DropdownPosition>('auto');
+  dropdownDirection = input<DropdownDirection | undefined>(undefined);
+  direction = input<DropdownDirection | undefined>(undefined);
+  size = input<SelectSize | undefined>(undefined);
+  variant = input<SelectVariant>('outlined');
+  fluid = input<boolean>(false);
+  scrollHeight = input<string>('200px');
+  style = input<{ [klass: string]: any } | null | undefined>(undefined);
+  styleClass = input<string | undefined>(undefined);
+  panelStyle = input<{ [klass: string]: any } | null | undefined>(undefined);
+  panelStyleClass = input<string | undefined>(undefined);
+  appendTo = input<'body' | HTMLElement | string | undefined>(undefined);
 
   // --- Modal / Popup Window Inputs ---
-  @Input() modal: boolean = false;
-  @Input() popup: boolean = false;
-  @Input() touchUI: boolean = false;
-  @Input() popupTitle?: string;
-  @Input() modalTitle?: string;
+  modal = input<boolean>(false);
+  popup = input<boolean>(false);
+  touchUI = input<boolean>(false);
+  popupTitle = input<string | undefined>(undefined);
+  modalTitle = input<string | undefined>(undefined);
 
   // --- Advanced Features ---
-  @Input() editable: boolean = false;
-  @Input() maxLength?: number;
-  @Input() selectOnFocus: boolean = false;
-  @Input() autoOptionFocus: boolean = true;
-  @Input() focusOnOpen?: number;
-  @Input() focusOnOpenStrategy: FocusOnOpenStrategy = 'always';
-  @Input() lazy: boolean = false;
+  editable = input<boolean>(false);
+  maxLength = input<number | undefined>(undefined);
+  selectOnFocus = input<boolean>(false);
+  autoOptionFocus = input<boolean>(true);
+  focusOnOpen = input<number | undefined>(undefined);
+  focusOnOpenStrategy = input<FocusOnOpenStrategy>('always');
+  lazy = input<boolean>(false);
 
   // --- Two-way Overlay Visibility Binding ---
-  @Input() overlayVisible: boolean = false;
-  @Output() overlayVisibleChange = new EventEmitter<boolean>();
+  overlayVisible = model<boolean>(false);
 
   // --- Event Outputs ---
-  @Output() onChange = new EventEmitter<SelectChangeEvent>();
-  @Output() onFilter = new EventEmitter<SelectFilterEvent>();
-  @Output() onFocus = new EventEmitter<Event>();
-  @Output() onBlur = new EventEmitter<Event>();
-  @Output() onShow = new EventEmitter<Event | null>();
-  @Output() onHide = new EventEmitter<Event | null>();
-  @Output() onClear = new EventEmitter<Event>();
-  @Output() onSelectAllChange = new EventEmitter<SelectSelectAllChangeEvent>();
-  @Output() onRemoveChip = new EventEmitter<SelectRemoveChipEvent>();
-  @Output() onLazyLoad = new EventEmitter<SelectLazyLoadEvent>();
+  onChange = output<SelectChangeEvent>();
+  onFilter = output<SelectFilterEvent>();
+  onFocus = output<Event>();
+  onBlur = output<Event>();
+  onShow = output<Event | null>();
+  onHide = output<Event | null>();
+  onClear = output<Event>();
+  onSelectAllChange = output<SelectSelectAllChangeEvent>();
+  onRemoveChip = output<SelectRemoveChipEvent>();
+  onLazyLoad = output<SelectLazyLoadEvent>();
 
   // --- Custom Content Templates ---
   @ContentChild('item') itemTemplate?: TemplateRef<any>;
@@ -168,87 +167,264 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   @ViewChild('editableInput') editableInputElement?: ElementRef<HTMLInputElement>;
   @ViewChild('dropdownMenu') dropdownMenuElement?: ElementRef<HTMLDivElement>;
 
-  get effectiveSearchPlaceholder(): string {
-    return this.searchPlaceholder || this.filterPlaceholder || this.placeholder || 'Search...';
-  }
+  // --- Computed UI & Accessibility State ---
+  effectiveSearchPlaceholder = computed(() => {
+    return (
+      this.searchPlaceholder() || this.filterPlaceholder() || this.placeholder() || 'Search...'
+    );
+  });
 
-  get effectiveDropdownPosition(): DropdownPosition {
-    return this.dropdownDirection || this.direction || this.dropdownPosition || 'auto';
-  }
+  effectiveDropdownPosition = computed<DropdownPosition>(() => {
+    return this.dropdownDirection() || this.direction() || this.dropdownPosition() || 'auto';
+  });
 
-  public currentPlacement: 'bottom' | 'top' = 'bottom';
-  get isDropup(): boolean {
-    return this.currentPlacement === 'top';
-  }
+  currentPlacement = signal<'bottom' | 'top'>('bottom');
+  isDropup = computed(() => this.currentPlacement() === 'top');
 
-  get isModalMode(): boolean {
-    return this.modal || this.popup || this.touchUI;
-  }
+  isModalMode = computed(() => this.modal() || this.popup() || this.touchUI());
+  effectivePopupTitle = computed(() => {
+    return this.popupTitle() || this.modalTitle() || this.placeholder() || 'Select an Option';
+  });
 
-  get effectivePopupTitle(): string {
-    return this.popupTitle || this.modalTitle || this.placeholder || 'Select an Option';
-  }
-
-  // --- Internal State ---
-  public value: any = null;
-  public filteredOptions: any[] = [];
-  public filterValue: string = '';
-
-  get effectiveFilterValue(): string {
-    return this.overlayVisible
-      ? this.filterValue
+  effectiveFilterValue = computed(() => {
+    return this.overlayVisible()
+      ? this.filterValue()
       : this.hasSelectedValue()
         ? ''
-        : this.filterValue;
-  }
-  public focusedIndex: number = -1;
+        : this.filterValue();
+  });
+
+  // --- Internal State ---
+  public value = signal<any>(null);
+  public filterValue = signal<string>('');
+  public focusedIndex = signal<number>(-1);
+
+  // --- Reactive Option Filtering & Transformation ---
+  safeOptions = computed<any[]>(() => {
+    const opts = this.options();
+    return Array.isArray(opts) ? opts : [];
+  });
+
+  filterFields = computed<string[]>(() => {
+    const filterBy = this.filterBy();
+    if (filterBy) {
+      return filterBy.split(',').map((f) => f.trim());
+    }
+    return [this.optionLabel() || 'label'];
+  });
+
+  filteredOptions = computed<any[]>(() => {
+    const opts = this.safeOptions();
+    const query = this.filterValue();
+    if (!query) {
+      return opts;
+    }
+
+    const mode = this.filterMatchMode();
+    const locale = this.filterLocale();
+    const normalizeArabic = this.filterNormalizeArabic();
+    const fields = this.filterFields();
+    const isGroup = this.group();
+    const groupChildrenKey = this.optionGroupChildren();
+
+    if (isGroup) {
+      return opts
+        .map((group) => {
+          const children = this.resolveOptionGroupChildren(group);
+          const filteredChildren = children.filter((opt) =>
+            this.matchesFilter(opt, query, fields, mode, locale, normalizeArabic),
+          );
+          return {
+            ...group,
+            [groupChildrenKey]: filteredChildren,
+          };
+        })
+        .filter((group) => this.resolveOptionGroupChildren(group).length > 0);
+    } else {
+      return opts.filter((opt) =>
+        this.matchesFilter(opt, query, fields, mode, locale, normalizeArabic),
+      );
+    }
+  });
+
+  flatFilteredOptions = computed<any[]>(() => {
+    const filtered = this.filteredOptions();
+    if (this.group()) {
+      const flat: any[] = [];
+      for (const grp of filtered) {
+        flat.push(...this.resolveOptionGroupChildren(grp));
+      }
+      return flat;
+    }
+    return filtered;
+  });
+
+  isOptionsEmpty = computed<boolean>(() => {
+    const filtered = this.filteredOptions();
+    if (filtered.length === 0) return true;
+    if (this.group()) {
+      return filtered.every((grp) => this.resolveOptionGroupChildren(grp).length === 0);
+    }
+    return false;
+  });
+
+  // Flat list of all available options for fast lookup
+  flatOptions = computed<any[]>(() => {
+    const opts = this.safeOptions();
+    if (this.group()) {
+      const flat: any[] = [];
+      for (const grp of opts) {
+        flat.push(...this.resolveOptionGroupChildren(grp));
+      }
+      return flat;
+    }
+    return opts;
+  });
+
+  // Fast O(1) Map for option resolution by value or dataKey
+  valueToOptionMap = computed<Map<any, any>>(() => {
+    const map = new Map<any, any>();
+    const all = this.flatOptions();
+    for (const opt of all) {
+      const val = this.resolveOptionValue(opt);
+      if (val !== null && val !== undefined) {
+        map.set(val, opt);
+      }
+      if (opt !== null && opt !== undefined && typeof opt === 'object') {
+        map.set(opt, opt);
+      }
+      if (typeof val === 'object') {
+        const key = this.getLookupKey(val);
+        if (key !== undefined) {
+          map.set(key, opt);
+        }
+      }
+      if (opt && typeof opt === 'object') {
+        const key = this.getLookupKey(opt);
+        if (key !== undefined) {
+          map.set(key, opt);
+        }
+      }
+    }
+    return map;
+  });
+
+  // Fast O(1) Set for multi-select membership checking
+  selectedValuesSet = computed<Set<any>>(() => {
+    const val = this.value();
+    const set = new Set<any>();
+    if (this.multiple() && Array.isArray(val)) {
+      for (const item of val) {
+        set.add(item);
+        if (item && typeof item === 'object') {
+          const key = this.getLookupKey(item);
+          if (key !== undefined) {
+            set.add(key);
+          }
+        }
+      }
+    }
+    return set;
+  });
+
+  hasSelectedValue = computed<boolean>(() => {
+    const val = this.value();
+    if (this.multiple()) {
+      return Array.isArray(val) && val.length > 0;
+    }
+    return val !== null && val !== undefined && val !== '';
+  });
+
+  displayLabel = computed<string>(() => {
+    if (!this.hasSelectedValue()) {
+      return '';
+    }
+
+    if (this.multiple()) {
+      const selectedList = Array.isArray(this.value()) ? this.value() : [];
+      if (selectedList.length > this.maxSelectedLabels()) {
+        return this.selectedItemsLabel().replace('{0}', String(selectedList.length));
+      }
+      return selectedList.map((val: any) => this.resolveOptionLabelByValue(val)).join(', ');
+    }
+
+    if (this.editable() && typeof this.value() === 'string') {
+      return this.value();
+    }
+
+    return this.resolveOptionLabelByValue(this.value());
+  });
+
+  selectAll = computed<boolean | null>(() => {
+    if (!this.multiple() || !this.showSelectAll()) return null;
+    const targetOptions = this.flatFilteredOptions().filter((opt) => !this.isOptionDisabled(opt));
+    if (targetOptions.length === 0) return false;
+    return targetOptions.every((opt) => this.isSelected(opt));
+  });
+
+  focusedOption = computed<any>(() => {
+    const idx = this.focusedIndex();
+    if (idx < 0) return undefined;
+    const flat = this.flatFilteredOptions();
+    if (idx >= flat.length) return undefined;
+    return flat[idx];
+  });
 
   // --- ControlValueAccessor Callbacks ---
   private onModelChange: (value: any) => void = () => {};
   private onModelTouched: () => void = () => {};
 
+  private unlistenWindow?: () => void;
+  private unlistenDocumentClick?: () => void;
+
   constructor(
     public elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {}
 
   ngOnInit(): void {
-    this.updateFilteredOptions();
-    if (this.autofocus) {
+    if (this.autofocus()) {
       setTimeout(() => this.focus());
     }
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['options'] || changes['group']) {
-      this.updateFilteredOptions();
-      this.updateSelectAllState();
-    }
-    if (changes['overlayVisible'] && !changes['overlayVisible'].firstChange) {
-      if (this.overlayVisible) {
-        this.openOverlay();
-      } else {
-        this.closeOverlay();
+    // Attach high-frequency window scroll & resize events outside Angular zone
+    this.ngZone.runOutsideAngular(() => {
+      const handleWindowReposition = () => {
+        if (this.overlayVisible()) {
+          this.calculateDropdownPosition();
+          if (this.appendTo()) {
+            this.repositionOverlay();
+          }
+        }
+      };
+
+      if (typeof window !== 'undefined') {
+        window.addEventListener('resize', handleWindowReposition, { passive: true });
+        window.addEventListener('scroll', handleWindowReposition, { passive: true, capture: true });
+
+        this.unlistenWindow = () => {
+          window.removeEventListener('resize', handleWindowReposition);
+          window.removeEventListener('scroll', handleWindowReposition, { capture: true } as any);
+        };
       }
-    }
+    });
   }
 
   ngOnDestroy(): void {
+    if (this.unlistenWindow) {
+      this.unlistenWindow();
+    }
+    this.unbindDocumentClickListener();
     this.cleanAppendTo();
   }
 
-  get safeOptions(): any[] {
-    return Array.isArray(this.options) ? this.options : [];
-  }
-
-  // --- ControlValueAccessor Implementation ---
   writeValue(obj: any): void {
-    if (this.multiple) {
-      this.value = Array.isArray(obj) ? [...obj] : [];
+    if (this.multiple()) {
+      this.value.set(Array.isArray(obj) ? [...obj] : []);
     } else {
-      this.value = obj !== undefined ? obj : null;
+      this.value.set(obj !== undefined ? obj : null);
     }
-    this.updateSelectAllState();
     this.cdr.markForCheck();
   }
 
@@ -261,35 +437,25 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this.disabled.set(isDisabled);
     this.cdr.markForCheck();
   }
 
-  hasSelectedValue(): boolean {
-    if (this.multiple) {
-      return Array.isArray(this.value) && this.value.length > 0;
-    }
-    return this.value !== null && this.value !== undefined && this.value !== '';
+  getDisplayLabel(): string {
+    return this.displayLabel();
   }
 
-  getDisplayLabel(): string {
-    if (!this.hasSelectedValue()) {
-      return '';
+  resolveOptionTrackKey(option: any, index: number): any {
+    if (option === null || option === undefined) return index;
+    const val = this.resolveOptionValue(option);
+    if (val !== null && val !== undefined && (typeof val === 'string' || typeof val === 'number')) {
+      return val;
     }
-
-    if (this.multiple) {
-      const selectedList = Array.isArray(this.value) ? this.value : [];
-      if (selectedList.length > this.maxSelectedLabels) {
-        return this.selectedItemsLabel.replace('{0}', String(selectedList.length));
-      }
-      return selectedList.map((val) => this.resolveOptionLabelByValue(val)).join(', ');
+    const dataKey = this.dataKey();
+    if (dataKey && typeof option === 'object' && option[dataKey] !== undefined) {
+      return option[dataKey];
     }
-
-    if (this.editable && typeof this.value === 'string') {
-      return this.value;
-    }
-
-    return this.resolveOptionLabelByValue(this.value);
+    return option;
   }
 
   resolveOptionLabelByValue(val: any): string {
@@ -303,8 +469,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   resolveOptionLabel(option: any): string {
     if (option === null || option === undefined) return '';
     if (typeof option === 'object') {
-      if (this.optionLabel && option[this.optionLabel] !== undefined) {
-        return String(option[this.optionLabel]);
+      const labelKey = this.optionLabel();
+      if (labelKey && option[labelKey] !== undefined) {
+        return String(option[labelKey]);
       }
       if (option.label !== undefined) {
         return String(option.label);
@@ -317,8 +484,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   resolveOptionValue(option: any): any {
     if (option === null || option === undefined) return null;
     if (typeof option === 'object') {
-      if (this.optionValue && option[this.optionValue] !== undefined) {
-        return option[this.optionValue];
+      const valKey = this.optionValue();
+      if (valKey && option[valKey] !== undefined) {
+        return option[valKey];
       }
       if (option.value !== undefined) {
         return option.value;
@@ -327,11 +495,25 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     return option;
   }
 
+  private getLookupKey(val: any): any {
+    if (!val || typeof val !== 'object') return val;
+    const dataKey = this.dataKey();
+    if (dataKey && val[dataKey] !== undefined) {
+      return `dk:${val[dataKey]}`;
+    }
+    const valKey = this.optionValue();
+    if (valKey && val[valKey] !== undefined) {
+      return `ov:${val[valKey]}`;
+    }
+    return undefined;
+  }
+
   isOptionDisabled(option: any): boolean {
-    if (this.disabled) return true;
+    if (this.disabled()) return true;
     if (option && typeof option === 'object') {
-      if (this.optionDisabled && option[this.optionDisabled] !== undefined) {
-        return Boolean(option[this.optionDisabled]);
+      const disabledKey = this.optionDisabled();
+      if (disabledKey && option[disabledKey] !== undefined) {
+        return Boolean(option[disabledKey]);
       }
       return Boolean(option.disabled);
     }
@@ -340,24 +522,38 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   resolveOptionGroupLabel(groupOption: any): string {
     if (!groupOption) return '';
-    if (this.optionGroupLabel && groupOption[this.optionGroupLabel] !== undefined) {
-      return String(groupOption[this.optionGroupLabel]);
+    const groupLabelKey = this.optionGroupLabel();
+    if (groupLabelKey && groupOption[groupLabelKey] !== undefined) {
+      return String(groupOption[groupLabelKey]);
     }
     return String(groupOption.label || '');
   }
 
   resolveOptionGroupChildren(groupOption: any): any[] {
     if (!groupOption) return [];
-    if (this.optionGroupChildren && Array.isArray(groupOption[this.optionGroupChildren])) {
-      return groupOption[this.optionGroupChildren];
+    const groupChildrenKey = this.optionGroupChildren();
+    if (groupChildrenKey && Array.isArray(groupOption[groupChildrenKey])) {
+      return groupOption[groupChildrenKey];
     }
     return Array.isArray(groupOption.items) ? groupOption.items : [];
   }
 
   findOptionByValue(val: any): any {
     if (val === null || val === undefined) return undefined;
-    if (this.group) {
-      for (const grp of this.safeOptions) {
+
+    // Fast O(1) lookup from computed map
+    const map = this.valueToOptionMap();
+    if (map.has(val)) {
+      return map.get(val);
+    }
+    const lookupKey = this.getLookupKey(val);
+    if (lookupKey !== undefined && map.has(lookupKey)) {
+      return map.get(lookupKey);
+    }
+
+    // Fallback scan
+    if (this.group()) {
+      for (const grp of this.safeOptions()) {
         const children = this.resolveOptionGroupChildren(grp);
         const match = children.find((opt) =>
           this.areValuesEqual(this.resolveOptionValue(opt), val),
@@ -366,22 +562,20 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       }
       return undefined;
     }
-    return this.safeOptions.find((opt) => this.areValuesEqual(this.resolveOptionValue(opt), val));
+    return this.safeOptions().find((opt) => this.areValuesEqual(this.resolveOptionValue(opt), val));
   }
 
   areValuesEqual(val1: any, val2: any): boolean {
     if (val1 === val2) return true;
     if (val1 === null || val1 === undefined || val2 === null || val2 === undefined) return false;
     if (typeof val1 === 'object' && typeof val2 === 'object') {
-      if (this.dataKey && val1[this.dataKey] !== undefined && val2[this.dataKey] !== undefined) {
-        return val1[this.dataKey] === val2[this.dataKey];
+      const dataKey = this.dataKey();
+      if (dataKey && val1[dataKey] !== undefined && val2[dataKey] !== undefined) {
+        return val1[dataKey] === val2[dataKey];
       }
-      if (
-        this.optionValue &&
-        val1[this.optionValue] !== undefined &&
-        val2[this.optionValue] !== undefined
-      ) {
-        return val1[this.optionValue] === val2[this.optionValue];
+      const optVal = this.optionValue();
+      if (optVal && val1[optVal] !== undefined && val2[optVal] !== undefined) {
+        return val1[optVal] === val2[optVal];
       }
       try {
         return JSON.stringify(val1) === JSON.stringify(val2);
@@ -394,40 +588,47 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   isSelected(option: any): boolean {
     const optVal = this.resolveOptionValue(option);
-    if (this.multiple && Array.isArray(this.value)) {
-      return this.value.some((item) => this.areValuesEqual(item, optVal));
+    if (this.multiple()) {
+      const set = this.selectedValuesSet();
+      if (set.has(optVal)) return true;
+      const lookupKey = this.getLookupKey(optVal);
+      if (lookupKey !== undefined && set.has(lookupKey)) return true;
+
+      const valArr = Array.isArray(this.value()) ? this.value() : [];
+      return valArr.some((item: any) => this.areValuesEqual(item, optVal));
     }
-    return this.areValuesEqual(this.value, optVal);
+    return this.areValuesEqual(this.value(), optVal);
   }
 
-  isOptionsEmpty(): boolean {
-    if (this.filteredOptions.length === 0) return true;
-    if (this.group) {
-      return this.filteredOptions.every((grp) => this.resolveOptionGroupChildren(grp).length === 0);
-    }
-    return false;
+  updateFilteredOptions(): void {
+    // Kept for backward compatibility if called manually
+    this.cdr.markForCheck();
   }
 
-  // --- Trigger & Dropdown Visibility ---
+  updateSelectAllState(): void {
+    // Select all is now a computed signal
+    this.cdr.markForCheck();
+  }
+
   onTriggerClick(event: MouseEvent): void {
-    if (this.disabled || this.readonly) return;
+    if (this.disabled() || this.readonly()) return;
     this.toggleOverlay(event);
   }
 
   calculateDropdownPosition(): void {
-    const pref = this.effectiveDropdownPosition;
+    const pref = this.effectiveDropdownPosition();
     if (pref === 'top' || pref === 'up') {
-      this.currentPlacement = 'top';
+      this.currentPlacement.set('top');
       return;
     }
     if (pref === 'bottom' || pref === 'down') {
-      this.currentPlacement = 'bottom';
+      this.currentPlacement.set('bottom');
       return;
     }
 
     // Auto positioning based on viewport space
     if (typeof window === 'undefined' || !this.elementRef?.nativeElement) {
-      this.currentPlacement = 'bottom';
+      this.currentPlacement.set('bottom');
       return;
     }
 
@@ -438,22 +639,22 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     let panelHeight = 200;
     if (this.dropdownMenuElement?.nativeElement?.offsetHeight) {
       panelHeight = this.dropdownMenuElement.nativeElement.offsetHeight;
-    } else if (this.scrollHeight) {
-      const parsed = parseInt(this.scrollHeight, 10);
+    } else if (this.scrollHeight()) {
+      const parsed = parseInt(this.scrollHeight(), 10);
       if (!isNaN(parsed) && parsed > 0) {
         panelHeight = parsed;
       }
     }
 
     if (spaceBelow < panelHeight && spaceAbove > spaceBelow) {
-      this.currentPlacement = 'top';
+      this.currentPlacement.set('top');
     } else {
-      this.currentPlacement = 'bottom';
+      this.currentPlacement.set('bottom');
     }
   }
 
   toggleOverlay(event?: Event): void {
-    if (this.overlayVisible) {
+    if (this.overlayVisible()) {
       this.closeOverlay(event);
     } else {
       this.openOverlay(event);
@@ -461,19 +662,20 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   openOverlay(event?: Event): void {
-    if (this.disabled || this.readonly || this.overlayVisible) return;
+    if (this.disabled() || this.readonly() || this.overlayVisible()) return;
 
     this.calculateDropdownPosition();
-    this.overlayVisible = true;
-    this.overlayVisibleChange.emit(true);
+    this.overlayVisible.set(true);
     this.onShow.emit(event || null);
     this.onModelTouched();
 
+    this.bindDocumentClickListener();
+
     setTimeout(() => {
       this.calculateDropdownPosition();
-      if (this.filterInTrigger && this.triggerFilterInputElement) {
+      if (this.filterInTrigger() && this.triggerFilterInputElement) {
         this.triggerFilterInputElement.nativeElement.focus();
-      } else if (this.filter && this.filterInputElement) {
+      } else if (this.filter() && this.filterInputElement) {
         this.filterInputElement.nativeElement.focus();
       }
       this.handleFocusOnOpen();
@@ -483,43 +685,66 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   closeOverlay(event?: Event): void {
-    if (!this.overlayVisible) return;
+    if (!this.overlayVisible()) return;
 
-    this.overlayVisible = false;
-    this.overlayVisibleChange.emit(false);
+    this.unbindDocumentClickListener();
+
+    this.overlayVisible.set(false);
     this.onHide.emit(event || null);
 
-    if (this.resetFilterOnHide && this.filterValue) {
-      this.filterValue = '';
-      this.updateFilteredOptions();
+    if (this.resetFilterOnHide() && this.filterValue()) {
+      this.filterValue.set('');
     }
-    this.focusedIndex = -1;
+    this.focusedIndex.set(-1);
     this.cdr.markForCheck();
   }
 
+  private bindDocumentClickListener(): void {
+    if (typeof document === 'undefined' || this.unlistenDocumentClick) return;
+    const clickHandler = (event: MouseEvent) => {
+      if (
+        !this.elementRef.nativeElement.contains(event.target) &&
+        (!this.dropdownMenuElement ||
+          !this.dropdownMenuElement.nativeElement.contains(event.target as Node))
+      ) {
+        this.ngZone.run(() => {
+          this.closeOverlay(event);
+        });
+      }
+    };
+    document.addEventListener('click', clickHandler, { capture: true });
+    this.unlistenDocumentClick = () => {
+      document.removeEventListener('click', clickHandler, { capture: true });
+      this.unlistenDocumentClick = undefined;
+    };
+  }
+
+  private unbindDocumentClickListener(): void {
+    if (this.unlistenDocumentClick) {
+      this.unlistenDocumentClick();
+    }
+  }
+
   private handleFocusOnOpen(): void {
-    const flatItems = this.getFlatFilteredOptions();
+    const flatItems = this.flatFilteredOptions();
     let targetIndex = -1;
 
     const hasSelection = this.hasSelectedValue();
     const selectedIdx = flatItems.findIndex((opt) => this.isSelected(opt));
 
-    if (
-      this.focusOnOpen !== undefined &&
-      this.focusOnOpen >= 0 &&
-      this.focusOnOpen < flatItems.length
-    ) {
-      if (this.focusOnOpenStrategy === 'notSelected' && hasSelection && selectedIdx !== -1) {
+    const focusOnOpen = this.focusOnOpen();
+    if (focusOnOpen !== undefined && focusOnOpen >= 0 && focusOnOpen < flatItems.length) {
+      if (this.focusOnOpenStrategy() === 'notSelected' && hasSelection && selectedIdx !== -1) {
         targetIndex = selectedIdx;
       } else {
-        targetIndex = this.focusOnOpen;
+        targetIndex = focusOnOpen;
       }
-    } else if (this.autoOptionFocus) {
+    } else if (this.autoOptionFocus()) {
       targetIndex = selectedIdx !== -1 ? selectedIdx : 0;
     }
 
     if (targetIndex !== -1 && this.dropdownMenuElement) {
-      this.focusedIndex = targetIndex;
+      this.focusedIndex.set(targetIndex);
       const elements = this.dropdownMenuElement.nativeElement.querySelectorAll(
         '.dropdown-item[role="option"]',
       );
@@ -530,36 +755,36 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     }
   }
 
-  // --- Option Selection ---
   onOptionClick(option: any, event: Event): void {
     if (this.isOptionDisabled(option)) return;
 
     const val = this.resolveOptionValue(option);
 
-    if (this.multiple) {
-      let currentSelection: any[] = Array.isArray(this.value) ? [...this.value] : [];
+    if (this.multiple()) {
+      let currentSelection: any[] = Array.isArray(this.value()) ? [...this.value()] : [];
       const selectedIndex = currentSelection.findIndex((item) => this.areValuesEqual(item, val));
 
       if (selectedIndex !== -1) {
         currentSelection.splice(selectedIndex, 1);
       } else {
-        if (this.selectionLimit !== undefined && currentSelection.length >= this.selectionLimit) {
+        if (
+          this.selectionLimit() !== undefined &&
+          currentSelection.length >= this.selectionLimit()!
+        ) {
           return;
         }
         currentSelection.push(val);
       }
 
       this.updateModel(currentSelection, event);
-      this.updateSelectAllState();
 
-      if (this.closeOnSelect) {
+      if (this.closeOnSelect()) {
         this.closeOverlay(event);
       }
     } else {
       this.updateModel(val, event);
-      if (this.filterInTrigger) {
-        this.filterValue = '';
-        this.updateFilteredOptions();
+      if (this.filterInTrigger()) {
+        this.filterValue.set('');
         if (this.triggerFilterInputElement) {
           this.triggerFilterInputElement.nativeElement.value = '';
         }
@@ -570,137 +795,90 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
   removeChip(val: any, event: Event): void {
     event.stopPropagation();
-    if (this.disabled || this.readonly) return;
+    if (this.disabled() || this.readonly()) return;
 
-    if (Array.isArray(this.value)) {
-      const nextVal = this.value.filter((item) => !this.areValuesEqual(item, val));
+    if (Array.isArray(this.value())) {
+      const nextVal = this.value().filter((item: any) => !this.areValuesEqual(item, val));
       this.updateModel(nextVal, event);
       this.onRemoveChip.emit({ originalEvent: event, value: val });
-      this.updateSelectAllState();
     }
   }
 
   toggleSelectAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    const targetOptions = this.getFlatFilteredOptions().filter(
-      (opt) => !this.isOptionDisabled(opt),
-    );
+    const targetOptions = this.flatFilteredOptions().filter((opt) => !this.isOptionDisabled(opt));
 
     if (checked) {
       let allValues = targetOptions.map((opt) => this.resolveOptionValue(opt));
-      if (this.selectionLimit !== undefined) {
-        allValues = allValues.slice(0, this.selectionLimit);
+      if (this.selectionLimit() !== undefined) {
+        allValues = allValues.slice(0, this.selectionLimit());
       }
-      this.value = allValues;
+      this.value.set(allValues);
     } else {
-      this.value = [];
+      this.value.set([]);
     }
 
-    this.selectAll = checked;
-    this.updateModel(this.value, event);
+    this.updateModel(this.value(), event);
     this.onSelectAllChange.emit({ originalEvent: event, checked });
   }
 
-  updateSelectAllState(): void {
-    if (!this.multiple || !this.showSelectAll) return;
-    const targetOptions = this.getFlatFilteredOptions().filter(
-      (opt) => !this.isOptionDisabled(opt),
-    );
-    if (targetOptions.length === 0) {
-      this.selectAll = false;
-      return;
-    }
-    this.selectAll = targetOptions.every((opt) => this.isSelected(opt));
-  }
-
   private updateModel(val: any, event: Event | null): void {
-    this.value = val;
-    this.onModelChange(this.value);
+    this.value.set(val);
+    this.onModelChange(this.value());
     this.onChange.emit({
       originalEvent: event,
-      value: this.value,
+      value: this.value(),
     });
     this.cdr.markForCheck();
   }
 
-  // --- Clear Action ---
   onClearClick(event: Event): void {
     event.stopPropagation();
-    if (this.disabled || this.readonly) return;
+    if (this.disabled() || this.readonly()) return;
 
-    const clearedValue = this.multiple ? [] : null;
+    const clearedValue = this.multiple() ? [] : null;
     this.updateModel(clearedValue, event);
-    this.updateSelectAllState();
     this.onClear.emit(event);
   }
 
-  // --- Editable Combobox Logic ---
   onEditableInput(event: Event): void {
     const inputVal = (event.target as HTMLInputElement).value;
     this.updateModel(inputVal, event);
   }
 
   onEditableFocus(event: FocusEvent): void {
-    if (this.selectOnFocus && this.editableInputElement) {
+    if (this.selectOnFocus() && this.editableInputElement) {
       this.editableInputElement.nativeElement.select();
     }
     this.onFocus.emit(event);
   }
 
-  // --- Filtering Logic ---
   onFilterChange(event: Event): void {
     const raw = (event.target as HTMLInputElement).value || '';
-    this.filterValue = raw;
-    this.updateFilteredOptions();
-    this.updateSelectAllState();
+    this.filterValue.set(raw);
     this.onFilter.emit({
       originalEvent: event,
-      filter: this.filterValue,
+      filter: this.filterValue(),
     });
   }
 
-  updateFilteredOptions(): void {
-    if (!this.filterValue) {
-      this.filteredOptions = [...this.safeOptions];
-      return;
-    }
-
-    const query = this.filterValue;
-
-    if (this.group) {
-      this.filteredOptions = this.safeOptions
-        .map((group) => {
-          const children = this.resolveOptionGroupChildren(group);
-          const filteredChildren = children.filter((opt) => this.matchesFilter(opt, query));
-          return {
-            ...group,
-            [this.optionGroupChildren]: filteredChildren,
-          };
-        })
-        .filter((group) => this.resolveOptionGroupChildren(group).length > 0);
-    } else {
-      this.filteredOptions = this.safeOptions.filter((opt) => this.matchesFilter(opt, query));
-    }
-  }
-
-  private matchesFilter(option: any, query: string): boolean {
+  private matchesFilter(
+    option: any,
+    query: string,
+    fieldsToSearch: string[],
+    matchMode: SelectFilterMatchMode,
+    locale?: string,
+    normalizeArabic = true,
+  ): boolean {
     if (!option) return false;
-    const fieldsToSearch = this.getFilterFields();
 
     return fieldsToSearch.some((field) => {
       const val = this.resolveFieldData(option, field);
       if (val === null || val === undefined) return false;
 
       const stringVal = String(val);
-      return this.compareStrings(stringVal, query, this.filterMatchMode, this.filterLocale);
+      return this.compareStrings(stringVal, query, matchMode, locale, normalizeArabic);
     });
-  }
-
-  private getFilterFields(): string[] {
-    if (this.filterBy) {
-      return this.filterBy.split(',').map((f) => f.trim());
-    }
-    return [this.optionLabel || 'label'];
   }
 
   private resolveFieldData(data: any, field: string): any {
@@ -736,11 +914,12 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     query: string,
     mode: SelectFilterMatchMode,
     locale?: string,
+    normalizeArabic = true,
   ): boolean {
     let v = locale ? val.toLocaleLowerCase(locale) : val.toLowerCase();
     let q = locale ? query.toLocaleLowerCase(locale) : query.toLowerCase();
 
-    if (this.filterNormalizeArabic) {
+    if (normalizeArabic) {
       v = this.normalizeArabicText(v);
       q = this.normalizeArabicText(q);
     }
@@ -761,24 +940,16 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   public getFlatFilteredOptions(): any[] {
-    if (this.group) {
-      const flat: any[] = [];
-      for (const grp of this.filteredOptions) {
-        flat.push(...this.resolveOptionGroupChildren(grp));
-      }
-      return flat;
-    }
-    return this.filteredOptions;
+    return this.flatFilteredOptions();
   }
 
-  // --- Keyboard & Navigation ---
   onKeydown(event: KeyboardEvent): void {
-    if (this.disabled || this.readonly) return;
+    if (this.disabled() || this.readonly()) return;
 
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
-        if (!this.overlayVisible) {
+        if (!this.overlayVisible()) {
           this.openOverlay(event);
         } else {
           this.navigateOption(1);
@@ -787,7 +958,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
 
       case 'ArrowUp':
         event.preventDefault();
-        if (!this.overlayVisible) {
+        if (!this.overlayVisible()) {
           this.openOverlay(event);
         } else {
           this.navigateOption(-1);
@@ -798,32 +969,33 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
       case ' ':
         if (
           event.key === ' ' &&
-          ((this.filter && this.filterInputElement?.nativeElement === document.activeElement) ||
-            (this.filterInTrigger &&
+          ((this.filter() && this.filterInputElement?.nativeElement === document.activeElement) ||
+            (this.filterInTrigger() &&
               this.triggerFilterInputElement?.nativeElement === document.activeElement))
         ) {
           return;
         }
         event.preventDefault();
-        if (!this.overlayVisible) {
+        if (!this.overlayVisible()) {
           this.openOverlay(event);
         } else {
-          const flatItems = this.getFlatFilteredOptions();
-          if (this.focusedIndex >= 0 && this.focusedIndex < flatItems.length) {
-            this.onOptionClick(flatItems[this.focusedIndex], event);
+          const flatItems = this.flatFilteredOptions();
+          const focusedIdx = this.focusedIndex();
+          if (focusedIdx >= 0 && focusedIdx < flatItems.length) {
+            this.onOptionClick(flatItems[focusedIdx], event);
           }
         }
         break;
 
       case 'Escape':
-        if (this.overlayVisible) {
+        if (this.overlayVisible()) {
           event.preventDefault();
           this.closeOverlay(event);
         }
         break;
 
       case 'Tab':
-        if (this.overlayVisible) {
+        if (this.overlayVisible()) {
           this.closeOverlay(event);
         }
         break;
@@ -842,10 +1014,10 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   private navigateOption(step: number): void {
-    const flatItems = this.getFlatFilteredOptions();
+    const flatItems = this.flatFilteredOptions();
     if (flatItems.length === 0) return;
 
-    let nextIdx = this.focusedIndex + step;
+    let nextIdx = this.focusedIndex() + step;
     if (nextIdx < 0) nextIdx = 0;
     if (nextIdx >= flatItems.length) nextIdx = flatItems.length - 1;
 
@@ -858,7 +1030,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     }
 
     if (nextIdx >= 0 && nextIdx < flatItems.length) {
-      this.focusedIndex = nextIdx;
+      this.focusedIndex.set(nextIdx);
       if (this.dropdownMenuElement) {
         const elements = this.dropdownMenuElement.nativeElement.querySelectorAll(
           '.dropdown-item[role="option"]',
@@ -872,21 +1044,17 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   isOptionFocused(option: any): boolean {
-    if (this.focusedIndex < 0) return false;
-    const flat = this.getFlatFilteredOptions();
-    if (this.focusedIndex >= flat.length) return false;
-    return this.areValuesEqual(
-      this.resolveOptionValue(flat[this.focusedIndex]),
-      this.resolveOptionValue(option),
-    );
+    const focused = this.focusedOption();
+    if (focused === undefined || option === undefined) return false;
+    if (focused === option) return true;
+    return this.areValuesEqual(this.resolveOptionValue(focused), this.resolveOptionValue(option));
   }
 
-  // --- Scroll & Lazy Loading ---
   onOverlayScroll(event: Event): void {
-    if (!this.lazy) return;
+    if (!this.lazy()) return;
     const target = event.target as HTMLElement;
     if (target.scrollTop + target.clientHeight >= target.scrollHeight - 10) {
-      const flat = this.getFlatFilteredOptions();
+      const flat = this.flatFilteredOptions();
       this.onLazyLoad.emit({
         first: flat.length,
         last: flat.length + 10,
@@ -894,20 +1062,20 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     }
   }
 
-  // --- Append To Body Helper ---
   private handleAppendTo(): void {
-    if (!this.appendTo || !this.dropdownMenuElement) return;
-    if (this.appendTo === 'body') {
+    const appendTo = this.appendTo();
+    if (!appendTo || !this.dropdownMenuElement) return;
+    if (appendTo === 'body') {
       document.body.appendChild(this.dropdownMenuElement.nativeElement);
       this.repositionOverlay();
-    } else if (this.appendTo instanceof HTMLElement) {
-      this.appendTo.appendChild(this.dropdownMenuElement.nativeElement);
+    } else if (appendTo instanceof HTMLElement) {
+      appendTo.appendChild(this.dropdownMenuElement.nativeElement);
       this.repositionOverlay();
     }
   }
 
   private repositionOverlay(): void {
-    if (!this.dropdownMenuElement || this.isModalMode) return;
+    if (!this.dropdownMenuElement || this.isModalMode()) return;
     this.calculateDropdownPosition();
     const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
     const dropdown = this.dropdownMenuElement.nativeElement;
@@ -919,7 +1087,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     dropdown.style.boxSizing = 'border-box';
     dropdown.style.zIndex = '1060';
 
-    if (this.isDropup) {
+    if (this.isDropup()) {
       dropdown.style.top = 'auto';
       dropdown.style.bottom = `${window.innerHeight - triggerRect.top + 2}px`;
     } else {
@@ -929,7 +1097,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   private cleanAppendTo(): void {
-    if (this.appendTo && this.dropdownMenuElement) {
+    if (this.appendTo() && this.dropdownMenuElement) {
       const el = this.dropdownMenuElement.nativeElement;
       if (el.parentElement) {
         el.parentElement.removeChild(el);
@@ -937,7 +1105,6 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
     }
   }
 
-  // --- Focus, Blur & Click Outside ---
   onTriggerFocus(event: FocusEvent): void {
     this.onFocus.emit(event);
   }
@@ -947,46 +1114,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnChang
   }
 
   public focus(): void {
-    if (this.filterInTrigger && this.triggerFilterInputElement) {
+    if (this.filterInTrigger() && this.triggerFilterInputElement) {
       this.triggerFilterInputElement.nativeElement.focus();
-    } else if (this.editable && !this.multiple && this.editableInputElement) {
+    } else if (this.editable() && !this.multiple() && this.editableInputElement) {
       this.editableInputElement.nativeElement.focus();
     } else {
       const trigger = this.elementRef.nativeElement.querySelector('.form-select');
       if (trigger) trigger.focus();
-    }
-  }
-
-  @HostListener('window:resize')
-  onWindowResize(): void {
-    if (this.overlayVisible) {
-      this.calculateDropdownPosition();
-      if (this.appendTo) {
-        this.repositionOverlay();
-      }
-    }
-  }
-
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-    if (this.overlayVisible) {
-      this.calculateDropdownPosition();
-      if (this.appendTo) {
-        this.repositionOverlay();
-      }
-    }
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (this.overlayVisible && !this.elementRef.nativeElement.contains(event.target)) {
-      if (
-        this.dropdownMenuElement &&
-        this.dropdownMenuElement.nativeElement.contains(event.target as Node)
-      ) {
-        return;
-      }
-      this.closeOverlay(event);
     }
   }
 }

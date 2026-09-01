@@ -53,6 +53,25 @@ import { NgbSelectComponent } from './ngb-select.component';
         [dir]="dir"
         [appendTo]="appendTo"
         [(overlayVisible)]="overlayVisible"
+        [filterNormalizeArabic]="filterNormalizeArabic"
+        [filterPlaceholder]="filterPlaceholder"
+        [emptyMessage]="emptyMessage"
+        [emptyFilterMessage]="emptyFilterMessage"
+        [filterLocale]="filterLocale"
+        [readonly]="readonly"
+        [autofocus]="autofocus"
+        [tabindex]="tabindex"
+        [id]="id"
+        [ariaLabel]="ariaLabel"
+        [ariaLabelledBy]="ariaLabelledBy"
+        [style]="style"
+        [styleClass]="styleClass"
+        [panelStyle]="panelStyle"
+        [panelStyleClass]="panelStyleClass"
+        [maxLength]="maxLength"
+        [selectOnFocus]="selectOnFocus"
+        [autoOptionFocus]="autoOptionFocus"
+        [lazy]="lazy"
         (onChange)="onSelectChange($event)"
         (onFilter)="onFilterChange($event)"
         (onClear)="onClearChange($event)"
@@ -109,6 +128,25 @@ class TestHostComponent {
   focusOnOpen?: number;
   focusOnOpenStrategy: any = 'always';
   overlayVisible = false;
+  filterNormalizeArabic: any;
+  filterPlaceholder: any;
+  emptyMessage: any;
+  emptyFilterMessage: any;
+  filterLocale: any;
+  readonly: any;
+  autofocus: any;
+  tabindex: any;
+  id: any;
+  ariaLabel: any;
+  ariaLabelledBy: any;
+  style: any;
+  styleClass: any;
+  panelStyle: any;
+  panelStyleClass: any;
+  maxLength: any;
+  selectOnFocus: any;
+  autoOptionFocus: any;
+  lazy: any;
 
   form = new FormGroup({
     selectedCity: new FormControl<any>(null),
@@ -221,7 +259,7 @@ describe('NgbSelectComponent', () => {
 
       expect(hostComponent.form.get('selectedCity')?.value).toBe('NY');
       expect(hostComponent.lastChangeEvent?.value).toBe('NY');
-      expect(selectComponent.overlayVisible).toBe(false);
+      expect(selectComponent.overlayVisible()).toBe(false);
     });
 
     it('should update displayed label when writeValue is called via formControl', () => {
@@ -270,8 +308,8 @@ describe('NgbSelectComponent', () => {
       input.nativeElement.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(1);
-      expect(selectComponent.filteredOptions[0].name).toBe('Rome');
+      expect(selectComponent.filteredOptions().length).toBe(1);
+      expect(selectComponent.filteredOptions()[0].name).toBe('Rome');
     });
 
     it('should display empty message when filter produces no matches', () => {
@@ -304,13 +342,13 @@ describe('NgbSelectComponent', () => {
       input.nativeElement.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(0);
+      expect(selectComponent.filteredOptions().length).toBe(0);
     });
 
     it('should respect custom searchPlaceholder as placeholder in filter input', () => {
       const { fixture, selectComponent } = createComponent();
-      selectComponent.filter = true;
-      selectComponent.searchPlaceholder = 'Type to search cities...';
+      hostComponent.filter = true;
+      hostComponent.searchPlaceholder = 'Type to search cities...';
       selectComponent.openOverlay();
       fixture.detectChanges();
 
@@ -333,8 +371,8 @@ describe('NgbSelectComponent', () => {
       triggerInput.nativeElement.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(1);
-      expect(selectComponent.filteredOptions[0].name).toBe('Paris');
+      expect(selectComponent.filteredOptions().length).toBe(1);
+      expect(selectComponent.filteredOptions()[0].name).toBe('Paris');
     });
   });
 
@@ -439,7 +477,7 @@ describe('NgbSelectComponent', () => {
       trigger.nativeElement.click();
       fixture.detectChanges();
 
-      expect(selectComponent.overlayVisible).toBe(false);
+      expect(selectComponent.overlayVisible()).toBe(false);
     });
 
     it('should not allow selecting disabled option', () => {
@@ -486,7 +524,7 @@ describe('NgbSelectComponent', () => {
       hostComponent.form.get('selectedCity')?.setValue('');
       fixture.detectChanges();
 
-      expect(selectComponent.value).toBe('');
+      expect(selectComponent.value()).toBe('');
     });
 
     it('should work seamlessly with Angular Signal values in parent components', () => {
@@ -505,16 +543,16 @@ describe('NgbSelectComponent', () => {
   describe('Category 7: Advanced Features', () => {
     it('should match objects by dataKey rather than reference equality', () => {
       const { fixture, selectComponent } = createComponent();
-      selectComponent.optionValue = undefined as any;
-      selectComponent.dataKey = 'code';
-      selectComponent.options = [
+      hostComponent.optionValue = undefined as any;
+      hostComponent.dataKey = 'code';
+      hostComponent.options = [
         { name: 'New York', code: 'NY' },
         { name: 'Rome', code: 'RM' },
       ];
       selectComponent.writeValue({ name: 'Rome (Different ref)', code: 'RM' });
       fixture.detectChanges();
 
-      expect(selectComponent.isSelected(selectComponent.options[1])).toBe(true);
+      expect(selectComponent.isSelected(selectComponent.options()[1])).toBe(true);
     });
 
     it('should support editable combobox input typing', () => {
@@ -541,7 +579,7 @@ describe('NgbSelectComponent', () => {
       fixture.detectChanges();
       await new Promise((r) => setTimeout(r, 20));
 
-      expect(selectComponent.focusedIndex).toBe(1);
+      expect(selectComponent.focusedIndex()).toBe(1);
     });
 
     it('should prioritize selected item over focusOnOpen when focusOnOpenStrategy is notSelected and value is present', async () => {
@@ -556,7 +594,7 @@ describe('NgbSelectComponent', () => {
       fixture.detectChanges();
       await new Promise((r) => setTimeout(r, 20));
 
-      expect(selectComponent.focusedIndex).toBe(3); // Should focus selected PRS instead of focusOnOpen index 0
+      expect(selectComponent.focusedIndex()).toBe(3); // Should focus selected PRS instead of focusOnOpen index 0
     });
 
     it('should use focusOnOpen when focusOnOpenStrategy is notSelected and no value is selected', async () => {
@@ -569,7 +607,7 @@ describe('NgbSelectComponent', () => {
       fixture.detectChanges();
       await new Promise((r) => setTimeout(r, 20));
 
-      expect(selectComponent.focusedIndex).toBe(1);
+      expect(selectComponent.focusedIndex()).toBe(1);
     });
 
     it('should support two-way binding on overlayVisible', async () => {
@@ -578,7 +616,7 @@ describe('NgbSelectComponent', () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
-      expect(selectComponent.overlayVisible).toBe(true);
+      expect(selectComponent.overlayVisible()).toBe(true);
       expect(hostComponent.overlayVisible).toBe(true);
     });
   });
@@ -591,7 +629,7 @@ describe('NgbSelectComponent', () => {
       const { fixture, selectComponent } = createComponent((host) => {
         host.multiple = true;
       });
-      selectComponent.options = [
+      hostComponent.options = [
         { name: 'New York', code: 'NY' },
         { name: 'Rome', code: 'RM' },
         { name: 'Paris', code: 'PRS' },
@@ -599,9 +637,9 @@ describe('NgbSelectComponent', () => {
       selectComponent.writeValue(['NY', 'PRS']);
       fixture.detectChanges();
 
-      expect(selectComponent.isSelected(selectComponent.options[0])).toBe(true);
-      expect(selectComponent.isSelected(selectComponent.options[1])).toBe(false);
-      expect(selectComponent.isSelected(selectComponent.options[2])).toBe(true);
+      expect(selectComponent.isSelected(selectComponent.options()[0])).toBe(true);
+      expect(selectComponent.isSelected(selectComponent.options()[1])).toBe(false);
+      expect(selectComponent.isSelected(selectComponent.options()[2])).toBe(true);
     });
 
     it('should toggle selection in multiple mode and remain open by default', async () => {
@@ -619,7 +657,7 @@ describe('NgbSelectComponent', () => {
       await fixture.whenStable();
 
       expect(hostComponent.form.get('selectedCity')?.value).toEqual(['NY', 'RM']);
-      expect(selectComponent.overlayVisible).toBe(true); // Should remain open
+      expect(selectComponent.overlayVisible()).toBe(true); // Should remain open
     });
 
     it('should render chips when display="chip"', () => {
@@ -647,8 +685,8 @@ describe('NgbSelectComponent', () => {
       selectAllInput.dispatchEvent(new Event('change'));
       fixture.detectChanges();
 
-      expect(selectComponent.value.length).toBe(3); // 3 non-disabled items (NY, RM, PRS)
-      expect(selectComponent.selectAll).toBe(true);
+      expect(selectComponent.value().length).toBe(3); // 3 non-disabled items (NY, RM, PRS)
+      expect(selectComponent.selectAll()).toBe(true);
     });
 
     it('should enforce selectionLimit in multi-select mode', () => {
@@ -663,8 +701,8 @@ describe('NgbSelectComponent', () => {
       selectComponent.onOptionClick(thirdOption, new Event('click'));
       fixture.detectChanges();
 
-      expect(selectComponent.value.length).toBe(2);
-      expect(selectComponent.value).toEqual(['NY', 'RM']);
+      expect(selectComponent.value().length).toBe(2);
+      expect(selectComponent.value()).toEqual(['NY', 'RM']);
     });
 
     it('should strictly sync checkbox checked state with selected options in multiple mode', async () => {
@@ -702,15 +740,15 @@ describe('NgbSelectComponent', () => {
   describe('Category 9: RTL & Arabic Localization', () => {
     it('should match Arabic search terms regardless of Alef variants or Tashkeel diacritics', () => {
       const { fixture, selectComponent } = createComponent();
-      selectComponent.options = [
+      hostComponent.options = [
         { id: 1, name: 'الإمارات' },
         { id: 2, name: 'الْأُرْدُنّ' }, // with Tashkeel diacritics
         { id: 3, name: 'مصر' },
       ];
-      selectComponent.filter = true;
-      selectComponent.filterNormalizeArabic = true;
-      selectComponent.optionLabel = 'name';
-      selectComponent.optionValue = 'id';
+      hostComponent.filter = true;
+      hostComponent.filterNormalizeArabic = true;
+      hostComponent.optionLabel = 'name';
+      hostComponent.optionValue = 'id';
       selectComponent.openOverlay();
       fixture.detectChanges();
 
@@ -720,29 +758,29 @@ describe('NgbSelectComponent', () => {
       input.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(1);
-      expect(selectComponent.filteredOptions[0].id).toBe(1);
+      expect(selectComponent.filteredOptions().length).toBe(1);
+      expect(selectComponent.filteredOptions()[0].id).toBe(1);
 
       // Query with plain 'الاردن' against 'الْأُرْدُنّ'
       input.value = 'الاردن';
       input.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(1);
-      expect(selectComponent.filteredOptions[0].id).toBe(2);
+      expect(selectComponent.filteredOptions().length).toBe(1);
+      expect(selectComponent.filteredOptions()[0].id).toBe(2);
     });
 
     it('should match Arabic search terms with Yaa and Taa Marbuta variations', () => {
       const { fixture, selectComponent } = createComponent();
-      selectComponent.options = [
+      hostComponent.options = [
         { id: 1, name: 'القاهرة' },
         { id: 2, name: 'دبي' },
         { id: 3, name: 'مستشفى' },
       ];
-      selectComponent.filter = true;
-      selectComponent.filterNormalizeArabic = true;
-      selectComponent.optionLabel = 'name';
-      selectComponent.optionValue = 'id';
+      hostComponent.filter = true;
+      hostComponent.filterNormalizeArabic = true;
+      hostComponent.optionLabel = 'name';
+      hostComponent.optionValue = 'id';
       selectComponent.openOverlay();
       fixture.detectChanges();
 
@@ -752,16 +790,16 @@ describe('NgbSelectComponent', () => {
       input.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(1);
-      expect(selectComponent.filteredOptions[0].id).toBe(1);
+      expect(selectComponent.filteredOptions().length).toBe(1);
+      expect(selectComponent.filteredOptions()[0].id).toBe(1);
 
       // Query 'مستشفي' with 'ي' against 'مستشفى' with 'ى'
       input.value = 'مستشفي';
       input.dispatchEvent(new Event('input'));
       fixture.detectChanges();
 
-      expect(selectComponent.filteredOptions.length).toBe(1);
-      expect(selectComponent.filteredOptions[0].id).toBe(3);
+      expect(selectComponent.filteredOptions().length).toBe(1);
+      expect(selectComponent.filteredOptions()[0].id).toBe(3);
     });
 
     it('should apply dir attribute when dir input is set', () => {
@@ -808,7 +846,7 @@ describe('NgbSelectComponent', () => {
       container.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
       fixture.detectChanges();
 
-      expect(selectComponent.focusedIndex).toBe(0);
+      expect(selectComponent.focusedIndex()).toBe(0);
       const items = fixture.debugElement.queryAll(By.css('.dropdown-item[role="option"]'));
       expect(items[0].nativeElement.classList.contains('focus')).toBe(true);
       expect(items[0].nativeElement.classList.contains('bg-body-secondary')).toBe(true);
@@ -817,7 +855,7 @@ describe('NgbSelectComponent', () => {
       container.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
       fixture.detectChanges();
 
-      expect(selectComponent.focusedIndex).toBe(1);
+      expect(selectComponent.focusedIndex()).toBe(1);
       expect(items[1].nativeElement.classList.contains('focus')).toBe(true);
       expect(items[1].nativeElement.classList.contains('bg-body-secondary')).toBe(true);
     });
@@ -838,8 +876,8 @@ describe('NgbSelectComponent', () => {
 
     it('should default dropdownPosition to auto', () => {
       const { selectComponent } = createComponent();
-      expect(selectComponent.dropdownPosition).toBe('auto');
-      expect(selectComponent.effectiveDropdownPosition).toBe('auto');
+      expect(selectComponent.dropdownPosition()).toBe('auto');
+      expect(selectComponent.effectiveDropdownPosition()).toBe('auto');
     });
 
     it('should apply dropup class and set isDropup when dropdownPosition is "top" or "up"', () => {
@@ -849,7 +887,7 @@ describe('NgbSelectComponent', () => {
       selectComponent.openOverlay();
       fixture.detectChanges();
 
-      expect(selectComponent.isDropup).toBe(true);
+      expect(selectComponent.isDropup()).toBe(true);
       const container = fixture.debugElement.query(By.css('.ngb-select-container'));
       expect(container.nativeElement.classList.contains('dropup')).toBe(true);
       expect(container.nativeElement.classList.contains('dropdown-up')).toBe(true);
@@ -862,7 +900,7 @@ describe('NgbSelectComponent', () => {
       selectComponent.openOverlay();
       fixture.detectChanges();
 
-      expect(selectComponent.isDropup).toBe(true);
+      expect(selectComponent.isDropup()).toBe(true);
       const container = fixture.debugElement.query(By.css('.ngb-select-container'));
       expect(container.nativeElement.classList.contains('dropup')).toBe(true);
     });
@@ -874,7 +912,7 @@ describe('NgbSelectComponent', () => {
       selectComponent.openOverlay();
       fixture.detectChanges();
 
-      expect(selectComponent.isDropup).toBe(false);
+      expect(selectComponent.isDropup()).toBe(false);
       const container = fixture.debugElement.query(By.css('.ngb-select-container'));
       expect(container.nativeElement.classList.contains('dropup')).toBe(false);
     });
@@ -903,7 +941,7 @@ describe('NgbSelectComponent', () => {
       selectComponent.openOverlay();
       fixture.detectChanges();
 
-      expect(selectComponent.isModalMode).toBe(true);
+      expect(selectComponent.isModalMode()).toBe(true);
       const modal = fixture.debugElement.query(By.css('.modal'));
       expect(modal).toBeTruthy();
 
@@ -928,7 +966,7 @@ describe('NgbSelectComponent', () => {
       modal.nativeElement.click();
       fixture.detectChanges();
 
-      expect(selectComponent.overlayVisible).toBe(false);
+      expect(selectComponent.overlayVisible()).toBe(false);
     });
 
     it('should close overlay when clicking close button in modal header', () => {
@@ -944,7 +982,7 @@ describe('NgbSelectComponent', () => {
       closeBtn.nativeElement.click();
       fixture.detectChanges();
 
-      expect(selectComponent.overlayVisible).toBe(false);
+      expect(selectComponent.overlayVisible()).toBe(false);
     });
 
     it('should render modal footer with Done button when modal is true and multiple is true', () => {
@@ -962,7 +1000,7 @@ describe('NgbSelectComponent', () => {
       doneBtn.nativeElement.click();
       fixture.detectChanges();
 
-      expect(selectComponent.overlayVisible).toBe(false);
+      expect(selectComponent.overlayVisible()).toBe(false);
     });
   });
 });

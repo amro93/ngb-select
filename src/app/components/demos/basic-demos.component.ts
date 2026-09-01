@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { NgbSelectComponent } from '../../../lib/ngb-select.component';
 import { FocusOnOpenStrategy, SelectFilterMatchMode } from '../../../lib/ngb-select.interface';
 import { ExampleCardComponent } from '../example-card.component';
@@ -10,7 +16,14 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
 @Component({
   selector: 'app-basic-demos',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbSelectComponent, ExampleCardComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbSelectComponent,
+    ExampleCardComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- 1. Basic Single Selection -->
     <div class="col-12" id="basic">
@@ -22,9 +35,9 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
         [tsCode]="snippets.basicTs"
       >
         <p class="text-muted small mb-3">
-          Standard single-value dropdown supporting arrays of primitives or complex objects.
-          Use <code>optionLabel</code> to specify the display property and
-          <code>dataKey</code> for object identity comparisons.
+          Standard single-value dropdown supporting arrays of primitives or complex objects. Use
+          <code>optionLabel</code> to specify the display property and <code>dataKey</code> for
+          object identity comparisons.
         </p>
         <div class="mb-3">
           <label class="form-label text-muted small fw-semibold">Select City</label>
@@ -55,8 +68,8 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
       >
         <p class="text-muted small mb-3">
           Enables multi-selection with checkboxes inside the list. When
-          <code>display="chip"</code>, selected items appear as removable Bootstrap badge
-          chips with individual close buttons.
+          <code>display="chip"</code>, selected items appear as removable Bootstrap badge chips with
+          individual close buttons.
         </p>
         <div class="mb-3">
           <label class="form-label text-muted small fw-semibold"
@@ -92,9 +105,8 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
         [tsCode]="snippets.selectAllTs"
       >
         <p class="text-muted small mb-3">
-          Renders a sticky header checkbox with <code>[showSelectAll]="true"</code>.
-          Toggling it selects or deselects all active items, respecting any active filter
-          search criteria.
+          Renders a sticky header checkbox with <code>[showSelectAll]="true"</code>. Toggling it
+          selects or deselects all active items, respecting any active filter search criteria.
         </p>
         <div class="mb-3">
           <label class="form-label text-muted small fw-semibold"
@@ -136,8 +148,8 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
       >
         <p class="text-muted small mb-3">
           Embeds the filter input directly inside the main select box using
-          <code>[filterInTrigger]="true"</code> with custom
-          <code>searchPlaceholder</code> for seamless inline searchable autocomplete.
+          <code>[filterInTrigger]="true"</code> with custom <code>searchPlaceholder</code> for
+          seamless inline searchable autocomplete.
         </p>
         <div class="mb-3">
           <label class="form-label text-muted small fw-semibold">Inline Search Trigger:</label>
@@ -172,8 +184,8 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
         [tsCode]="snippets.searchableMultiTs"
       >
         <p class="text-muted small mb-3">
-          Combines multi-field search (<code>filterBy="name,code,currency"</code>),
-          removable chip badges (<code>display="chip"</code>), and sticky "Select All" header.
+          Combines multi-field search (<code>filterBy="name,code,currency"</code>), removable chip
+          badges (<code>display="chip"</code>), and sticky "Select All" header.
         </p>
         <div class="mb-3">
           <label class="form-label text-muted small fw-semibold"
@@ -212,11 +224,10 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
         [tsCode]="snippets.focusOnOpenTs"
       >
         <p class="text-muted small mb-3">
-          Configure <code>[focusOnOpen]="index"</code> and
-          <code>[focusOnOpenStrategy]</code> to choose whether target index is focused
-          <strong>always</strong>, or
-          <strong>only when no value is currently selected</strong> (if a value is selected,
-          it focuses the selected item instead).
+          Configure <code>[focusOnOpen]="index"</code> and <code>[focusOnOpenStrategy]</code> to
+          choose whether target index is focused <strong>always</strong>, or
+          <strong>only when no value is currently selected</strong> (if a value is selected, it
+          focuses the selected item instead).
         </p>
         <div class="row g-2 mb-3">
           <div class="col-sm-6">
@@ -268,9 +279,9 @@ import { PRIMITIVE_CITIES, OBJECT_CITIES, COUNTRIES, City, Country } from '../..
         [tsCode]="snippets.reactiveTs"
       >
         <p class="text-muted small mb-3">
-          Implements Angular's <code>ControlValueAccessor</code> interface with full
-          validation status support. Highlights with <code>.is-invalid</code> and displays
-          field errors upon touched validation.
+          Implements Angular's <code>ControlValueAccessor</code> interface with full validation
+          status support. Highlights with <code>.is-invalid</code> and displays field errors upon
+          touched validation.
         </p>
         <form [formGroup]="userForm" (ngSubmit)="submitReactiveForm()">
           <div class="mb-3">

@@ -705,5 +705,5 @@ selectedGroupedPermissions: string[] = ['usr_create'];`,
 ];
 
 modalSingleCountryCode: string | null = 'IT';
-modalMultiCountryCodes: string[] = ['IT', 'FR'];`
+modalMultiCountryCodes: string[] = ['IT', 'FR'];`,
 };

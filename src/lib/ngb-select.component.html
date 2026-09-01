@@ -1,31 +1,31 @@
 <div
   class="ngb-select-container position-relative"
-  [class.form-floating]="floatLabel"
-  [class.float-variant-on]="floatLabel && floatLabelVariant === 'on'"
-  [class.float-variant-in]="floatLabel && floatLabelVariant === 'in'"
-  [class.float-variant-over]="floatLabel && floatLabelVariant === 'over'"
-  [class.floating-active]="hasSelectedValue() || overlayVisible"
-  [class.dropup]="isDropup"
-  [class.dropdown-up]="isDropup"
-  [class.w-100]="fluid"
-  [attr.dir]="dir || null"
-  [ngStyle]="style"
-  [ngClass]="styleClass"
+  [class.form-floating]="floatLabel()"
+  [class.float-variant-on]="floatLabel() && floatLabelVariant() === 'on'"
+  [class.float-variant-in]="floatLabel() && floatLabelVariant() === 'in'"
+  [class.float-variant-over]="floatLabel() && floatLabelVariant() === 'over'"
+  [class.floating-active]="hasSelectedValue() || overlayVisible()"
+  [class.dropup]="isDropup()"
+  [class.dropdown-up]="isDropup()"
+  [class.w-100]="fluid()"
+  [attr.dir]="dir() || null"
+  [ngStyle]="style()"
+  [ngClass]="styleClass()"
   (keydown)="onKeydown($event)"
 >
   <!-- Select Trigger Box -->
   <div
     class="form-select d-flex align-items-center justify-content-between"
-    [class.is-invalid]="invalid"
-    [class.disabled]="disabled"
-    [class.form-select-sm]="size === 'small'"
-    [class.form-select-lg]="size === 'large'"
-    [class.bg-light]="variant === 'filled'"
-    [attr.id]="id"
-    [attr.tabindex]="disabled ? -1 : tabindex"
-    [attr.aria-label]="ariaLabel"
-    [attr.aria-labelledby]="ariaLabelledBy"
-    [attr.aria-expanded]="overlayVisible"
+    [class.is-invalid]="invalid()"
+    [class.disabled]="disabled()"
+    [class.form-select-sm]="size() === 'small'"
+    [class.form-select-lg]="size() === 'large'"
+    [class.bg-light]="variant() === 'filled'"
+    [attr.id]="id()"
+    [attr.tabindex]="disabled() ? -1 : tabindex()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-labelledby]="ariaLabelledBy()"
+    [attr.aria-expanded]="overlayVisible()"
     [attr.aria-haspopup]="'listbox'"
     role="combobox"
     (click)="onTriggerClick($event)"
@@ -35,10 +35,10 @@
     <!-- Selected Value / Input / Chips Area -->
     <span class="text-truncate flex-grow-1 me-2 d-flex flex-wrap align-items-center gap-1">
       <!-- Filter directly in Trigger Box -->
-      @if (filterInTrigger) {
+      @if (filterInTrigger()) {
         <!-- Chips in multiple mode when filterInTrigger is active -->
-        @if (multiple && display === 'chip' && hasSelectedValue()) {
-          @for (val of value; track val) {
+        @if (multiple() && display() === 'chip' && hasSelectedValue()) {
+          @for (val of value(); track val) {
             <span
               class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2"
             >
@@ -52,7 +52,7 @@
               } @else {
                 <span>{{ resolveOptionLabelByValue(val) }}</span>
               }
-              @if (!disabled && !readonly) {
+              @if (!disabled() && !readonly()) {
                 <i
                   class="bi bi-x ms-1 cursor-pointer fw-bold"
                   (click)="removeChip(val, $event)"
@@ -67,17 +67,17 @@
           type="text"
           class="form-control border-0 bg-transparent p-0 shadow-none flex-grow-1"
           style="min-width: 80px"
-          [class.form-control-sm]="size === 'small'"
-          [class.form-control-lg]="size === 'large'"
-          [disabled]="disabled"
-          [readonly]="readonly"
-          [value]="effectiveFilterValue"
+          [class.form-control-sm]="size() === 'small'"
+          [class.form-control-lg]="size() === 'large'"
+          [disabled]="disabled()"
+          [readonly]="readonly()"
+          [value]="effectiveFilterValue()"
           [placeholder]="
-            multiple && hasSelectedValue()
+            multiple() && hasSelectedValue()
               ? ''
-              : hasSelectedValue() && !overlayVisible
-                ? getDisplayLabel()
-                : effectiveSearchPlaceholder
+              : hasSelectedValue() && !overlayVisible()
+                ? displayLabel()
+                : effectiveSearchPlaceholder()
           "
           (input)="onFilterChange($event)"
           (keydown)="onFilterKeydown($event)"
@@ -86,26 +86,26 @@
         />
       } @else {
         <!-- Editable Input (Single mode only) -->
-        @if (editable && !multiple) {
+        @if (editable() && !multiple()) {
           <input
             #editableInput
             type="text"
             class="form-control border-0 bg-transparent p-0 shadow-none"
-            [class.form-control-sm]="size === 'small'"
-            [class.form-control-lg]="size === 'large'"
-            [disabled]="disabled"
-            [readonly]="readonly"
-            [attr.maxlength]="maxLength"
-            [value]="getDisplayLabel()"
-            [placeholder]="placeholder || ''"
+            [class.form-control-sm]="size() === 'small'"
+            [class.form-control-lg]="size() === 'large'"
+            [disabled]="disabled()"
+            [readonly]="readonly()"
+            [attr.maxlength]="maxLength()"
+            [value]="displayLabel()"
+            [placeholder]="placeholder() || ''"
             (input)="onEditableInput($event)"
             (focus)="onEditableFocus($event)"
             (click)="$event.stopPropagation()"
           />
         } @else {
           <!-- Multi-Select Chips Display Mode -->
-          @if (multiple && display === 'chip' && hasSelectedValue()) {
-            @for (val of value; track val) {
+          @if (multiple() && display() === 'chip' && hasSelectedValue()) {
+            @for (val of value(); track val) {
               <span
                 class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2"
               >
@@ -119,7 +119,7 @@
                 } @else {
                   <span>{{ resolveOptionLabelByValue(val) }}</span>
                 }
-                @if (!disabled && !readonly) {
+                @if (!disabled() && !readonly()) {
                   <i
                     class="bi bi-x ms-1 cursor-pointer fw-bold"
                     (click)="removeChip(val, $event)"
@@ -133,14 +133,14 @@
                 <ng-container
                   *ngTemplateOutlet="
                     selectedItemTemplate || labelTemplate;
-                    context: { $implicit: findOptionByValue(value) ?? value, value: value }
+                    context: { $implicit: findOptionByValue(value()) ?? value(), value: value() }
                   "
                 ></ng-container>
               } @else {
-                <span>{{ getDisplayLabel() }}</span>
+                <span>{{ displayLabel() }}</span>
               }
             } @else {
-              <span class="text-muted">{{ floatLabel ? '' : placeholder || '' }}</span>
+              <span class="text-muted">{{ floatLabel() ? '' : placeholder() || '' }}</span>
             }
           }
           <!-- Standard Single or Comma Multi-Select Text -->
@@ -151,7 +151,7 @@
     <!-- Icons & Spinners Area -->
     <div class="d-flex align-items-center flex-shrink-0 gap-1 ms-auto">
       <!-- Clear Icon -->
-      @if (showClear && hasSelectedValue() && !disabled && !readonly) {
+      @if (showClear() && hasSelectedValue() && !disabled() && !readonly()) {
         <span
           class="ngb-select-clear-icon text-muted me-1"
           (click)="onClearClick($event)"
@@ -169,19 +169,19 @@
       }
 
       <!-- Loading Spinner -->
-      @if (loading) {
+      @if (loading()) {
         <div class="spinner-border spinner-border-sm text-secondary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       }
 
       <!-- Dropdown Caret Icon -->
-      @if (!loading) {
+      @if (!loading()) {
         <span class="ngb-select-dropdown-icon text-secondary">
           @if (dropdownIconTemplate) {
             <ng-container *ngTemplateOutlet="dropdownIconTemplate"></ng-container>
           } @else {
-            <i class="bi bi-chevron-down" [class.rotate-180]="overlayVisible"></i>
+            <i class="bi bi-chevron-down" [class.rotate-180]="overlayVisible()"></i>
           }
         </span>
       }
@@ -189,8 +189,8 @@
   </div>
 
   <!-- Float Label Support -->
-  @if (floatLabel && placeholder) {
-    <label [attr.for]="id">{{ placeholder }}</label>
+  @if (floatLabel() && placeholder()) {
+    <label [attr.for]="id()">{{ placeholder() }}</label>
   }
 
   <ng-template #dropdownContent>
@@ -202,15 +202,15 @@
     }
 
     <!-- Header: Select All Checkbox & Search / Filter Box -->
-    @if ((filter && !filterInTrigger) || (multiple && showSelectAll)) {
+    @if ((filter() && !filterInTrigger()) || (multiple() && showSelectAll())) {
       <div class="p-2 border-bottom bg-light bg-opacity-50">
         <!-- Select All Checkbox -->
-        @if (multiple && showSelectAll) {
+        @if (multiple() && showSelectAll()) {
           <div class="d-flex align-items-center mb-2 px-1">
             <input
               type="checkbox"
               class="form-check-input me-2 mt-0 cursor-pointer"
-              [checked]="selectAll"
+              [checked]="selectAll()"
               (change)="toggleSelectAll($event)"
               id="selectAllCheckbox"
             />
@@ -220,7 +220,7 @@
             >
               @if (headerCheckboxTemplate) {
                 <ng-container
-                  *ngTemplateOutlet="headerCheckboxTemplate; context: { $implicit: selectAll }"
+                  *ngTemplateOutlet="headerCheckboxTemplate; context: { $implicit: selectAll() }"
                 ></ng-container>
               } @else {
                 Select All
@@ -229,7 +229,7 @@
           </div>
         }
         <!-- Search Box -->
-        @if (filter && !filterInTrigger) {
+        @if (filter() && !filterInTrigger()) {
           <div class="input-group input-group-sm">
             <span class="input-group-text bg-transparent border-end-0">
               @if (filterIconTemplate) {
@@ -242,8 +242,8 @@
               #filterInput
               type="text"
               class="form-control border-start-0"
-              [placeholder]="effectiveSearchPlaceholder"
-              [value]="filterValue"
+              [placeholder]="effectiveSearchPlaceholder()"
+              [value]="filterValue()"
               (input)="onFilterChange($event)"
               (keydown)="onFilterKeydown($event)"
             />
@@ -253,8 +253,11 @@
     }
 
     <!-- Grouped Options Mode -->
-    @if (group) {
-      @for (groupOption of filteredOptions; track groupOption) {
+    @if (group()) {
+      @for (
+        groupOption of filteredOptions();
+        track resolveOptionGroupLabel(groupOption) || $index
+      ) {
         <div>
           <!-- Group Header -->
           <h6
@@ -269,24 +272,27 @@
             }
           </h6>
           <!-- Group Items -->
-          @for (option of resolveOptionGroupChildren(groupOption); track option) {
+          @for (
+            option of resolveOptionGroupChildren(groupOption);
+            track resolveOptionTrackKey(option, $index)
+          ) {
             <button
               type="button"
               class="dropdown-item d-flex align-items-center py-2 px-3"
-              [class.active]="!multiple && isSelected(option)"
-              [class.bg-light]="multiple && isSelected(option)"
-              [class.fw-semibold]="multiple && isSelected(option)"
+              [class.active]="!multiple() && isSelected(option)"
+              [class.bg-light]="multiple() && isSelected(option)"
+              [class.fw-semibold]="multiple() && isSelected(option)"
               [class.focus]="isOptionFocused(option)"
               [class.bg-body-secondary]="isOptionFocused(option) && !isSelected(option)"
               [class.disabled]="isOptionDisabled(option)"
               [disabled]="isOptionDisabled(option)"
               role="option"
               [attr.aria-selected]="isSelected(option)"
-              [attr.aria-checked]="multiple ? isSelected(option) : null"
+              [attr.aria-checked]="multiple() ? isSelected(option) : null"
               (click)="onOptionClick(option, $event)"
             >
               <!-- Checkbox in Multiple Mode synced to selection -->
-              @if (multiple) {
+              @if (multiple()) {
                 <input
                   type="checkbox"
                   class="form-check-input me-2 mt-0"
@@ -307,24 +313,28 @@
         </div>
       }
     } @else {
-      @for (option of filteredOptions; track option; let i = $index) {
+      @for (
+        option of filteredOptions();
+        track resolveOptionTrackKey(option, $index);
+        let i = $index
+      ) {
         <button
           type="button"
           class="dropdown-item d-flex align-items-center py-2 px-3"
-          [class.active]="!multiple && isSelected(option)"
-          [class.bg-light]="multiple && isSelected(option)"
-          [class.fw-semibold]="multiple && isSelected(option)"
+          [class.active]="!multiple() && isSelected(option)"
+          [class.bg-light]="multiple() && isSelected(option)"
+          [class.fw-semibold]="multiple() && isSelected(option)"
           [class.focus]="isOptionFocused(option)"
           [class.bg-body-secondary]="isOptionFocused(option) && !isSelected(option)"
           [class.disabled]="isOptionDisabled(option)"
           [disabled]="isOptionDisabled(option)"
           role="option"
           [attr.aria-selected]="isSelected(option)"
-          [attr.aria-checked]="multiple ? isSelected(option) : null"
+          [attr.aria-checked]="multiple() ? isSelected(option) : null"
           (click)="onOptionClick(option, $event)"
         >
           <!-- Checkbox in Multiple Mode synced to selection -->
-          @if (multiple) {
+          @if (multiple()) {
             <input
               type="checkbox"
               class="form-check-input me-2 mt-0"
@@ -351,18 +361,18 @@
           <ng-container *ngTemplateOutlet="emptyTemplate"></ng-container>
         } @else {
           <small>{{
-            filterValue
-              ? emptyFilterMessage || 'No results found'
-              : emptyMessage || 'No results found'
+            filterValue()
+              ? emptyFilterMessage() || 'No results found'
+              : emptyMessage() || 'No results found'
           }}</small>
         }
       </div>
     }
   </ng-template>
 
-  @if (isModalMode) {
+  @if (isModalMode()) {
     <!-- Bootstrap Modal Overlay -->
-    @if (overlayVisible) {
+    @if (overlayVisible()) {
       <div
         class="modal fade show d-block"
         tabindex="-1"
@@ -376,10 +386,10 @@
           role="document"
           (click)="$event.stopPropagation()"
         >
-          <div class="modal-content shadow" [ngClass]="panelStyleClass" [ngStyle]="panelStyle">
+          <div class="modal-content shadow" [ngClass]="panelStyleClass()" [ngStyle]="panelStyle()">
             <!-- Modal Header -->
             <div class="modal-header bg-light bg-opacity-50 py-2 px-3">
-              <h6 class="modal-title m-0 fw-semibold text-truncate">{{ effectivePopupTitle }}</h6>
+              <h6 class="modal-title m-0 fw-semibold text-truncate">{{ effectivePopupTitle() }}</h6>
               <button
                 type="button"
                 class="btn-close"
@@ -399,7 +409,7 @@
             </div>
 
             <!-- Modal Footer (Custom Template or Done Button) -->
-            @if (footerTemplate || multiple) {
+            @if (footerTemplate || multiple()) {
               <div
                 class="modal-footer p-2 bg-light bg-opacity-50 d-flex align-items-center justify-content-end"
               >
@@ -427,10 +437,10 @@
     <div
       #dropdownMenu
       class="dropdown-menu shadow-sm p-0"
-      [class.show]="overlayVisible"
-      [ngStyle]="panelStyle"
-      [ngClass]="panelStyleClass"
-      [style.max-height]="scrollHeight"
+      [class.show]="overlayVisible()"
+      [ngStyle]="panelStyle()"
+      [ngClass]="panelStyleClass()"
+      [style.max-height]="scrollHeight()"
       style="overflow-y: auto"
       role="listbox"
       (scroll)="onOverlayScroll($event)"

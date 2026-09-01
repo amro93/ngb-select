@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { NgbSelectComponent } from '../../../lib/ngb-select.component';
 import { ExampleCardComponent } from '../example-card.component';
 import { DEMO_SNIPPETS } from '../../data/demo-snippets';
@@ -25,7 +31,14 @@ import {
 @Component({
   selector: 'app-advanced-demos',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbSelectComponent, ExampleCardComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbSelectComponent,
+    ExampleCardComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- 17. Arabic (AR) RTL Showcase -->
     <div class="col-12" id="arabic-showcase">
@@ -40,9 +53,9 @@ import {
         [tsCode]="snippets.arabicTs"
       >
         <p class="text-muted small mb-3">
-          Demonstrates full bidirectional layout (<code>dir="rtl"</code>), Arabic mock
-          datasets, and intelligent Arabic text search normalization that ignores Tashkeel
-          diacritics and equates letter variants.
+          Demonstrates full bidirectional layout (<code>dir="rtl"</code>), Arabic mock datasets, and
+          intelligent Arabic text search normalization that ignores Tashkeel diacritics and equates
+          letter variants.
         </p>
         <div class="p-3 border rounded bg-white" dir="rtl" lang="ar">
           <div class="row g-3">
@@ -126,8 +139,8 @@ import {
         [tsCode]="snippets.cascadingTs"
       >
         <p class="text-muted small mb-3">
-          Dependent dropdown selection where selecting a parent Country automatically
-          filters the available child Cities.
+          Dependent dropdown selection where selecting a parent Country automatically filters the
+          available child Cities.
         </p>
         <div class="row g-3">
           <div class="col-md-6">
@@ -160,8 +173,8 @@ import {
           </div>
         </div>
         <div class="p-2 bg-light rounded text-muted small mt-3">
-          <strong>Selected:</strong> Country:
-          <code>{{ selectedCascadingCountry || 'None' }}</code>, City ID:
+          <strong>Selected:</strong> Country: <code>{{ selectedCascadingCountry || 'None' }}</code
+          >, City ID:
           <code>{{ selectedCascadingCity || 'None' }}</code>
         </div>
       </app-example-card>
@@ -177,8 +190,8 @@ import {
         [tsCode]="snippets.asyncSearchTs"
       >
         <p class="text-muted small mb-3">
-          Simulates debounced real-time server queries as the user types (e.g. searching
-          users via remote API).
+          Simulates debounced real-time server queries as the user types (e.g. searching users via
+          remote API).
         </p>
         <div class="mb-3">
           <ngb-select
@@ -446,8 +459,8 @@ import {
         [tsCode]="snippets.a11yTs"
       >
         <p class="text-muted small mb-3">
-          Full ARIA attribute support including <code>ariaLabel</code>,
-          <code>ariaLabelledBy</code>, and screen reader roles.
+          Full ARIA attribute support including <code>ariaLabel</code>, <code>ariaLabelledBy</code>,
+          and screen reader roles.
         </p>
         <div class="mb-3">
           <label id="paymentMethodLabel" class="form-label text-muted small fw-semibold"
@@ -477,8 +490,8 @@ import {
         [tsCode]="snippets.formResetTs"
       >
         <p class="text-muted small mb-3">
-          Demonstrates programmatic form resetting, setting disabled states dynamically, and
-          clean reactive sync.
+          Demonstrates programmatic form resetting, setting disabled states dynamically, and clean
+          reactive sync.
         </p>
         <form [formGroup]="accountForm">
           <div class="mb-3">
@@ -559,8 +572,9 @@ import {
         [tsCode]="snippets.mobileModalTs"
       >
         <p class="text-muted small mb-3">
-          Use <code>[modal]="true"</code> to render options in a centered popup dialog.
-          Native Bootstrap <code>.modal</code> is generated internally, allowing <strong>Modal-in-Modal</strong> support without z-index conflicts.
+          Use <code>[modal]="true"</code> to render options in a centered popup dialog. Native
+          Bootstrap <code>.modal</code> is generated internally, allowing
+          <strong>Modal-in-Modal</strong> support without z-index conflicts.
         </p>
         <div class="row g-3">
           <div class="col-12 col-md-6">
@@ -579,9 +593,16 @@ import {
             ></ngb-select>
           </div>
           <div class="col-12 col-md-6">
-            <label class="form-label text-muted small fw-semibold">Trigger Parent Bootstrap Modal</label>
+            <label class="form-label text-muted small fw-semibold"
+              >Trigger Parent Bootstrap Modal</label
+            >
             <div>
-              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#parentModalDemo">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#parentModalDemo"
+              >
                 Open Parent Modal
               </button>
             </div>
@@ -589,20 +610,33 @@ import {
         </div>
 
         <!-- Parent Bootstrap Modal -->
-        <div class="modal fade" id="parentModalDemo" tabindex="-1" aria-labelledby="parentModalDemoLabel" aria-hidden="true">
+        <div
+          class="modal fade"
+          id="parentModalDemo"
+          tabindex="-1"
+          aria-labelledby="parentModalDemoLabel"
+          aria-hidden="true"
+        >
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
                 <h1 class="modal-title fs-5" id="parentModalDemoLabel">Create New Event</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
               <div class="modal-body">
                 <div class="mb-3">
                   <label class="form-label text-muted small fw-semibold">Event Name</label>
-                  <input type="text" class="form-control" placeholder="e.g. Project Sync">
+                  <input type="text" class="form-control" placeholder="e.g. Project Sync" />
                 </div>
                 <div class="mb-3">
-                  <label class="form-label text-muted small fw-semibold">Target Audience (Modal in Modal)</label>
+                  <label class="form-label text-muted small fw-semibold"
+                    >Target Audience (Modal in Modal)</label
+                  >
                   <ngb-select
                     [options]="countries"
                     [(ngModel)]="modalMultiCountryCodes"
@@ -620,8 +654,12 @@ import {
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Close
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                  Save changes
+                </button>
               </div>
             </div>
           </div>

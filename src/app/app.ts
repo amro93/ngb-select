@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { APP_VERSION } from '../version';
 import { COUNTRIES, Country } from './data/demo-data';
@@ -23,16 +23,18 @@ import { FooterComponent } from './components/footer.component';
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   public readonly appVersion = APP_VERSION;
-  isDarkMode = false;
+  isDarkMode = signal(false);
 
   countries: Country[] = COUNTRIES;
-  selectedHeroCountries: Country[] = [];
+  selectedHeroCountries = signal<Country[]>([]);
 
   toggleTheme(): void {
-    this.isDarkMode = !this.isDarkMode;
-    document.documentElement.setAttribute('data-bs-theme', this.isDarkMode ? 'dark' : 'light');
+    const nextMode = !this.isDarkMode();
+    this.isDarkMode.set(nextMode);
+    document.documentElement.setAttribute('data-bs-theme', nextMode ? 'dark' : 'light');
   }
 }
