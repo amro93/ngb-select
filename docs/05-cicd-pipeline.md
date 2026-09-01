@@ -1,5 +1,7 @@
 # 05. CI/CD Pipeline and NPM Package Automation
 
+> **Note**: For a step-by-step release reference, see the **[Publishing Guide](./PUBLISHING-GUIDE.md)**.
+
 This guide outlines the end-to-end setup for registering `ngb-select` as an official package on the [npm Registry](https://www.npmjs.com) and orchestrating automated versioning, publishing, and demo application deployments using **GitHub Actions** and **Semantic Release**.
 
 ---
