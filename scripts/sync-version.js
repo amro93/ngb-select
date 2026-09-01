@@ -16,11 +16,19 @@ if (fs.existsSync(libPkgPath)) {
   fs.writeFileSync(libPkgPath, JSON.stringify(libPkg, null, 2) + '\n');
 }
 
-// 2. Sync src/version.ts
+// 2. Sync dist/ngb-select/package.json if dist already exists
+const distPkgPath = path.join(__dirname, '..', 'dist', 'ngb-select', 'package.json');
+if (fs.existsSync(distPkgPath)) {
+  const distPkg = JSON.parse(fs.readFileSync(distPkgPath, 'utf-8'));
+  distPkg.version = version;
+  fs.writeFileSync(distPkgPath, JSON.stringify(distPkg, null, 2) + '\n');
+}
+
+// 3. Sync src/version.ts
 const versionTsPath = path.join(__dirname, '..', 'src', 'version.ts');
 fs.writeFileSync(versionTsPath, `export const APP_VERSION = '${version}';\n`);
 
-// 3. Sync src/lib/ngb-select.interface.ts
+// 4. Sync src/lib/ngb-select.interface.ts and projects/ngb-select/src/lib/ngb-select.interface.ts
 const syncVersionConst = (filePath) => {
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf-8');

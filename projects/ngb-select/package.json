@@ -1,6 +1,6 @@
 {
   "name": "@amro93/ngb-select",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Lightweight, accessible, standalone Angular Select dropdown component built with pure Bootstrap 5",
   "keywords": [
     "angular",
