@@ -40,9 +40,11 @@ jobs:
       - name: Build Demo App
         run: npm run build:demo -- --base-href=/ngb-select/
 
-      # SPA Fallback for GitHub Pages routing
-      - name: Copy index.html to 404.html
-        run: cp ./dist/ngb-select-app/browser/index.html ./dist/ngb-select-app/browser/404.html
+      # SPA Fallback for GitHub Pages routing & disable Jekyll
+      - name: Copy index.html to 404.html and create .nojekyll
+        run: |
+          cp ./dist/ngb-select-app/browser/index.html ./dist/ngb-select-app/browser/404.html
+          touch ./dist/ngb-select-app/browser/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
