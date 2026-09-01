@@ -15,7 +15,7 @@
     "version:patch": "npm version patch --no-git-tag-version",
     "version:minor": "npm version minor --no-git-tag-version",
     "version:major": "npm version major --no-git-tag-version",
-    "publish:lib": "npm run build:lib && npm publish dist/ngb-select --access public",
+    "publish:lib": "npm run build:lib && npm publish ./dist/ngb-select --access public",
     "publish:patch": "npm version patch && npm run publish:lib",
     "publish:minor": "npm version minor && npm run publish:lib",
     "publish:major": "npm version major && npm run publish:lib",
