@@ -1,7 +1,11 @@
 name: Deploy Demo
 
+# Runs only after CI is green, so a failing build never reaches the demo site.
+# The push trigger lives on the CI workflow; duplicating it here would race it.
 on:
-  push:
+  workflow_run:
+    workflows: ['CI & Publish NPM Package']
+    types: [completed]
     branches:
       - main
       - master
@@ -21,12 +25,19 @@ jobs:
   build-and-deploy-demo:
     name: Build & Deploy Demo App
     runs-on: ubuntu-latest
+    # A manual dispatch has no upstream run to inspect; otherwise demand success.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          # workflow_run reports the commit CI validated, not necessarily the tip.
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
