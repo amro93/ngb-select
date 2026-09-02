@@ -455,32 +455,35 @@ isAsyncSearching = false;`,
 selectedBrowser = 'chrome';`,
 
   tableEditHtml: `<!-- Table Cell In-Place Inline Editing with Floating Dropdown -->
-<table class="table table-hover align-middle">
-  <thead>
-    <tr>
-      <th>Member</th>
-      <th>Email</th>
-      <th style="width: 180px;">Role</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let member of tableMembers">
-      <td class="fw-semibold">{{ member.name }}</td>
-      <td>{{ member.email }}</td>
-      <td>
-        <ngb-select
-          [options]="roleOptions"
-          [(ngModel)]="member.role"
-          size="small"
-          optionLabel="label"
-          optionValue="value"
-          appendTo="body"
-          [fluid]="true">
-        </ngb-select>
-      </td>
-    </tr>
-  </tbody>
-</table>`,
+<div class="table-responsive" style="overflow: visible">
+  <table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Member</th>
+        <th>Email</th>
+        <th style="width: 180px;">Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (member of tableMembers; track member.id) {
+        <tr>
+          <td class="fw-semibold">{{ member.name }}</td>
+          <td>{{ member.email }}</td>
+          <td>
+            <ngb-select
+              [options]="roleOptions"
+              [(ngModel)]="member.role"
+              size="small"
+              optionLabel="label"
+              optionValue="value"
+              [fluid]="true">
+            </ngb-select>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>`,
 
   tableEditTs: `roleOptions = [
   { label: 'Administrator', value: 'admin' },

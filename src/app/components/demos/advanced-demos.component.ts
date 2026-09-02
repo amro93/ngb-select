@@ -270,7 +270,7 @@ import {
         <p class="text-muted small mb-3">
           Compact <code>size="small"</code> selects seamlessly embedded inside data table rows.
         </p>
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow: visible">
           <table class="table table-hover table-bordered align-middle mb-0">
             <thead class="table-light">
               <tr>
@@ -291,7 +291,6 @@ import {
                       size="small"
                       optionLabel="label"
                       optionValue="value"
-                      appendTo="body"
                       [fluid]="true"
                     >
                     </ngb-select>

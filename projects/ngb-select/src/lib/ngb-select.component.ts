@@ -2,19 +2,20 @@ import {
   Component,
   forwardRef,
   ElementRef,
-  ViewChild,
-  ContentChild,
   TemplateRef,
   OnInit,
+  AfterViewInit,
   OnDestroy,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
-  NgZone,
+  inject,
   input,
   output,
   model,
   signal,
   computed,
+  viewChild,
+  contentChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
@@ -51,8 +52,12 @@ import {
     },
   ],
 })
-export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestroy {
+export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
   public static readonly VERSION = NGB_SELECT_VERSION;
+
+  // --- Dependency Injection ---
+  public elementRef = inject(ElementRef);
+  private cdr = inject(ChangeDetectorRef);
 
   // --- Basic & Data Inputs ---
   options = input<any[]>([]);
@@ -108,7 +113,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   direction = input<DropdownDirection | undefined>(undefined);
   size = input<SelectSize | undefined>(undefined);
   variant = input<SelectVariant>('outlined');
-  fluid = input<boolean>(false);
+  fluid = input<boolean>(true);
   scrollHeight = input<string>('200px');
   style = input<{ [klass: string]: any } | null | undefined>(undefined);
   styleClass = input<string | undefined>(undefined);
@@ -148,24 +153,24 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   onLazyLoad = output<SelectLazyLoadEvent>();
 
   // --- Custom Content Templates ---
-  @ContentChild('item') itemTemplate?: TemplateRef<any>;
-  @ContentChild('selectedItem') selectedItemTemplate?: TemplateRef<any>;
-  @ContentChild('label') labelTemplate?: TemplateRef<any>;
-  @ContentChild('chip') chipTemplate?: TemplateRef<any>;
-  @ContentChild('headerCheckbox') headerCheckboxTemplate?: TemplateRef<any>;
-  @ContentChild('header') headerTemplate?: TemplateRef<any>;
-  @ContentChild('footer') footerTemplate?: TemplateRef<any>;
-  @ContentChild('group') groupTemplate?: TemplateRef<any>;
-  @ContentChild('empty') emptyTemplate?: TemplateRef<any>;
-  @ContentChild('clearIcon') clearIconTemplate?: TemplateRef<any>;
-  @ContentChild('dropdownIcon') dropdownIconTemplate?: TemplateRef<any>;
-  @ContentChild('filterIcon') filterIconTemplate?: TemplateRef<any>;
+  itemTemplate = contentChild<TemplateRef<any>>('item');
+  selectedItemTemplate = contentChild<TemplateRef<any>>('selectedItem');
+  labelTemplate = contentChild<TemplateRef<any>>('label');
+  chipTemplate = contentChild<TemplateRef<any>>('chip');
+  headerCheckboxTemplate = contentChild<TemplateRef<any>>('headerCheckbox');
+  headerTemplate = contentChild<TemplateRef<any>>('header');
+  footerTemplate = contentChild<TemplateRef<any>>('footer');
+  groupTemplate = contentChild<TemplateRef<any>>('group');
+  emptyTemplate = contentChild<TemplateRef<any>>('empty');
+  clearIconTemplate = contentChild<TemplateRef<any>>('clearIcon');
+  dropdownIconTemplate = contentChild<TemplateRef<any>>('dropdownIcon');
+  filterIconTemplate = contentChild<TemplateRef<any>>('filterIcon');
 
   // --- View References ---
-  @ViewChild('filterInput') filterInputElement?: ElementRef<HTMLInputElement>;
-  @ViewChild('triggerFilterInput') triggerFilterInputElement?: ElementRef<HTMLInputElement>;
-  @ViewChild('editableInput') editableInputElement?: ElementRef<HTMLInputElement>;
-  @ViewChild('dropdownMenu') dropdownMenuElement?: ElementRef<HTMLDivElement>;
+  filterInputElement = viewChild<ElementRef<HTMLInputElement>>('filterInput');
+  triggerFilterInputElement = viewChild<ElementRef<HTMLInputElement>>('triggerFilterInput');
+  editableInputElement = viewChild<ElementRef<HTMLInputElement>>('editableInput');
+  dropdownMenuElement = viewChild<ElementRef<HTMLDivElement>>('dropdownMenu');
 
   // --- Computed UI & Accessibility State ---
   effectiveSearchPlaceholder = computed(() => {
@@ -377,38 +382,31 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   private unlistenWindow?: () => void;
   private unlistenDocumentClick?: () => void;
 
-  constructor(
-    public elementRef: ElementRef,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-  ) {}
-
   ngOnInit(): void {
-    if (this.autofocus()) {
-      setTimeout(() => this.focus());
-    }
-
-    // Attach high-frequency window scroll & resize events outside Angular zone
-    this.ngZone.runOutsideAngular(() => {
-      const handleWindowReposition = () => {
-        if (this.overlayVisible()) {
-          this.calculateDropdownPosition();
-          if (this.appendTo()) {
-            this.repositionOverlay();
-          }
+    const handleWindowReposition = () => {
+      if (this.overlayVisible()) {
+        this.calculateDropdownPosition();
+        if (this.appendTo()) {
+          this.repositionOverlay();
         }
-      };
-
-      if (typeof window !== 'undefined') {
-        window.addEventListener('resize', handleWindowReposition, { passive: true });
-        window.addEventListener('scroll', handleWindowReposition, { passive: true, capture: true });
-
-        this.unlistenWindow = () => {
-          window.removeEventListener('resize', handleWindowReposition);
-          window.removeEventListener('scroll', handleWindowReposition, { capture: true } as any);
-        };
       }
-    });
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleWindowReposition, { passive: true });
+      window.addEventListener('scroll', handleWindowReposition, { passive: true, capture: true });
+
+      this.unlistenWindow = () => {
+        window.removeEventListener('resize', handleWindowReposition);
+        window.removeEventListener('scroll', handleWindowReposition, { capture: true } as any);
+      };
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.autofocus()) {
+      this.focus();
+    }
   }
 
   ngOnDestroy(): void {
@@ -637,8 +635,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
     const spaceAbove = triggerRect.top;
 
     let panelHeight = 200;
-    if (this.dropdownMenuElement?.nativeElement?.offsetHeight) {
-      panelHeight = this.dropdownMenuElement.nativeElement.offsetHeight;
+    const dropdownMenuEl = this.dropdownMenuElement();
+    if (dropdownMenuEl?.nativeElement?.offsetHeight) {
+      panelHeight = dropdownMenuEl.nativeElement.offsetHeight;
     } else if (this.scrollHeight()) {
       const parsed = parseInt(this.scrollHeight(), 10);
       if (!isNaN(parsed) && parsed > 0) {
@@ -671,17 +670,16 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
 
     this.bindDocumentClickListener();
 
-    setTimeout(() => {
-      this.calculateDropdownPosition();
-      if (this.filterInTrigger() && this.triggerFilterInputElement) {
-        this.triggerFilterInputElement.nativeElement.focus();
-      } else if (this.filter() && this.filterInputElement) {
-        this.filterInputElement.nativeElement.focus();
-      }
-      this.handleFocusOnOpen();
-      this.handleAppendTo();
-      this.cdr.markForCheck();
-    });
+    const triggerFilterInputEl = this.triggerFilterInputElement();
+    const filterInputEl = this.filterInputElement();
+    if (this.filterInTrigger() && triggerFilterInputEl) {
+      triggerFilterInputEl.nativeElement.focus();
+    } else if (this.filter() && filterInputEl) {
+      filterInputEl.nativeElement.focus();
+    }
+    this.handleFocusOnOpen();
+    this.handleAppendTo();
+    this.cdr.markForCheck();
   }
 
   closeOverlay(event?: Event): void {
@@ -702,14 +700,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   private bindDocumentClickListener(): void {
     if (typeof document === 'undefined' || this.unlistenDocumentClick) return;
     const clickHandler = (event: MouseEvent) => {
+      const dropdownMenuEl = this.dropdownMenuElement();
       if (
         !this.elementRef.nativeElement.contains(event.target) &&
-        (!this.dropdownMenuElement ||
-          !this.dropdownMenuElement.nativeElement.contains(event.target as Node))
+        (!dropdownMenuEl ||
+          !dropdownMenuEl.nativeElement.contains(event.target as Node))
       ) {
-        this.ngZone.run(() => {
-          this.closeOverlay(event);
-        });
+        this.closeOverlay(event);
       }
     };
     document.addEventListener('click', clickHandler, { capture: true });
@@ -743,9 +740,10 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
       targetIndex = selectedIdx !== -1 ? selectedIdx : 0;
     }
 
-    if (targetIndex !== -1 && this.dropdownMenuElement) {
+    const dropdownMenuEl = this.dropdownMenuElement();
+    if (targetIndex !== -1 && dropdownMenuEl) {
       this.focusedIndex.set(targetIndex);
-      const elements = this.dropdownMenuElement.nativeElement.querySelectorAll(
+      const elements = dropdownMenuEl.nativeElement.querySelectorAll(
         '.dropdown-item[role="option"]',
       );
       const targetElement = elements[targetIndex] as HTMLElement;
@@ -785,8 +783,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
       this.updateModel(val, event);
       if (this.filterInTrigger()) {
         this.filterValue.set('');
-        if (this.triggerFilterInputElement) {
-          this.triggerFilterInputElement.nativeElement.value = '';
+        const triggerFilterInputEl = this.triggerFilterInputElement();
+        if (triggerFilterInputEl) {
+          triggerFilterInputEl.nativeElement.value = '';
         }
       }
       this.closeOverlay(event);
@@ -847,8 +846,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   }
 
   onEditableFocus(event: FocusEvent): void {
-    if (this.selectOnFocus() && this.editableInputElement) {
-      this.editableInputElement.nativeElement.select();
+    const editableInputEl = this.editableInputElement();
+    if (this.selectOnFocus() && editableInputEl) {
+      editableInputEl.nativeElement.select();
     }
     this.onFocus.emit(event);
   }
@@ -969,9 +969,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
       case ' ':
         if (
           event.key === ' ' &&
-          ((this.filter() && this.filterInputElement?.nativeElement === document.activeElement) ||
+          ((this.filter() && this.filterInputElement()?.nativeElement === document.activeElement) ||
             (this.filterInTrigger() &&
-              this.triggerFilterInputElement?.nativeElement === document.activeElement))
+              this.triggerFilterInputElement()?.nativeElement === document.activeElement))
         ) {
           return;
         }
@@ -1031,8 +1031,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
 
     if (nextIdx >= 0 && nextIdx < flatItems.length) {
       this.focusedIndex.set(nextIdx);
-      if (this.dropdownMenuElement) {
-        const elements = this.dropdownMenuElement.nativeElement.querySelectorAll(
+      const dropdownMenuEl = this.dropdownMenuElement();
+      if (dropdownMenuEl) {
+        const elements = dropdownMenuEl.nativeElement.querySelectorAll(
           '.dropdown-item[role="option"]',
         );
         const targetElement = elements[nextIdx] as HTMLElement;
@@ -1064,21 +1065,23 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
 
   private handleAppendTo(): void {
     const appendTo = this.appendTo();
-    if (!appendTo || !this.dropdownMenuElement) return;
+    const dropdownMenuEl = this.dropdownMenuElement();
+    if (!appendTo || !dropdownMenuEl) return;
     if (appendTo === 'body') {
-      document.body.appendChild(this.dropdownMenuElement.nativeElement);
+      document.body.appendChild(dropdownMenuEl.nativeElement);
       this.repositionOverlay();
     } else if (appendTo instanceof HTMLElement) {
-      appendTo.appendChild(this.dropdownMenuElement.nativeElement);
+      appendTo.appendChild(dropdownMenuEl.nativeElement);
       this.repositionOverlay();
     }
   }
 
   private repositionOverlay(): void {
-    if (!this.dropdownMenuElement || this.isModalMode()) return;
+    const dropdownMenuEl = this.dropdownMenuElement();
+    if (!dropdownMenuEl || this.isModalMode()) return;
     this.calculateDropdownPosition();
     const triggerRect = this.elementRef.nativeElement.getBoundingClientRect();
-    const dropdown = this.dropdownMenuElement.nativeElement;
+    const dropdown = dropdownMenuEl.nativeElement;
     dropdown.style.position = 'fixed';
     dropdown.style.left = `${triggerRect.left}px`;
     dropdown.style.width = `${triggerRect.width}px`;
@@ -1097,8 +1100,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   }
 
   private cleanAppendTo(): void {
-    if (this.appendTo() && this.dropdownMenuElement) {
-      const el = this.dropdownMenuElement.nativeElement;
+    const dropdownMenuEl = this.dropdownMenuElement();
+    if (this.appendTo() && dropdownMenuEl) {
+      const el = dropdownMenuEl.nativeElement;
       if (el.parentElement) {
         el.parentElement.removeChild(el);
       }
@@ -1114,10 +1118,12 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, OnDestr
   }
 
   public focus(): void {
-    if (this.filterInTrigger() && this.triggerFilterInputElement) {
-      this.triggerFilterInputElement.nativeElement.focus();
-    } else if (this.editable() && !this.multiple() && this.editableInputElement) {
-      this.editableInputElement.nativeElement.focus();
+    const triggerFilterInputEl = this.triggerFilterInputElement();
+    const editableInputEl = this.editableInputElement();
+    if (this.filterInTrigger() && triggerFilterInputEl) {
+      triggerFilterInputEl.nativeElement.focus();
+    } else if (this.editable() && !this.multiple() && editableInputEl) {
+      editableInputEl.nativeElement.focus();
     } else {
       const trigger = this.elementRef.nativeElement.querySelector('.form-select');
       if (trigger) trigger.focus();

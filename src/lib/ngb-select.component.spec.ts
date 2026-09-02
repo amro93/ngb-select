@@ -72,6 +72,7 @@ import { NgbSelectComponent } from './ngb-select.component';
         [selectOnFocus]="selectOnFocus"
         [autoOptionFocus]="autoOptionFocus"
         [lazy]="lazy"
+        [fluid]="fluid"
         (onChange)="onSelectChange($event)"
         (onFilter)="onFilterChange($event)"
         (onClear)="onClearChange($event)"
@@ -147,6 +148,7 @@ class TestHostComponent {
   selectOnFocus: any;
   autoOptionFocus: any;
   lazy: any;
+  fluid: any = true;
 
   form = new FormGroup({
     selectedCity: new FormControl<any>(null),
@@ -570,19 +572,18 @@ describe('NgbSelectComponent', () => {
       expect(hostComponent.form.get('selectedCity')?.value).toBe('Custom City');
     });
 
-    it('should focus option on focusOnOpen index when opening popup', async () => {
+    it('should focus option on focusOnOpen index when opening popup', () => {
       const { fixture, selectComponent } = createComponent((host) => {
         host.focusOnOpen = 1;
       });
 
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise((r) => setTimeout(r, 20));
 
       expect(selectComponent.focusedIndex()).toBe(1);
     });
 
-    it('should prioritize selected item over focusOnOpen when focusOnOpenStrategy is notSelected and value is present', async () => {
+    it('should prioritize selected item over focusOnOpen when focusOnOpenStrategy is notSelected and value is present', () => {
       const { fixture, hostComponent, selectComponent } = createComponent((host) => {
         host.focusOnOpen = 0; // NY is index 0
         host.focusOnOpenStrategy = 'notSelected';
@@ -592,12 +593,11 @@ describe('NgbSelectComponent', () => {
 
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise((r) => setTimeout(r, 20));
 
       expect(selectComponent.focusedIndex()).toBe(3); // Should focus selected PRS instead of focusOnOpen index 0
     });
 
-    it('should use focusOnOpen when focusOnOpenStrategy is notSelected and no value is selected', async () => {
+    it('should use focusOnOpen when focusOnOpenStrategy is notSelected and no value is selected', () => {
       const { fixture, selectComponent } = createComponent((host) => {
         host.focusOnOpen = 1; // Rome is index 1
         host.focusOnOpenStrategy = 'notSelected';
@@ -605,7 +605,6 @@ describe('NgbSelectComponent', () => {
 
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise((r) => setTimeout(r, 20));
 
       expect(selectComponent.focusedIndex()).toBe(1);
     });
@@ -860,16 +859,14 @@ describe('NgbSelectComponent', () => {
       expect(items[1].nativeElement.classList.contains('bg-body-secondary')).toBe(true);
     });
 
-    it('should set z-index 1060 when appendTo="body"', async () => {
+    it('should set z-index 1060 when appendTo="body"', () => {
       const { fixture, selectComponent } = createComponent((host) => {
         host.appendTo = 'body';
       });
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise((r) => setTimeout(r, 20));
-      fixture.detectChanges();
 
-      const dropdown = selectComponent.dropdownMenuElement?.nativeElement;
+      const dropdown = selectComponent.dropdownMenuElement()?.nativeElement;
       expect(dropdown).toBeTruthy();
       expect(dropdown?.style.zIndex).toBe('1060');
     });
@@ -917,17 +914,15 @@ describe('NgbSelectComponent', () => {
       expect(container.nativeElement.classList.contains('dropup')).toBe(false);
     });
 
-    it('should position fixed overlay upwards when appendTo="body" and isDropup is true', async () => {
+    it('should position fixed overlay upwards when appendTo="body" and isDropup is true', () => {
       const { fixture, selectComponent } = createComponent((host) => {
         host.appendTo = 'body';
         host.dropdownPosition = 'top';
       });
       selectComponent.openOverlay();
       fixture.detectChanges();
-      await new Promise((r) => setTimeout(r, 20));
-      fixture.detectChanges();
 
-      const dropdown = selectComponent.dropdownMenuElement?.nativeElement;
+      const dropdown = selectComponent.dropdownMenuElement()?.nativeElement;
       expect(dropdown).toBeTruthy();
       expect(dropdown?.style.top).toBe('auto');
       expect(dropdown?.style.bottom).toBeTruthy();
@@ -1001,6 +996,22 @@ describe('NgbSelectComponent', () => {
       fixture.detectChanges();
 
       expect(selectComponent.overlayVisible()).toBe(false);
+    });
+
+    it('should have fluid property true by default and apply w-100 class', () => {
+      const { fixture, selectComponent } = createComponent();
+      expect(selectComponent.fluid()).toBe(true);
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      expect(container.nativeElement.classList.contains('w-100')).toBe(true);
+    });
+
+    it('should allow disabling fluid property to remove w-100 class', () => {
+      const { fixture, selectComponent } = createComponent((host) => {
+        host.fluid = false;
+      });
+      expect(selectComponent.fluid()).toBe(false);
+      const container = fixture.debugElement.query(By.css('.ngb-select-container'));
+      expect(container.nativeElement.classList.contains('w-100')).toBe(false);
     });
   });
 });

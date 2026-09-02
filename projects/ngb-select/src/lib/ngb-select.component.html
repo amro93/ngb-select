@@ -42,10 +42,10 @@
             <span
               class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2"
             >
-              @if (chipTemplate) {
+              @if (chipTemplate()) {
                 <ng-container
                   *ngTemplateOutlet="
-                    chipTemplate;
+                    chipTemplate()!;
                     context: { $implicit: findOptionByValue(val) ?? val, value: val }
                   "
                 ></ng-container>
@@ -109,10 +109,10 @@
               <span
                 class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 py-1 px-2"
               >
-                @if (chipTemplate) {
+                @if (chipTemplate()) {
                   <ng-container
                     *ngTemplateOutlet="
-                      chipTemplate;
+                      chipTemplate()!;
                       context: { $implicit: findOptionByValue(val) ?? val, value: val }
                     "
                   ></ng-container>
@@ -129,10 +129,10 @@
             }
           } @else {
             @if (hasSelectedValue()) {
-              @if (selectedItemTemplate || labelTemplate) {
+              @if (selectedItemTemplate() || labelTemplate()) {
                 <ng-container
                   *ngTemplateOutlet="
-                    selectedItemTemplate || labelTemplate;
+                    selectedItemTemplate() || labelTemplate()!;
                     context: { $implicit: findOptionByValue(value()) ?? value(), value: value() }
                   "
                 ></ng-container>
@@ -160,8 +160,8 @@
           role="button"
           aria-label="Clear value"
         >
-          @if (clearIconTemplate) {
-            <ng-container *ngTemplateOutlet="clearIconTemplate"></ng-container>
+          @if (clearIconTemplate()) {
+            <ng-container *ngTemplateOutlet="clearIconTemplate()!"></ng-container>
           } @else {
             <i class="bi bi-x-circle-fill"></i>
           }
@@ -178,8 +178,8 @@
       <!-- Dropdown Caret Icon -->
       @if (!loading()) {
         <span class="ngb-select-dropdown-icon text-secondary">
-          @if (dropdownIconTemplate) {
-            <ng-container *ngTemplateOutlet="dropdownIconTemplate"></ng-container>
+          @if (dropdownIconTemplate()) {
+            <ng-container *ngTemplateOutlet="dropdownIconTemplate()!"></ng-container>
           } @else {
             <i class="bi bi-chevron-down" [class.rotate-180]="overlayVisible()"></i>
           }
@@ -195,9 +195,9 @@
 
   <ng-template #dropdownContent>
     <!-- Header Template -->
-    @if (headerTemplate) {
+    @if (headerTemplate()) {
       <div class="p-2 border-bottom">
-        <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        <ng-container *ngTemplateOutlet="headerTemplate()!"></ng-container>
       </div>
     }
 
@@ -218,9 +218,9 @@
               class="form-check-label small fw-semibold cursor-pointer user-select-none"
               for="selectAllCheckbox"
             >
-              @if (headerCheckboxTemplate) {
+              @if (headerCheckboxTemplate()) {
                 <ng-container
-                  *ngTemplateOutlet="headerCheckboxTemplate; context: { $implicit: selectAll() }"
+                  *ngTemplateOutlet="headerCheckboxTemplate()!; context: { $implicit: selectAll() }"
                 ></ng-container>
               } @else {
                 Select All
@@ -232,8 +232,8 @@
         @if (filter() && !filterInTrigger()) {
           <div class="input-group input-group-sm">
             <span class="input-group-text bg-transparent border-end-0">
-              @if (filterIconTemplate) {
-                <ng-container *ngTemplateOutlet="filterIconTemplate"></ng-container>
+              @if (filterIconTemplate()) {
+                <ng-container *ngTemplateOutlet="filterIconTemplate()!"></ng-container>
               } @else {
                 <i class="bi bi-search text-muted"></i>
               }
@@ -263,9 +263,9 @@
           <h6
             class="dropdown-header text-muted py-2 px-3 m-0 bg-light bg-opacity-75 d-flex align-items-center"
           >
-            @if (groupTemplate) {
+            @if (groupTemplate()) {
               <ng-container
-                *ngTemplateOutlet="groupTemplate; context: { $implicit: groupOption }"
+                *ngTemplateOutlet="groupTemplate()!; context: { $implicit: groupOption }"
               ></ng-container>
             } @else {
               {{ resolveOptionGroupLabel(groupOption) }}
@@ -301,9 +301,9 @@
                   tabindex="-1"
                 />
               }
-              @if (itemTemplate) {
+              @if (itemTemplate()) {
                 <ng-container
-                  *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"
+                  *ngTemplateOutlet="itemTemplate()!; context: { $implicit: option }"
                 ></ng-container>
               } @else {
                 <span>{{ resolveOptionLabel(option) }}</span>
@@ -343,9 +343,9 @@
               tabindex="-1"
             />
           }
-          @if (itemTemplate) {
+          @if (itemTemplate()) {
             <ng-container
-              *ngTemplateOutlet="itemTemplate; context: { $implicit: option }"
+              *ngTemplateOutlet="itemTemplate()!; context: { $implicit: option }"
             ></ng-container>
           } @else {
             <span>{{ resolveOptionLabel(option) }}</span>
@@ -357,8 +357,8 @@
     <!-- Empty State Message -->
     @if (isOptionsEmpty()) {
       <div class="dropdown-item text-muted text-center py-3">
-        @if (emptyTemplate) {
-          <ng-container *ngTemplateOutlet="emptyTemplate"></ng-container>
+        @if (emptyTemplate()) {
+          <ng-container *ngTemplateOutlet="emptyTemplate()!"></ng-container>
         } @else {
           <small>{{
             filterValue()
@@ -409,13 +409,13 @@
             </div>
 
             <!-- Modal Footer (Custom Template or Done Button) -->
-            @if (footerTemplate || multiple()) {
+            @if (footerTemplate() || multiple()) {
               <div
                 class="modal-footer p-2 bg-light bg-opacity-50 d-flex align-items-center justify-content-end"
               >
-                @if (footerTemplate) {
+                @if (footerTemplate()) {
                   <div class="w-100">
-                    <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+                    <ng-container *ngTemplateOutlet="footerTemplate()!"></ng-container>
                   </div>
                 } @else {
                   <button
@@ -449,9 +449,9 @@
       <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
 
       <!-- Footer Template -->
-      @if (footerTemplate) {
+      @if (footerTemplate()) {
         <div class="p-2 border-top">
-          <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+          <ng-container *ngTemplateOutlet="footerTemplate()!"></ng-container>
         </div>
       }
     </div>
