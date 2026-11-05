@@ -126,6 +126,9 @@ import { CommonModule } from '@angular/common';
             <a class="nav-link py-2 px-3 rounded-2" href="#mobile-modal" (click)="collapseNav()"
               ><i class="bi bi-phone text-success me-2"></i>28. Mobile Modal & Modal-in-Modal</a
             >
+            <a class="nav-link py-2 px-3 rounded-2" href="#playground" (click)="collapseNav()"
+              ><i class="bi bi-sliders text-primary me-2"></i>29. Property Playground</a
+            >
             <div class="dropdown-divider my-2"></div>
             <a
               class="nav-link py-2 px-3 rounded-2 active-pill text-white bg-primary fw-bold"
