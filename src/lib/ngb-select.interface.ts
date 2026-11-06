@@ -68,4 +68,4 @@ export interface TreeNodeEntry<T = any> {
   parent: T | null;
 }
 
-export const NGB_SELECT_VERSION = '0.1.7';
+export const NGB_SELECT_VERSION = '0.2.0';
