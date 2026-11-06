@@ -709,4 +709,40 @@ selectedGroupedPermissions: string[] = ['usr_create'];`,
 
 modalSingleCountryCode: string | null = 'IT';
 modalMultiCountryCodes: string[] = ['IT', 'FR'];`,
+  treeSelectHtml: `<ngb-select
+  tree
+  [options]="icsTree"
+  optionLabel="nameEn"
+  optionValue="code"
+  optionChildren="children"
+  filter
+  filterBy="code,nameEn,nameAr"
+  showClear
+  treeShowPath
+  placeholder="Filter by ICS code"
+  [(ngModel)]="ics"
+>
+  <ng-template #item let-node let-hasChildren="hasChildren">
+    <div class="d-flex align-items-center gap-2 w-100">
+      <code class="small">{{ node.code }}</code>
+      <span class="flex-grow-1" [class.fw-semibold]="hasChildren">{{ node.nameEn }}</span>
+      <span class="badge rounded-pill text-bg-secondary">{{ node.count }}</span>
+    </div>
+  </ng-template>
+</ngb-select>`,
+
+  treeSelectTs: `icsTree = [
+  {
+    code: '13',
+    nameEn: 'Environment, health protection, safety',
+    count: 3,
+    children: [
+      { code: '13.100', nameEn: 'Occupational safety', count: 2, children: [
+        { code: '13.100.10', nameEn: 'Ergonomics', count: 1, children: [] },
+      ] },
+    ],
+  },
+];
+
+ics: string | null = '13.100.10';`,
 };

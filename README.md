@@ -12,6 +12,7 @@ A comprehensive, lightweight Angular Standalone select component that utilizes *
 - 🎨 **Pure Bootstrap 5** - Uses `.form-select`, `.dropdown-menu`, and `.list-group` internally. No extra CSS payload.
 - 🔍 **Filtering & Match Modes** - Fast, client-side search supporting `contains`, `startsWith`, `endsWith`, `equals`.
 - 🗂️ **Grouping** - Categorize options with nested headers.
+- 🌳 **Tree Select** - Expandable hierarchical options with tree filtering, path labels and WAI-ARIA tree keyboard support.
 - 🛠️ **Advanced Templating** - Replace default text with fully custom DOM for items, headers, footers, and selected states.
 - ⌨️ **Forms Native & Signals** - Implements `ControlValueAccessor` for seamless `ngModel`, `FormControl` (Reactive Forms), and modern Angular `model()` Signal support.
 - 🛡️ **Robust Fallbacks** - Defensively programmed to gracefully handle `null`, `undefined`, and empty strings across inputs.
@@ -206,6 +207,48 @@ Full compatibility with Bootstrap 5 RTL and Arabic search text normalization:
 </div>
 ```
 
+### 8. Tree Select (hierarchical options)
+
+Set `tree` to render nested options (e.g. an ICS classification) as an expandable tree inside the same dropdown. Every other input (filtering, `multiple`, templates, RTL, forms) keeps working.
+
+```html
+<ngb-select
+  tree
+  [options]="icsTree"
+  optionLabel="nameEn"
+  optionValue="code"
+  optionChildren="children"
+  filter
+  filterBy="code,nameEn"
+  showClear
+  treeShowPath
+  [(ngModel)]="ics"
+>
+  <ng-template #item let-node let-depth="depth" let-hasChildren="hasChildren">
+    <div class="d-flex align-items-center gap-2 w-100">
+      <code class="small">{{ node.code }}</code>
+      <span class="flex-grow-1">{{ node.nameEn }}</span>
+      <span class="badge rounded-pill text-bg-secondary">{{ node.count }}</span>
+    </div>
+  </ng-template>
+</ngb-select>
+```
+
+| Input            | Type              | Default      | Description                                                                                                         |
+| ---------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `tree`           | `boolean`         | `false`      | Enables tree mode.                                                                                                  |
+| `optionChildren` | `string`          | `'children'` | Property holding a node's children. Missing or empty arrays are leaves.                                             |
+| `treeSelectable` | `'all' \| 'leaf'` | `'all'`      | `'leaf'`: only leaves can be selected; clicking a parent row expands/collapses it.                                  |
+| `treeExpandAll`  | `boolean`         | `false`      | Start fully expanded. Otherwise the ancestors of the selected value(s) are expanded when the panel opens.           |
+| `treeShowPath`   | `boolean`         | `false`      | Selected label shows the ancestor path joined with ` › ` (e.g. `Environment › Occupational safety › Ergonomics`). |
+
+| Output           | Payload | Description                       |
+| ---------------- | ------- | --------------------------------- |
+| `onNodeExpand`   | node    | A node was expanded (click/key).  |
+| `onNodeCollapse` | node    | A node was collapsed (click/key). |
+
+See **[09. Tree Select](./docs/09-tree-select.md)** for filtering, keyboard, template context and limitations.
+
 ## 📖 Deep-Dive Documentation
 
 For full API property lists, architecture decisions, and implementation strategies, refer to the [docs/](./docs) directory:
@@ -218,6 +261,7 @@ For full API property lists, architecture decisions, and implementation strategi
 - [06. Git & StackBlitz](./docs/06-git-and-stackblitz.md)
 - [07. Demo Examples Catalog](./docs/07-demo-examples.md)
 - [08. Installation Guide](./docs/08-installation-guide.md)
+- [09. Tree Select](./docs/09-tree-select.md)
 
 ## 🧪 Live Preview & Sandbox
 

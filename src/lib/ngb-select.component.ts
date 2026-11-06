@@ -9,6 +9,7 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   inject,
+  booleanAttribute,
   input,
   output,
   model,
@@ -34,8 +35,12 @@ import {
   SelectLazyLoadEvent,
   DropdownPosition,
   DropdownDirection,
+  TreeSelectableMode,
+  TreeNodeEntry,
   NGB_SELECT_VERSION,
 } from './ngb-select.interface';
+
+const OPTION_ROW_SELECTOR = '.dropdown-item[role="option"], .dropdown-item[role="treeitem"]';
 
 @Component({
   selector: 'ngb-select',
@@ -80,7 +85,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   closeOnSelect = input<boolean>(false);
 
   // --- Filtering Inputs ---
-  filter = input<boolean>(false);
+  filter = input<boolean, unknown>(false, { transform: booleanAttribute });
   filterBy = input<string | undefined>(undefined);
   filterMatchMode = input<SelectFilterMatchMode>('contains');
   filterLocale = input<string | undefined>(undefined);
@@ -96,7 +101,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   disabled = model<boolean>(false);
   readonly = input<boolean>(false);
   loading = input<boolean>(false);
-  showClear = input<boolean>(false);
+  showClear = input<boolean, unknown>(false, { transform: booleanAttribute });
   invalid = input<boolean>(false);
   floatLabel = input<boolean>(false);
   floatLabelVariant = input<FloatLabelVariant>('on');
@@ -137,6 +142,13 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   focusOnOpenStrategy = input<FocusOnOpenStrategy>('always');
   lazy = input<boolean>(false);
 
+  // --- Tree Mode Inputs ---
+  tree = input<boolean, unknown>(false, { transform: booleanAttribute });
+  optionChildren = input<string>('children');
+  treeSelectable = input<TreeSelectableMode>('all');
+  treeExpandAll = input<boolean, unknown>(false, { transform: booleanAttribute });
+  treeShowPath = input<boolean, unknown>(false, { transform: booleanAttribute });
+
   // --- Two-way Overlay Visibility Binding ---
   overlayVisible = model<boolean>(false);
 
@@ -151,6 +163,8 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   onSelectAllChange = output<SelectSelectAllChangeEvent>();
   onRemoveChip = output<SelectRemoveChipEvent>();
   onLazyLoad = output<SelectLazyLoadEvent>();
+  onNodeExpand = output<any>();
+  onNodeCollapse = output<any>();
 
   // --- Custom Content Templates ---
   itemTemplate = contentChild<TemplateRef<any>>('item');
@@ -218,7 +232,103 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
     return [this.optionLabel() || 'label'];
   });
 
+  // --- Tree Mode State ---
+  /** User expansion state (null = not touched yet; falls back to treeExpandAll). */
+  private treeExpandedKeys = signal<Set<any> | null>(null);
+  /** Keys toggled by the user while a filter is active (XOR with auto-expanded ancestors). */
+  private treeFilterToggleState = signal<{ query: string; keys: Set<any> }>({
+    query: '',
+    keys: new Set(),
+  });
+  /** Toggles only apply to the filter query they were made under. */
+  private treeFilterToggles = computed<Set<any>>(() => {
+    const state = this.treeFilterToggleState();
+    return state.query === this.filterValue() ? state.keys : new Set();
+  });
+
+  /** Parent lookup and full flat list of every node in the tree. */
+  treeIndex = computed(() => {
+    const parents = new Map<any, any>();
+    const depths = new Map<any, number>();
+    const all: any[] = [];
+    const parentKeys: any[] = [];
+    if (!this.tree()) return { parents, depths, all, parentKeys };
+    const walk = (nodes: any[], parent: any, depth: number) => {
+      for (const node of nodes) {
+        parents.set(node, parent);
+        depths.set(node, depth);
+        all.push(node);
+        const children = this.resolveTreeChildren(node);
+        if (children.length) {
+          parentKeys.push(this.treeNodeKey(node));
+          walk(children, node, depth + 1);
+        }
+      }
+    };
+    walk(this.safeOptions(), null, 0);
+    return { parents, depths, all, parentKeys };
+  });
+
+  private effectiveTreeExpanded = computed<Set<any>>(() => {
+    const keys = this.treeExpandedKeys();
+    if (keys) return keys;
+    return this.treeExpandAll() ? new Set(this.treeIndex().parentKeys) : new Set();
+  });
+
+  /** Filter result in tree mode: nodes to include and ancestors to auto-expand. */
+  private treeFilterResult = computed<{ include: Set<any>; autoExpand: Set<any> } | null>(() => {
+    if (!this.tree()) return null;
+    const query = this.filterValue();
+    if (!query) return null;
+    const mode = this.filterMatchMode();
+    const locale = this.filterLocale();
+    const normalizeArabic = this.filterNormalizeArabic();
+    const fields = this.filterFields();
+    const include = new Set<any>();
+    const autoExpand = new Set<any>();
+    const visit = (node: any, underMatch: boolean): boolean => {
+      const self = this.matchesFilter(node, query, fields, mode, locale, normalizeArabic);
+      let descendantHit = false;
+      for (const child of this.resolveTreeChildren(node)) {
+        if (visit(child, underMatch || self)) descendantHit = true;
+      }
+      if (descendantHit) autoExpand.add(this.treeNodeKey(node));
+      const hit = self || descendantHit;
+      if (hit || underMatch) include.add(node);
+      return hit;
+    };
+    for (const root of this.safeOptions()) visit(root, false);
+    return { include, autoExpand };
+  });
+
+  /** Flattened list of currently visible tree rows. */
+  visibleTreeNodes = computed<TreeNodeEntry[]>(() => {
+    if (!this.tree()) return [];
+    const filterRes = this.treeFilterResult();
+    const expanded = this.effectiveTreeExpanded();
+    const toggles = this.treeFilterToggles();
+    const rows: TreeNodeEntry[] = [];
+    const walk = (nodes: any[], parent: any, depth: number) => {
+      for (const node of nodes) {
+        if (filterRes && !filterRes.include.has(node)) continue;
+        const key = this.treeNodeKey(node);
+        const children = this.resolveTreeChildren(node);
+        const hasChildren = children.length > 0;
+        const isExpanded =
+          hasChildren &&
+          (filterRes ? filterRes.autoExpand.has(key) !== toggles.has(key) : expanded.has(key));
+        rows.push({ node, key, depth, hasChildren, expanded: isExpanded, parent });
+        if (isExpanded) walk(children, node, depth + 1);
+      }
+    };
+    walk(this.safeOptions(), null, 0);
+    return rows;
+  });
+
   filteredOptions = computed<any[]>(() => {
+    if (this.tree()) {
+      return this.visibleTreeNodes().map((r) => r.node);
+    }
     const opts = this.safeOptions();
     const query = this.filterValue();
     if (!query) {
@@ -254,7 +364,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
 
   flatFilteredOptions = computed<any[]>(() => {
     const filtered = this.filteredOptions();
-    if (this.group()) {
+    if (this.group() && !this.tree()) {
       const flat: any[] = [];
       for (const grp of filtered) {
         flat.push(...this.resolveOptionGroupChildren(grp));
@@ -267,7 +377,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   isOptionsEmpty = computed<boolean>(() => {
     const filtered = this.filteredOptions();
     if (filtered.length === 0) return true;
-    if (this.group()) {
+    if (this.group() && !this.tree()) {
       return filtered.every((grp) => this.resolveOptionGroupChildren(grp).length === 0);
     }
     return false;
@@ -275,6 +385,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
 
   // Flat list of all available options for fast lookup
   flatOptions = computed<any[]>(() => {
+    if (this.tree()) {
+      return this.treeIndex().all;
+    }
     const opts = this.safeOptions();
     if (this.group()) {
       const flat: any[] = [];
@@ -459,6 +572,11 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   resolveOptionLabelByValue(val: any): string {
     const selectedOpt = this.findOptionByValue(val);
     if (selectedOpt !== undefined && selectedOpt !== null) {
+      if (this.tree() && this.treeShowPath()) {
+        return this.getTreePath(selectedOpt)
+          .map((n) => this.resolveOptionLabel(n))
+          .join(' › ');
+      }
       return this.resolveOptionLabel(selectedOpt);
     }
     return this.resolveOptionLabel(val);
@@ -550,6 +668,11 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
     }
 
     // Fallback scan
+    if (this.tree()) {
+      return this.flatOptions().find((opt) =>
+        this.areValuesEqual(this.resolveOptionValue(opt), val),
+      );
+    }
     if (this.group()) {
       for (const grp of this.safeOptions()) {
         const children = this.resolveOptionGroupChildren(grp);
@@ -670,6 +793,15 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
 
     this.bindDocumentClickListener();
 
+    if (this.tree()) {
+      this.expandToSelection();
+      try {
+        this.cdr.detectChanges();
+      } catch {
+        // ignore: view may not be ready
+      }
+    }
+
     const triggerFilterInputEl = this.triggerFilterInputElement();
     const filterInputEl = this.filterInputElement();
     if (this.filterInTrigger() && triggerFilterInputEl) {
@@ -744,7 +876,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
     if (targetIndex !== -1 && dropdownMenuEl) {
       this.focusedIndex.set(targetIndex);
       const elements = dropdownMenuEl.nativeElement.querySelectorAll(
-        '.dropdown-item[role="option"]',
+        OPTION_ROW_SELECTOR,
       );
       const targetElement = elements[targetIndex] as HTMLElement;
       if (targetElement && typeof targetElement.scrollIntoView === 'function') {
@@ -856,6 +988,9 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
   onFilterChange(event: Event): void {
     const raw = (event.target as HTMLInputElement).value || '';
     this.filterValue.set(raw);
+    if (this.tree()) {
+      this.focusedIndex.set(-1);
+    }
     this.onFilter.emit({
       originalEvent: event,
       filter: this.filterValue(),
@@ -982,8 +1117,23 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
           const flatItems = this.flatFilteredOptions();
           const focusedIdx = this.focusedIndex();
           if (focusedIdx >= 0 && focusedIdx < flatItems.length) {
-            this.onOptionClick(flatItems[focusedIdx], event);
+            if (this.tree()) {
+              const entry = this.visibleTreeNodes()[focusedIdx];
+              if (entry) this.activateTreeEntry(entry, event);
+            } else {
+              this.onOptionClick(flatItems[focusedIdx], event);
+            }
           }
+        }
+        break;
+
+      case 'ArrowRight':
+      case 'ArrowLeft':
+      case 'Home':
+      case 'End':
+        if (this.tree() && this.overlayVisible() && !this.isTextInputTarget(event)) {
+          event.preventDefault();
+          this.handleTreeKey(event);
         }
         break;
 
@@ -1034,7 +1184,7 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
       const dropdownMenuEl = this.dropdownMenuElement();
       if (dropdownMenuEl) {
         const elements = dropdownMenuEl.nativeElement.querySelectorAll(
-          '.dropdown-item[role="option"]',
+          OPTION_ROW_SELECTOR,
         );
         const targetElement = elements[nextIdx] as HTMLElement;
         if (targetElement && typeof targetElement.scrollIntoView === 'function') {
@@ -1127,6 +1277,218 @@ export class NgbSelectComponent implements ControlValueAccessor, OnInit, AfterVi
     } else {
       const trigger = this.elementRef.nativeElement.querySelector('.form-select');
       if (trigger) trigger.focus();
+    }
+  }
+
+  // ==========================================
+  // Tree Mode
+  // ==========================================
+
+  resolveTreeChildren(node: any): any[] {
+    if (!node || typeof node !== 'object') return [];
+    const key = this.optionChildren() || 'children';
+    return Array.isArray(node[key]) ? node[key] : [];
+  }
+
+  treeNodeKey(node: any): any {
+    return this.resolveOptionTrackKey(node, -1);
+  }
+
+  /** Ancestors (root first) followed by the node itself. */
+  getTreePath(node: any): any[] {
+    const parents = this.treeIndex().parents;
+    const path: any[] = [];
+    let current = node;
+    let guard = 0;
+    while (current !== null && current !== undefined && guard++ < 1000) {
+      path.unshift(current);
+      current = parents.get(current) ?? null;
+    }
+    return path;
+  }
+
+  isTreeNodeExpanded(node: any): boolean {
+    const key = this.treeNodeKey(node);
+    const filterRes = this.treeFilterResult();
+    if (filterRes) {
+      return filterRes.autoExpand.has(key) !== this.treeFilterToggles().has(key);
+    }
+    return this.effectiveTreeExpanded().has(key);
+  }
+
+  isRtl(): boolean {
+    const dir = this.dir();
+    if (dir === 'rtl') return true;
+    if (dir === 'ltr') return false;
+    const el: HTMLElement | undefined = this.elementRef?.nativeElement;
+    if (el && typeof el.closest === 'function') {
+      const host = el.closest('[dir]');
+      return !!host && host.getAttribute('dir') === 'rtl';
+    }
+    return false;
+  }
+
+  treeIndent(depth: number): string {
+    return `calc(0.75rem + ${depth} * 1.25rem)`;
+  }
+
+  /** Template context for the option/item template in tree mode. */
+  treeItemContext(entry: TreeNodeEntry): any {
+    return {
+      $implicit: entry.node,
+      node: entry.node,
+      depth: entry.depth,
+      expanded: entry.expanded,
+      hasChildren: entry.hasChildren,
+    };
+  }
+
+  /** Template context for the selected item/label template. */
+  selectedItemContext(val: any): any {
+    const option = this.findOptionByValue(val);
+    const ctx: any = { $implicit: option ?? val, value: val };
+    if (this.tree() && option !== undefined) {
+      const path = this.getTreePath(option);
+      ctx.node = option;
+      ctx.depth = path.length - 1;
+      ctx.path = path;
+      ctx.hasChildren = this.resolveTreeChildren(option).length > 0;
+    }
+    return ctx;
+  }
+
+  isTreeNodeSelectable(entry: TreeNodeEntry): boolean {
+    return !(this.treeSelectable() === 'leaf' && entry.hasChildren);
+  }
+
+  setTreeNodeExpanded(node: any, expand: boolean, event: Event | null = null): void {
+    const key = this.treeNodeKey(node);
+    if (this.resolveTreeChildren(node).length === 0) return;
+    if (this.isTreeNodeExpanded(node) === expand) return;
+
+    if (this.treeFilterResult()) {
+      const toggles = new Set(this.treeFilterToggles());
+      if (toggles.has(key)) toggles.delete(key);
+      else toggles.add(key);
+      this.treeFilterToggleState.set({ query: this.filterValue(), keys: toggles });
+    } else {
+      const next = new Set(this.effectiveTreeExpanded());
+      if (expand) next.add(key);
+      else next.delete(key);
+      this.treeExpandedKeys.set(next);
+    }
+
+    if (expand) this.onNodeExpand.emit(node);
+    else this.onNodeCollapse.emit(node);
+    void event;
+    this.cdr.markForCheck();
+  }
+
+  toggleTreeNode(node: any, event: Event | null = null): void {
+    this.setTreeNodeExpanded(node, !this.isTreeNodeExpanded(node), event);
+  }
+
+  onTreeToggleClick(entry: TreeNodeEntry, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.focusedIndex.set(this.visibleTreeNodes().indexOf(entry));
+    this.toggleTreeNode(entry.node, event);
+  }
+
+  onTreeRowClick(entry: TreeNodeEntry, event: Event): void {
+    this.focusedIndex.set(this.visibleTreeNodes().indexOf(entry));
+    this.activateTreeEntry(entry, event);
+  }
+
+  private activateTreeEntry(entry: TreeNodeEntry, event: Event): void {
+    if (this.isOptionDisabled(entry.node)) return;
+    if (!this.isTreeNodeSelectable(entry)) {
+      this.toggleTreeNode(entry.node, event);
+      return;
+    }
+    this.onOptionClick(entry.node, event);
+  }
+
+  /** Expands the ancestors of the selected value(s) so they are visible. */
+  private expandToSelection(): void {
+    if (this.treeFilterResult()) return;
+    const val = this.value();
+    const values = this.multiple() ? (Array.isArray(val) ? val : []) : [val];
+    const parents = this.treeIndex().parents;
+    const next = new Set(this.effectiveTreeExpanded());
+    let changed = false;
+    for (const v of values) {
+      if (v === null || v === undefined || v === '') continue;
+      const opt = this.findOptionByValue(v);
+      if (opt === undefined) continue;
+      let p = parents.get(opt);
+      while (p) {
+        const key = this.treeNodeKey(p);
+        if (!next.has(key)) {
+          next.add(key);
+          changed = true;
+        }
+        p = parents.get(p);
+      }
+    }
+    if (changed || this.treeExpandedKeys() === null) {
+      this.treeExpandedKeys.set(next);
+    }
+  }
+
+  private isTextInputTarget(event: Event): boolean {
+    const t = event.target as HTMLElement | null;
+    return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
+  }
+
+  private focusTreeIndex(idx: number): void {
+    const rows = this.visibleTreeNodes();
+    if (idx < 0 || idx >= rows.length) return;
+    this.focusedIndex.set(idx);
+    const menu = this.dropdownMenuElement();
+    if (menu) {
+      const el = menu.nativeElement.querySelectorAll(OPTION_ROW_SELECTOR)[idx] as HTMLElement;
+      if (el && typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({ block: 'nearest', inline: 'start' });
+      }
+    }
+  }
+
+  private handleTreeKey(event: KeyboardEvent): void {
+    const rows = this.visibleTreeNodes();
+    if (rows.length === 0) return;
+    const idx = this.focusedIndex();
+
+    if (event.key === 'Home' || event.key === 'End') {
+      const step = event.key === 'Home' ? 1 : -1;
+      let i = event.key === 'Home' ? 0 : rows.length - 1;
+      while (i >= 0 && i < rows.length && this.isOptionDisabled(rows[i].node)) i += step;
+      this.focusTreeIndex(i);
+      return;
+    }
+
+    const entry = rows[idx];
+    if (!entry) {
+      this.focusTreeIndex(0);
+      return;
+    }
+    const rtl = this.isRtl();
+    const isExpandKey = event.key === (rtl ? 'ArrowLeft' : 'ArrowRight');
+
+    if (isExpandKey) {
+      if (!entry.hasChildren) return;
+      if (!entry.expanded) {
+        this.setTreeNodeExpanded(entry.node, true, event);
+      } else {
+        this.focusTreeIndex(idx + 1);
+      }
+    } else {
+      if (entry.hasChildren && entry.expanded) {
+        this.setTreeNodeExpanded(entry.node, false, event);
+      } else if (entry.parent) {
+        const parentIdx = rows.findIndex((r) => r.node === entry.parent);
+        this.focusTreeIndex(parentIdx);
+      }
     }
   }
 }

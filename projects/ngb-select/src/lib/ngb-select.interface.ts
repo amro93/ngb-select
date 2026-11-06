@@ -51,4 +51,21 @@ export interface SelectLazyLoadEvent {
   [key: string]: any;
 }
 
+/** Which tree nodes may be selected in tree mode. */
+export type TreeSelectableMode = 'all' | 'leaf';
+
+/** A visible (flattened) row rendered in tree mode. */
+export interface TreeNodeEntry<T = any> {
+  /** The original option object. */
+  node: T;
+  /** Stable key used for expansion state (option value, dataKey or the node itself). */
+  key: any;
+  /** Zero-based nesting depth. */
+  depth: number;
+  hasChildren: boolean;
+  expanded: boolean;
+  /** Parent option, or null for root nodes. */
+  parent: T | null;
+}
+
 export const NGB_SELECT_VERSION = '0.1.7';

@@ -299,3 +299,34 @@ export const GROUPED_PERMISSIONS: GroupedPermissionCategory[] = [
     ],
   },
 ];
+
+export const ICS_TREE = [
+  {
+    code: '13',
+    nameEn: 'Environment, health protection, safety',
+    nameAr: 'البيئة وحماية الصحة والسلامة',
+    count: 3,
+    children: [
+      {
+        code: '13.100',
+        nameEn: 'Occupational safety. Industrial hygiene',
+        nameAr: 'السلامة المهنية. الصحة الصناعية',
+        count: 2,
+        children: [
+          { code: '13.100.10', nameEn: 'Ergonomics', nameAr: 'بيئة العمل', count: 1, children: [] },
+          { code: '13.100.20', nameEn: 'Lighting at work', nameAr: 'الإضاءة في العمل', count: 1, children: [] },
+        ],
+      },
+      { code: '13.200', nameEn: 'Accident and disaster control', nameAr: 'مكافحة الحوادث والكوارث', count: 1, children: [] },
+    ],
+  },
+  {
+    code: '91',
+    nameEn: 'Construction materials and building',
+    nameAr: 'مواد البناء والتشييد',
+    count: 2,
+    children: [
+      { code: '91.100', nameEn: 'Construction materials', nameAr: 'مواد البناء', count: 2, children: [] },
+    ],
+  },
+];

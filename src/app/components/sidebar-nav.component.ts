@@ -129,6 +129,9 @@ import { CommonModule } from '@angular/common';
             <a class="nav-link py-2 px-3 rounded-2" href="#playground" (click)="collapseNav()"
               ><i class="bi bi-sliders text-primary me-2"></i>29. Property Playground</a
             >
+            <a class="nav-link py-2 px-3 rounded-2" href="#tree-select" (click)="collapseNav()"
+              ><i class="bi bi-diagram-3 text-primary me-2"></i>30. Tree Select</a
+            >
             <div class="dropdown-divider my-2"></div>
             <a
               class="nav-link py-2 px-3 rounded-2 active-pill text-white bg-primary fw-bold"

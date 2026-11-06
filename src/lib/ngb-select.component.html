@@ -26,7 +26,7 @@
     [attr.aria-label]="ariaLabel()"
     [attr.aria-labelledby]="ariaLabelledBy()"
     [attr.aria-expanded]="overlayVisible()"
-    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-haspopup]="tree() ? 'tree' : 'listbox'"
     role="combobox"
     (click)="onTriggerClick($event)"
     (focus)="onTriggerFocus($event)"
@@ -133,7 +133,9 @@
                 <ng-container
                   *ngTemplateOutlet="
                     selectedItemTemplate() || labelTemplate()!;
-                    context: { $implicit: findOptionByValue(value()) ?? value(), value: value() }
+                    context: tree()
+                      ? selectedItemContext(value())
+                      : { $implicit: findOptionByValue(value()) ?? value(), value: value() }
                   "
                 ></ng-container>
               } @else {
@@ -252,8 +254,59 @@
       </div>
     }
 
-    <!-- Grouped Options Mode -->
-    @if (group()) {
+    <!-- Tree Mode -->
+    @if (tree()) {
+      @for (entry of visibleTreeNodes(); track entry.key; let i = $index) {
+        <div
+          class="dropdown-item d-flex align-items-center py-2 ngb-select-tree-row"
+          [style.padding-inline-start]="treeIndent(entry.depth)"
+          [class.active]="!multiple() && isSelected(entry.node)"
+          [class.bg-light]="multiple() && isSelected(entry.node)"
+          [class.fw-semibold]="multiple() && isSelected(entry.node)"
+          [class.focus]="focusedIndex() === i"
+          [class.bg-body-secondary]="focusedIndex() === i && !isSelected(entry.node)"
+          [class.disabled]="isOptionDisabled(entry.node)"
+          role="treeitem"
+          [attr.aria-level]="entry.depth + 1"
+          [attr.aria-expanded]="entry.hasChildren ? entry.expanded : null"
+          [attr.aria-selected]="isSelected(entry.node)"
+          [attr.aria-disabled]="isOptionDisabled(entry.node) || null"
+          (click)="onTreeRowClick(entry, $event)"
+        >
+          @if (entry.hasChildren) {
+            <button
+              type="button"
+              class="btn btn-link btn-sm p-0 text-reset lh-1 ngb-select-tree-toggle"
+              [class.ngb-select-tree-open]="entry.expanded"
+              [class.ngb-select-tree-rtl]="isRtl()"
+              tabindex="-1"
+              [attr.aria-label]="entry.expanded ? 'Collapse' : 'Expand'"
+              (click)="onTreeToggleClick(entry, $event)"
+            >
+              <i class="bi" [class.bi-chevron-right]="!isRtl()" [class.bi-chevron-left]="isRtl()"></i>
+            </button>
+          } @else {
+            <span class="ngb-select-tree-spacer" aria-hidden="true"></span>
+          }
+          @if (multiple()) {
+            <input
+              type="checkbox"
+              class="form-check-input mt-0 ngb-select-tree-check"
+              style="pointer-events: none"
+              [checked]="isSelected(entry.node)"
+              tabindex="-1"
+            />
+          }
+          @if (itemTemplate()) {
+            <ng-container
+              *ngTemplateOutlet="itemTemplate()!; context: treeItemContext(entry)"
+            ></ng-container>
+          } @else {
+            <span>{{ resolveOptionLabel(entry.node) }}</span>
+          }
+        </div>
+      }
+    } @else if (group()) {
       @for (
         groupOption of filteredOptions();
         track resolveOptionGroupLabel(groupOption) || $index
@@ -402,7 +455,8 @@
             <div
               class="modal-body p-0"
               #dropdownMenu
-              role="listbox"
+              [attr.role]="tree() ? 'tree' : 'listbox'"
+              [attr.aria-multiselectable]="tree() && multiple() ? true : null"
               (scroll)="onOverlayScroll($event)"
             >
               <ng-container *ngTemplateOutlet="dropdownContent"></ng-container>
@@ -442,7 +496,8 @@
       [ngClass]="panelStyleClass()"
       [style.max-height]="scrollHeight()"
       style="overflow-y: auto"
-      role="listbox"
+      [attr.role]="tree() ? 'tree' : 'listbox'"
+      [attr.aria-multiselectable]="tree() && multiple() ? true : null"
       (scroll)="onOverlayScroll($event)"
       (click)="$event.stopPropagation()"
     >

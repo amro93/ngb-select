@@ -26,6 +26,7 @@ import {
   ACCOUNT_PLANS,
   GROUPED_PERMISSIONS,
   COUNTRIES,
+  ICS_TREE,
 } from '../../data/demo-data';
 
 @Component({
@@ -665,6 +666,67 @@ import {
         </div>
       </app-example-card>
     </div>
+    <!-- 30. Tree Select -->
+    <div class="col-12" id="tree-select">
+      <app-example-card
+        title="30. Tree Select (ICS Classification)"
+        icon="bi bi-diagram-3"
+        iconClass="text-primary"
+        [htmlCode]="snippets.treeSelectHtml"
+        [tsCode]="snippets.treeSelectTs"
+      >
+        <p class="text-muted small mb-3">
+          Hierarchical options via <code>tree</code> + <code>optionChildren</code>. Filtering keeps
+          ancestors of matches, <code>treeShowPath</code> shows the full path in the trigger, and
+          the item template receives <code>depth</code>, <code>expanded</code> and
+          <code>hasChildren</code>.
+        </p>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label text-muted small fw-semibold">Single (LTR)</label>
+            <ngb-select
+              tree
+              [options]="icsTree"
+              optionLabel="nameEn"
+              optionValue="code"
+              optionChildren="children"
+              filter
+              filterBy="code,nameEn,nameAr"
+              showClear
+              treeShowPath
+              placeholder="Filter by ICS code"
+              [(ngModel)]="ics"
+            >
+              <ng-template #item let-node let-hasChildren="hasChildren">
+                <div class="d-flex align-items-center gap-2 w-100">
+                  <code class="small">{{ node.code }}</code>
+                  <span class="flex-grow-1" [class.fw-semibold]="hasChildren">{{ node.nameEn }}</span>
+                  <span class="badge rounded-pill text-bg-secondary">{{ node.count }}</span>
+                </div>
+              </ng-template>
+            </ngb-select>
+            <small class="text-muted">Value: {{ ics ?? 'null' }}</small>
+          </div>
+          <div class="col-md-6" dir="rtl" lang="ar">
+            <label class="form-label text-muted small fw-semibold">متعدد – أوراق فقط (RTL)</label>
+            <ngb-select
+              tree
+              dir="rtl"
+              [options]="icsTree"
+              optionLabel="nameAr"
+              optionValue="code"
+              [multiple]="true"
+              display="chip"
+              treeSelectable="leaf"
+              filter
+              filterBy="code,nameAr"
+              placeholder="اختر التصنيف"
+              [(ngModel)]="icsMulti"
+            ></ngb-select>
+          </div>
+        </div>
+      </app-example-card>
+    </div>
   `,
 })
 export class AdvancedDemosComponent {
@@ -685,6 +747,9 @@ export class AdvancedDemosComponent {
   paymentMethods = PAYMENT_METHODS;
   plans = ACCOUNT_PLANS;
   groupedPermissions = GROUPED_PERMISSIONS;
+  icsTree = ICS_TREE;
+  ics: string | null = '13.100.20';
+  icsMulti: string[] = [];
 
   selectedArabicCountry: string = 'SA';
   selectedArabicCities: number[] = [1, 2];
